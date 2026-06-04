@@ -32,6 +32,8 @@
   "time.over": "Over",
   "event.expiry": "Expiry",
   "event.grace": "Grace Period",
+  "goal.pct": "Progress",
+  "deal.sales": "Sales",
   "sorty.title": "Defeat |Boss|'s Troops",
   "sorty.title.lite": "Archon Hunt: |Boss|"
 }

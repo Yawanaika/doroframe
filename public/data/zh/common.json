@@ -32,6 +32,8 @@
   "time.over": "已结束",
   "event.expiry":"剩余",
   "event.grace":"兑换",
+  "goal.pct": "进度",
+  "deal.sales": "已售",
   "sorty.title": "击败 |Boss| 的部队",
   "sorty.title.lite": "执行官猎杀: |Boss|"
 }
