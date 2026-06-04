@@ -134,7 +134,8 @@ export {
     getItem,
     itemName,
     itemIcon,
+    itemDetail,
     rewardName,
     normalizeItemKey,
 } from "./items";
-export type { ItemLookup, ItemSource, RewardNameOptions } from "./items";
+export type { ItemLookup, ItemSource, ItemDetail, RewardNameOptions } from "./items";

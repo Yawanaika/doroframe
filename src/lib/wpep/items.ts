@@ -200,6 +200,64 @@ export const itemIcon = (key: string | undefined | null): string => {
     return trImage(item?.icon);
 };
 
+/**
+ * 物品详细信息（用于 daily-deal / invasion / 奖励等场景）
+ *   - name        本地化名称（item.name → tr；recipes 走 resultType）
+ *   - description 物品描述（item.description → tr）
+ *   - icon        图标 URL（item.icon → content.warframe.com）
+ *   - source      命中的数据源（weapons / warframes / ...）
+ *   - raw         原始 item 引用，便于按需访问其它字段
+ */
+export interface ItemDetail<T = Record<string, unknown>> {
+    key: string;
+    source: ItemSource;
+    name: string;
+    description: string;
+    icon: string;
+    raw: T;
+}
+
+export const itemDetail = <T = Record<string, unknown>>(
+    key: string | undefined | null,
+): ItemDetail<T> | undefined => {
+    const hit = findItem<{
+        name?: string;
+        description?: string;
+        icon?: string;
+        resultType?: string;
+    }>(key);
+    if (!hit) return undefined;
+
+    const { item, source } = hit;
+    // recipes 的"成品名"在 resultType 指向的条目里
+    const resultDetail =
+        source === "recipes" && item.resultType
+            ? itemDetail(item.resultType)
+            : undefined;
+
+    const name =
+        tr(item.name) ||
+        resultDetail?.name ||
+        tr(hit.key) ||
+        hit.key;
+
+    const description =
+        tr(item.description) || resultDetail?.description || "";
+
+    const icon = item.icon
+        ? trImage(item.icon)
+        : resultDetail?.icon ?? "";
+
+    return {
+        key: hit.key,
+        source,
+        name,
+        description,
+        icon,
+        raw: hit.item as T,
+    };
+};
+
 // ── rewardName: 移植 cache_builder.dart 的 getRewardName + _appendItemCount ──
 
 const ERA_NAME: Record<string, string> = {

@@ -7,8 +7,9 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 type EventCardProps = ComponentPropsWithoutRef<typeof Card> & {
     title: string;
@@ -39,12 +40,18 @@ export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(function Eve
         <Card ref={ref} className={cn("flex flex-row gap-3 p-3", className)} {...rest}>
             {image ? (
                 <div className="size-16 shrink-0 rounded-md overflow-hidden backdrop-brightness-75 backdrop-contrast-125">
-                    <img
-                        src={image}
-                        alt={imageAlt ?? title}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                    />
+                    {imageAlt ? (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <img src={image} alt={imageAlt ?? title} className="w-full h-full object-cover" loading="lazy"/>
+                            </TooltipTrigger>
+                            <TooltipContent align="center">
+                                <p>{imageAlt}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    ) : (
+                        <img src={image} alt={imageAlt ?? title} className="w-full h-full object-cover" loading="lazy"/>
+                    )}
                 </div>
             ) : null}
             <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -58,8 +65,11 @@ export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(function Eve
                     <div className="flex flex-col items-end gap-1">
                         {badge ? <Badge variant="secondary">{badge}</Badge> : null}
                         {countdown ? (
-                            <span className="text-muted-foreground text-xs tabular-nums">
-                                {t("event.expiry")}:{countdown}
+                            <span className="text-muted-foreground text-xs tabular-nums flex items-center gap-1">
+                                <div className="w-4 h-4 shrink-0 rounded bg-muted flex items-center justify-center">
+                                    <img src="/images/Timer.png" alt={t("event.expiry")} className="w-3 h-3" />
+                                </div>
+                                {countdown}
                             </span>
                         ) : null}
                         {redemption ? (
@@ -71,16 +81,6 @@ export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(function Eve
                 </CardHeader>
                 {children ? <CardContent className="p-0">{children}</CardContent> : null}
             </div>
-            {image ? (
-                <div className="size-16 shrink-0 rounded-md overflow-hidden backdrop-brightness-75 backdrop-contrast-125">
-                    <img
-                        src={image}
-                        alt={imageAlt ?? title}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                    />
-                </div>
-            ) : null}
         </Card>
     );
-})
+});
