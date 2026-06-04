@@ -13,7 +13,7 @@ export function resolveNode(location: string | undefined): NodeInfo {
     return {
         nameZh: tr(node?.name) || location || "",
         systemNameZh: tr(node?.systemName),
-        factionNameZh: tr((Factions as any)[node?.factionIndex]?.name),
-        missionTypeZh: tr((MissionTypes as any)[node?.missionIndex]?.name),
+        factionNameZh: tr((Factions as any)[node?.faction]?.name),
+        missionTypeZh: tr((MissionTypes as any)[node?.missionType]?.name),
     };
 }

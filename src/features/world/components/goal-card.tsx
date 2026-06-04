@@ -31,14 +31,6 @@ const GoalRow = memo(function GoalRow({ goal }: { goal: Goal }) {
                             </Badge>
                         ))}
                     </div>
-                    {/*<Tooltip>*/}
-                    {/*    <TooltipTrigger asChild>*/}
-                    {/*        <Badge variant="outline">{goal.tag}</Badge>*/}
-                    {/*    </TooltipTrigger>*/}
-                    {/*    <TooltipContent>*/}
-                    {/*        <p>{goal.tag}</p>*/}
-                    {/*    </TooltipContent>*/}
-                    {/*</Tooltip>*/}
                 </EventCard>
             </TooltipTrigger>
             <TooltipContent align="center">

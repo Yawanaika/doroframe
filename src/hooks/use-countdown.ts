@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 
 // 解析后端给的 ISO / millis 字符串，返回剩余秒数；过期返回 0
 export function useCountdown(expiry: string | undefined): number {
@@ -16,13 +17,21 @@ export function useCountdown(expiry: string | undefined): number {
 }
 
 export function formatCountdown(sec: number): string {
-    if (sec <= 0) return "已结束";
+    const [t] = useTranslation();
+    if (sec <= 0) return t("time.over");
     const d = Math.floor(sec / 86400);
     const h = Math.floor((sec % 86400) / 3600);
     const m = Math.floor((sec % 3600) / 60);
     const s = sec % 60;
-    if (d > 0) return `${d}天 ${h}小时`;
-    if (h > 0) return `${h}小时 ${m}分`;
-    if (m > 0) return `${m}分 ${s}秒`;
-    return `${s}秒`;
+    if (d > 0) return `${t("time.days")
+        .replace("|d|",String(d))
+        .replace("|h|",String(h))}`;
+    if (h > 0) return `${t("time.hours")
+        .replace("|h|",String(h))
+        .replace("|m|",String(m))}`;
+    if (m > 0) return `${t("time.minutes")
+        .replace("|m|",String(m))
+        .replace("|s|",String(s))}`;
+    return `${t("time.seconds")
+        .replace("|s|",String(s))}`;
 }

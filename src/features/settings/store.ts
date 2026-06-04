@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { loadSetting, saveSetting } from "@/lib/tauri/store";
 import { setActiveLang } from "@/lib/wpep";
-import { i18n } from "@/lib/i18n";
+import { loadLangBundle } from "@/lib/i18n";
 
 export type ThemeMode = "light" | "dark" | "system";
 export type LangCode = "zh" | "en";
@@ -39,7 +39,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
         set({ ...DEFAULTS, ...loaded, hydrated: true });
         applyTheme(loaded.theme ?? DEFAULTS.theme);
         setActiveLang(loaded.lang ?? DEFAULTS.lang);
-        void i18n.changeLanguage(loaded.lang ?? DEFAULTS.lang);
+        void loadLangBundle(loaded.lang ?? DEFAULTS.lang);
     },
     update: async (key, value) => {
         const next = { ...get(), [key]: value } as Settings;
@@ -47,7 +47,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
         if (key === "theme") applyTheme(value as ThemeMode);
         if (key === "lang") {
             setActiveLang(value as LangCode);
-            void i18n.changeLanguage(value as LangCode);
+            void loadLangBundle(value as LangCode);
         }
         await saveSetting<Settings>("settings", {
             theme: next.theme,
