@@ -1,4 +1,4 @@
-import { Base, parseBase, serializeBase } from "@/types/wf-state/world/base.ts";
+import {asDateMs, Base, parseBase, serializeBase} from "@/types/wf-state/world/base.ts";
 
 export interface Goal extends Base {
     node: string;
@@ -11,6 +11,7 @@ export interface Goal extends Base {
     interimRewards: Reward[];
     rewardGoal?: number;
     reward?: Reward;
+    gracePeriod?: string;
 }
 
 interface Reward {
@@ -32,6 +33,7 @@ export function goalFromJson(json: any): Goal {
         interimRewards: (json?.InterimRewards ?? []).map(rewardFromJson),
         rewardGoal: json?.Goal,
         reward: json?.Reward ? rewardFromJson(json.Reward) : undefined,
+        gracePeriod: asDateMs(json?.GracePeriod),
     };
 }
 
@@ -48,6 +50,7 @@ export function goalToJson(g: Goal) {
         interimRewards: g.interimRewards.map(rewardToJson),
         rewardGoal: g.rewardGoal,
         reward: g.reward ? rewardToJson(g.reward) : undefined,
+        gracePeriod: g.gracePeriod
     };
 }
 

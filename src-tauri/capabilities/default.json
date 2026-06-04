@@ -2,9 +2,16 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "Capability for the main window",
-  "windows": ["main"],
+  "windows": ["main", "overlay"],
   "permissions": [
     "core:default",
-    "opener:default"
+    "core:webview:allow-create-webview-window",
+    "core:webview:allow-webview-close",
+    "core:event:allow-emit",
+    "core:event:allow-listen",
+    "opener:default",
+    "store:default",
+    "notification:default",
+    "global-shortcut:default"
   ]
 }

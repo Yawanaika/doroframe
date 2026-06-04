@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
@@ -11,121 +12,43 @@ import {
   SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import {
-  TerminalSquareIcon,
   BotIcon,
-  BookOpenIcon,
   Settings2Icon,
+  WaypointsIcon,
 } from "lucide-react"
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "World State",
-      url: "/wf",
-      icon: (
-        <TerminalSquareIcon
-        />
-      ),
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Warframe Market",
-      url: "/wm",
-      icon: (
-        <BotIcon
-        />
-      ),
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: (
-        <BookOpenIcon
-        />
-      ),
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: (
-        <Settings2Icon
-        />
-      ),
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ]
-}
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { t } = useTranslation()
+  const data = {
+    user: { name: "guest", email: "未登录", avatar: "/icon.png" },
+    navMain: [
+      {
+        title: t("nav.state"),
+        url: "/",
+        icon: <WaypointsIcon />,
+        items: [
+          { title: t("nav.state"), url: "/state" },
+          { title: t("nav.weekly"), url: "/state/weekly" }
+        ],
+        isActive: true,
+      },
+      {
+        title: "Warframe Market",
+        url: "/market/items",
+        icon: <BotIcon />,
+        items: [
+          { title: t("nav.market.items"), url: "/market/items" },
+          { title: t("nav.market.auctions"), url: "/market/auctions" },
+          { title: t("nav.market.me"), url: "/market/me" },
+        ],
+      },
+      {
+        title: t("nav.settings"),
+        url: "/settings",
+        icon: <Settings2Icon />,
+      },
+    ],
+  }
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
