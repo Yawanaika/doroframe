@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { StatePage } from "@/routes/state";
 import { WeeklyPage } from "@/routes/weekly";
+import {SettingsPage} from "@/routes/settings.tsx";
 
 const rootRoute = createRootRoute({
     component: RootLayout,
@@ -45,10 +46,17 @@ const weeklyRoute = createRoute({
     component: WeeklyPage,
 });
 
+const settingsRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/settings",
+    component: SettingsPage,
+});
+
 const routeTree = rootRoute.addChildren([
     indexRoute,
     stateRoute,
     weeklyRoute,
+    settingsRoute
 ]);
 
 const initialPath =
