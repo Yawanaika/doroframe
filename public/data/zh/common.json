@@ -9,7 +9,7 @@
   "state.title.alert": "警报",
   "state.title.arby": "仲裁",
   "state.title.sortie": "每日突击",
-  "state.title.lite-sortie": "执刑官",
+  "state.title.lite-sortie": "执刑官猎杀",
   "state.title.syndicate": "集团每日",
   "state.title.invasion": "入侵",
   "state.title.void-trader": "虚空商人",
@@ -35,5 +35,9 @@
   "goal.pct": "进度",
   "deal.sales": "已售",
   "sorty.title": "击败 |Boss| 的部队",
-  "sorty.title.lite": "执行官猎杀: |Boss|"
+  "sorty.title.lite": "执行官猎杀: |Boss|",
+  "trader.arrived": "到达",
+  "trader.departed": "未到达",
+  "trader.leave": "离开",
+  "trader.manifest.unpublished": "商品清单未公布"
 }

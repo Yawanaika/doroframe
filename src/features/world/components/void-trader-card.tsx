@@ -1,12 +1,13 @@
 import { memo } from "react";
 import type { VoidTrader } from "@/types/wf-state";
 import { EventCard } from "@/components/event-card";
-import { CardEmpty, CardError, CardSkeleton } from "@/components/card-states";
+import { CardError, CardSkeleton } from "@/components/card-states";
 import { Badge } from "@/components/ui/badge";
 import { useVoidTradersQuery } from "@/features/world/queries";
 import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
 import { resolveNode } from "@/lib/wpep/nodes";
 import { tr } from "@/lib/wpep";
+import {useTranslation} from "react-i18next";
 
 const VoidTraderRow = memo(function VoidTraderRow({
     trader,
@@ -17,15 +18,17 @@ const VoidTraderRow = memo(function VoidTraderRow({
     const arrivalSec = useCountdown(trader.activation);
     const node = resolveNode(trader.node);
     const arrived = arrivalSec === 0;
+    const [t] = useTranslation();
     return (
         <EventCard
-            title={tr(trader.charater) || "虚空商人"}
-            subtitle={node.nameZh || trader.node}
-            badge={arrived ? "在站" : "未到达"}
+            title={tr(trader.charater)}
+            subtitle={`${node.nameZh} · ${node.systemNameZh}`}
+            image={"/images/Baro'Ki Teel.png"}
+            badge={arrived ? t("trader.arrived") : t("trader.departed")}
             countdown={
                 arrived
-                    ? `离开 ${formatCountdown(sec)}`
-                    : `到达 ${formatCountdown(arrivalSec)}`
+                    ? `${formatCountdown(sec)} ${t("trader.leave")} `
+                    : `${formatCountdown(arrivalSec)} ${t("trader.arrived")}`
             }
         >
             {trader.manifest?.length ? (
@@ -43,7 +46,7 @@ const VoidTraderRow = memo(function VoidTraderRow({
                 </div>
             ) : (
                 <span className="text-xs text-muted-foreground">
-                    商品清单未公布
+                    {t("trader.manifest.unpublished")}
                 </span>
             )}
         </EventCard>
@@ -54,7 +57,6 @@ export function VoidTraderList() {
     const { data, isPending, isError, error } = useVoidTradersQuery();
     if (isPending) return <CardSkeleton />;
     if (isError) return <CardError message={String(error)} />;
-    if (!data?.length) return <CardEmpty text="无虚空商人信息" />;
     return (
         <div className="grid gap-3">
             {data.map((t) => (

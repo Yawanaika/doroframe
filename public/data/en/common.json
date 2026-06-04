@@ -35,5 +35,9 @@
   "goal.pct": "Progress",
   "deal.sales": "Sales",
   "sorty.title": "Defeat |Boss|'s Troops",
-  "sorty.title.lite": "Archon Hunt: |Boss|"
+  "sorty.title.lite": "Archon Hunt: |Boss|",
+  "trader.arrived": "Arrived",
+  "trader.departed": "Departed",
+  "trader.leave": "Leave",
+  "trader.manifest.unpublished": "Manifest Unpublished"
 }
