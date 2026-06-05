@@ -27,8 +27,6 @@ const SortyRow = memo(function SortyRow({
     return (
         <EventCard
             title={t(title).replace("|Boss|",tb(sorty.boss))}
-            subtitle={tb(sorty.boss) || sorty.boss}
-            badge={tr(sorty.reward) || undefined}
             countdown={formatCountdown(sec)}
         >
             <div className="grid gap-1.5 text-sm">

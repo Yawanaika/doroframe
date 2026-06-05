@@ -43,12 +43,14 @@ export function StatePage() {
             <Section title={t("state.title.arby")}>
                 <ActiveMissionList />
             </Section>
-            <Section title={t("state.title.sortie")}>
-                <SortyList />
-            </Section>
-            <Section title={t("state.title.lite-sortie")}>
-                <LiteSortyList />
-            </Section>
+            <div className="grid gap-3 md:grid-cols-2">
+                <Section title={t("state.title.sortie")}>
+                    <SortyList />
+                </Section>
+                <Section title={t("state.title.lite-sortie")}>
+                    <LiteSortyList />
+                </Section>
+            </div>
             <Section title={t("state.title.syndicate")}>
                 <SyndicateList />
             </Section>
