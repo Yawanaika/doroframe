@@ -45,7 +45,7 @@ export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(function Eve
                             <TooltipTrigger asChild>
                                 <img src={image} alt={imageAlt ?? title} className="w-full h-full object-cover" loading="lazy"/>
                             </TooltipTrigger>
-                            <TooltipContent align="center">
+                            <TooltipContent>
                                 <p>{imageAlt}</p>
                             </TooltipContent>
                         </Tooltip>

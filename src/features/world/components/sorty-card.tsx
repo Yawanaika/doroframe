@@ -44,7 +44,7 @@ const SortyRow = memo(function SortyRow({
                                         <TooltipTrigger asChild>
                                             <Badge variant="outline">{tsm(v.modifierType)}</Badge>
                                         </TooltipTrigger>
-                                        <TooltipContent align="center">
+                                        <TooltipContent>
                                             <p>{tsmd(v.modifierType)}</p>
                                         </TooltipContent>
                                     </Tooltip>
