@@ -1,0 +1,20 @@
+/*
+ * Primary: Islands — #548af7
+ */
+:root {
+    --primary: #548af7;
+    --primary-foreground: #ffffff;
+    --ring: #548af7;
+    --sidebar-primary: #548af7;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-ring: #548af7;
+}
+
+.dark {
+    --primary: #548af7;
+    --primary-foreground: #ffffff;
+    --ring: #548af7;
+    --sidebar-primary: #548af7;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-ring: #548af7;
+}

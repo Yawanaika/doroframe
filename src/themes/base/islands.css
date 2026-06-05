@@ -1,0 +1,66 @@
+/*
+ * Islands theme — 移植自 bwya77/vscode-dark-islands
+ *   canvas  = 页面底色（panel 间缝隙）
+ *   surface = 漂浮的面板/卡片（sidebar、card、popover、input）
+ *   accent  = #548af7（按钮 / 选中 / focus ring）
+ */
+:root {
+    --background: #e8e9ec;
+    --foreground: #1f2126;
+    --card: #ffffff;
+    --card-foreground: #1f2126;
+    --popover: #ffffff;
+    --popover-foreground: #1f2126;
+    --secondary: #f1f2f5;
+    --secondary-foreground: #1f2126;
+    --muted: #eef0f3;
+    --muted-foreground: #6b7079;
+    --accent: #e6ecfb;
+    --accent-foreground: #1f2126;
+    --destructive: #d4453a;
+    --border: #d9dbe0;
+    --input: #d9dbe0;
+    --radius: 0.75rem;
+    --sidebar: #ffffff;
+    --sidebar-foreground: #1f2126;
+    --sidebar-accent: #e6ecfb;
+    --sidebar-accent-foreground: #1f2126;
+    --sidebar-border: #d9dbe0;
+    --islands-gap: 0.25rem;
+}
+
+.dark {
+    --background: #121216;
+    --foreground: #bcbec4;
+    --card: #181a1d;
+    --card-foreground: #bcbec4;
+    --popover: #181a1d;
+    --popover-foreground: #bcbec4;
+    --secondary: #161619;
+    --secondary-foreground: #bcbec4;
+    --muted: #1d1f23;
+    --muted-foreground: #7a7e85;
+    --accent: #25262a;
+    --accent-foreground: #ffffff;
+    --destructive: #cf6b5e;
+    --border: rgb(255 255 255 / 6%);
+    --input: rgb(255 255 255 / 8%);
+    --sidebar: #181a1d;
+    --sidebar-foreground: #bcbec4;
+    --sidebar-accent: #25262a;
+    --sidebar-accent-foreground: #ffffff;
+    --sidebar-border: rgb(255 255 255 / 6%);
+}
+
+:root [data-slot="sidebar-inset"] {
+    box-shadow:
+            0 1px 0 0 rgb(255 255 255 / 80%) inset,
+            0 -1px 0 0 rgb(0 0 0 / 4%) inset,
+            0 8px 24px -16px rgb(15 17 22 / 12%);
+}
+.dark [data-slot="sidebar-inset"] {
+    box-shadow:
+            0 1px 0 0 rgb(255 255 255 / 6%) inset,
+            0 -1px 0 0 rgb(0 0 0 / 25%) inset,
+            0 8px 24px -12px rgb(0 0 0 / 35%);
+}

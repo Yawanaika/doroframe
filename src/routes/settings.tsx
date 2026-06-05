@@ -1,5 +1,10 @@
 import { useEffect } from "react";
-import { useSettingsStore } from "@/features/settings/store";
+import {
+    useSettingsStore,
+    PRIMARY_OPTIONS,
+    BASE_OPTIONS,
+    CHART_OPTIONS,
+} from "@/features/settings/store";
 import {
     Card,
     CardContent,
@@ -16,6 +21,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { ModeToggle } from "@/components/mode-toggle";
 // import { Button } from "@/components/ui/button";
 // import { closeOverlay, openOverlay } from "@/api/overlay";
 // import { toast } from "sonner";
@@ -46,7 +52,9 @@ export function SettingsPage() {
     const {
         hydrated,
         hydrate,
-        theme,
+        primaryColor,
+        baseColor,
+        chartColor,
         lang,
         notifyAlert,
         notifyVoidTrader,
@@ -67,20 +75,63 @@ export function SettingsPage() {
                     <CardDescription>主题与语言</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Row label="主题">
+                    <Row label="外观">
+                        <ModeToggle />
+                    </Row>
+                    <Row label="颜色主题">
                         <Select
-                            value={theme}
+                            value={primaryColor}
                             onValueChange={(v) =>
-                                update("theme", v as typeof theme)
+                                update("primaryColor", v)
                             }
                         >
                             <SelectTrigger className="w-32">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="light">浅色</SelectItem>
-                                <SelectItem value="dark">深色</SelectItem>
-                                <SelectItem value="system">跟随系统</SelectItem>
+                                {PRIMARY_OPTIONS.map((name) => (
+                                    <SelectItem key={name} value={name}>
+                                        {name.charAt(0).toUpperCase() + name.slice(1)}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </Row>
+                    <Row label="基础色">
+                        <Select
+                            value={baseColor}
+                            onValueChange={(v) =>
+                                update("baseColor", v)
+                            }
+                        >
+                            <SelectTrigger className="w-32">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {BASE_OPTIONS.map((name) => (
+                                    <SelectItem key={name} value={name}>
+                                        {name.charAt(0).toUpperCase() + name.slice(1)}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </Row>
+                    <Row label="图表色">
+                        <Select
+                            value={chartColor}
+                            onValueChange={(v) =>
+                                update("chartColor", v)
+                            }
+                        >
+                            <SelectTrigger className="w-32">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {CHART_OPTIONS.map((name) => (
+                                    <SelectItem key={name} value={name}>
+                                        {name.charAt(0).toUpperCase() + name.slice(1)}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     </Row>

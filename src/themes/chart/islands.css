@@ -1,0 +1,15 @@
+:root {
+    --chart-1: #56a8f5;
+    --chart-2: #6aab73;
+    --chart-3: #cf8e6d;
+    --chart-4: #2aacb8;
+    --chart-5: #c77dbb;
+}
+
+.dark {
+    --chart-1: #56a8f5;
+    --chart-2: #6aab73;
+    --chart-3: #cf8e6d;
+    --chart-4: #2aacb8;
+    --chart-5: #c77dbb;
+}

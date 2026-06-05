@@ -1,0 +1,17 @@
+:root {
+    --primary: oklch(0.525 0.223 3.958);
+    --primary-foreground: oklch(0.971 0.014 343.198);
+    --ring: oklch(0.714 0.014 41.2);
+    --sidebar-primary: oklch(0.592 0.249 0.584);
+    --sidebar-primary-foreground: oklch(0.971 0.014 343.198);
+    --sidebar-ring: oklch(0.714 0.014 41.2);
+}
+
+.dark {
+    --primary: oklch(0.459 0.187 3.815);
+    --primary-foreground: oklch(0.971 0.014 343.198);
+    --ring: oklch(0.547 0.021 43.1);
+    --sidebar-primary: oklch(0.656 0.241 354.308);
+    --sidebar-primary-foreground: oklch(0.971 0.014 343.198);
+    --sidebar-ring: oklch(0.547 0.021 43.1);
+}

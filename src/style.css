@@ -48,87 +48,6 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/*
- * Islands theme — 移植自 bwya77/vscode-dark-islands
- *   canvas  = 页面底色（panel 间缝隙）
- *   surface = 漂浮的面板/卡片（sidebar、card、popover、input）
- *   accent  = #548af7（按钮 / 选中 / focus ring）
- *   语法高亮色派生为 chart-* 调色板
- */
-:root {
-    /* light 派生：浅灰画布上漂浮白色岛屿 */
-    --background: #e8e9ec;          /* canvas */
-    --foreground: #1f2126;
-    --card: #ffffff;                 /* surface */
-    --card-foreground: #1f2126;
-    --popover: #ffffff;
-    --popover-foreground: #1f2126;
-    --primary: #548af7;              /* button.background */
-    --primary-foreground: #ffffff;
-    --secondary: #f1f2f5;            /* 类比 tab.inactiveBackground */
-    --secondary-foreground: #1f2126;
-    --muted: #eef0f3;
-    --muted-foreground: #6b7079;     /* 类比 comment 色 */
-    --accent: #e6ecfb;               /* hover 态 */
-    --accent-foreground: #1f2126;
-    --destructive: #d4453a;
-    --border: #d9dbe0;               /* 岛屿边缘 */
-    --input: #d9dbe0;
-    --ring: #548af7;
-    /* 语法色 → 图表色：function / string / keyword / number / type */
-    --chart-1: #56a8f5;
-    --chart-2: #6aab73;
-    --chart-3: #cf8e6d;
-    --chart-4: #2aacb8;
-    --chart-5: #c77dbb;
-    --radius: 0.75rem;               /* 12px，更"岛"味 */
-    --sidebar: #ffffff;
-    --sidebar-foreground: #1f2126;
-    --sidebar-primary: #548af7;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #e6ecfb;
-    --sidebar-accent-foreground: #1f2126;
-    --sidebar-border: #d9dbe0;
-    --sidebar-ring: #548af7;
-    --islands-gap: 0.25rem;
-}
-
-.dark {
-    /* dark 原版：canvas #121216 / surface #181a1d / text #bcbec4 */
-    --background: #121216;
-    --foreground: #bcbec4;
-    --card: #181a1d;
-    --card-foreground: #bcbec4;
-    --popover: #181a1d;
-    --popover-foreground: #bcbec4;
-    --primary: #548af7;
-    --primary-foreground: #ffffff;
-    --secondary: #161619;             /* tab.inactiveBackground */
-    --secondary-foreground: #bcbec4;
-    --muted: #1d1f23;
-    --muted-foreground: #7a7e85;      /* comment */
-    --accent: #25262a;                /* list.hoverBackground / activeSelection */
-    --accent-foreground: #ffffff;
-    --destructive: #cf6b5e;
-    /* 顶/左较亮，营造"光从上来"的岛屿浮起感 */
-    --border: rgb(255 255 255 / 6%);
-    --input: rgb(255 255 255 / 8%);
-    --ring: #548af7;
-    --chart-1: #56a8f5;
-    --chart-2: #6aab73;
-    --chart-3: #cf8e6d;
-    --chart-4: #2aacb8;
-    --chart-5: #c77dbb;
-    --sidebar: #181a1d;
-    --sidebar-foreground: #bcbec4;
-    --sidebar-primary: #548af7;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #25262a;
-    --sidebar-accent-foreground: #ffffff;
-    --sidebar-border: rgb(255 255 255 / 6%);
-    --sidebar-ring: #548af7;
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -149,24 +68,21 @@
   [data-slot="sidebar-wrapper"]:has([data-variant="inset"]) {
     background-color: var(--background);
     padding: var(--islands-gap);
-    gap: 0; /* 中缝紧贴；inset 自带 ml-0，sidebar 与 inset 直接相邻 */
+    gap: 0;
   }
 
-  /* 侧栏自身做成圆角岛屿 */
   [data-variant="inset"] + *,
   [data-slot="sidebar-container"] {
     border-radius: var(--radius-xl);
   }
 
-  /* 主内容 inset 已自带 m-2 / rounded-xl / shadow-sm，再补一点"上亮下沉"光感 */
   [data-slot="sidebar-inset"] {
     box-shadow:
-      0 1px 0 0 rgb(255 255 255 / 6%) inset,    /* 顶部高光 */
-      0 -1px 0 0 rgb(0 0 0 / 25%) inset,        /* 底部阴影 */
-      0 8px 24px -12px rgb(0 0 0 / 35%);        /* 投影抬升 */
+      0 1px 0 0 rgb(255 255 255 / 6%) inset,
+      0 -1px 0 0 rgb(0 0 0 / 25%) inset,
+      0 8px 24px -12px rgb(0 0 0 / 35%);
   }
 
-  /* 通用"岛屿"工具类：方向性光感边框 */
   .island {
     background-color: var(--card);
     border-radius: var(--radius-xl);
@@ -176,18 +92,4 @@
       0 -1px 0 0 rgb(0 0 0 / 20%) inset,
       0 8px 24px -12px rgb(0 0 0 / 30%);
   }
-}
-
-/* light 下方向性光感弱化（白底没那么需要内阴影） */
-:root [data-slot="sidebar-inset"] {
-  box-shadow:
-    0 1px 0 0 rgb(255 255 255 / 80%) inset,
-    0 -1px 0 0 rgb(0 0 0 / 4%) inset,
-    0 8px 24px -16px rgb(15 17 22 / 12%);
-}
-.dark [data-slot="sidebar-inset"] {
-  box-shadow:
-    0 1px 0 0 rgb(255 255 255 / 6%) inset,
-    0 -1px 0 0 rgb(0 0 0 / 25%) inset,
-    0 8px 24px -12px rgb(0 0 0 / 35%);
 }
