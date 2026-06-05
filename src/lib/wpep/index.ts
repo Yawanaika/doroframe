@@ -74,20 +74,42 @@ const resolveName = (key: string): string => {
     if (r?.name) return r.name;
     return key;
 };
+function serializeKey(key: string): string {
+    // 对于科研词条的预处理
+    // 科研词条: 迷人弧犬 MagneticHounds
+    // 科研词条: 钝重兵刃 ComboCountChance
+    // 科研词条: 补给短缺 MaxAmmo
+    return key.replace("EMPBlackHole","MagneticHounds")
+        .replace('DullBlades', 'ComboCountChance')
+        .replace('Undersupplied', 'MaxAmmo');
+}
+function serializeValue(value: string): string {
+    // 处理value中的特殊字符
+    return value.replace("<DT_ELECTRICITY>","")
+        .replace("<DT_PUNCTURE>","")
+        .replace("<DT_SLASH>","")
+        .replace("<DT_POISON_COLOR>","")
+        // 缩短技能
+        .replace("技能持续时间减少 |val|", "技能持续时间减少 50")
+        // 嗜睡护盾
+        .replace('护盾充能延迟增加 |val|', '护盾充能延迟增加 500');
+}
 
 export const tr = (key: string | undefined | null, lang?: Lang): string => {
     if (!key) return "";
+    key = serializeKey(key);
     const l = lang ?? activeLang;
     const cache = trCache[l];
     const hit = cache.get(key);
     if (hit !== undefined) return hit;
     const path = resolveName(key);
-    const value =
+    let value =
         Dict[l][path] ??
         Dict[l][key] ??
         eventDict[l]?.[path] ??
         eventDict[l]?.[key] ??
         key;
+    value = serializeValue(value);
     cache.set(key, value);
     return value;
 };

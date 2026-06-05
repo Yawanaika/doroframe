@@ -1,6 +1,7 @@
 import {Base, parseBase, serializeBase} from "@/types/wf-state/world/base.ts";
 
 export interface Conquest extends Base{
+    type: string;
     missions: ConquestMission[];
     variables: string[];
 }
@@ -20,6 +21,7 @@ interface Difficulty {
 export function conquestFromJson(json: any): Conquest {
     return {
         ...parseBase(json),
+        type: json.Type,
         missions: (json?.Missions ?? []).map(conquestMissionFromJson),
         variables: json?.Variables ?? [],
     };
@@ -28,6 +30,7 @@ export function conquestFromJson(json: any): Conquest {
 export function conquestToJson(c: Conquest) {
     return {
         ...serializeBase(c),
+        type: c.type,
         missions: c.missions.map(conquestMissionToJson),
         variables: c.variables,
     };

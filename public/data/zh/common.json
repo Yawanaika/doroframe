@@ -17,7 +17,7 @@
   "state.title.void-storm": "虚空裂缝",
   "state.title.daily-deal": "每日折扣",
   "state.title.goal": "限时活动",
-  "state.title.conquest": "九重天",
+  "state.title.conquest": "科研",
   "state.title.descent": "深层科研",
   "state.title.endless-xp": "无尽回廊",
   "state.title.season-info": "午夜电波",
@@ -42,5 +42,7 @@
   "trader.arrived": "到达",
   "trader.departed": "未到达",
   "trader.leave": "离开",
-  "trader.manifest.unpublished": "商品清单未公布"
+  "trader.manifest.unpublished": "商品清单未公布",
+  "conquest.CT_LAB":  "深层科研",
+  "conquest.CT_HEX":  "时光科研"
 }

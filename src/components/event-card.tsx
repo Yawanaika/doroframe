@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 
 type EventCardProps = ComponentPropsWithoutRef<typeof Card> & {
     title: string;
-    subtitle?: string;
+    subtitle?: string|ReactNode;
     badge?: string;
     countdown?: string;
     redemption?: string;
@@ -74,7 +74,7 @@ export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(function Eve
                         ) : null}
                         {redemption ? (
                             <span className="text-muted-foreground text-xs tabular-nums">
-                                {t("event.grace")}:{redemption}
+                                {t("event.grace")}:  {redemption}
                             </span>
                         ) : null}
                     </div>

@@ -17,7 +17,7 @@
   "state.title.void-storm": "Void Storms",
   "state.title.daily-deal": "Daily Deal",
   "state.title.goal": "Goals",
-  "state.title.conquest": "Empyrean",
+  "state.title.conquest": "Archimedea",
   "state.title.descent": "Deep Archimedea",
   "state.title.endless-xp": "Elite Sanctuary",
   "state.title.season-info": "Nightwave",
@@ -42,5 +42,7 @@
   "trader.arrived": "Arrived",
   "trader.departed": "Departed",
   "trader.leave": "Leave",
-  "trader.manifest.unpublished": "Manifest Unpublished"
+  "trader.manifest.unpublished": "Manifest Unpublished",
+  "conquest.CT_LAB":  "Deep Archimedea",
+  "conquest.CT_HEX":  "Temporal Archimedea"
 }
