@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import { useTranslation } from "react-i18next"
 
@@ -20,7 +18,6 @@ import {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation()
   const data = {
-    user: { name: "guest", email: "未登录", avatar: "/icon.png" },
     navMain: [
       {
         title: t("nav.state"),
@@ -61,7 +58,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-medium">DoroFrame</span>
-                  <span className="">v0.0.1</span>
+                  <span className="text-muted-foreground">v0.1.0</span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -72,7 +69,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   )

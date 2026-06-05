@@ -22,9 +22,6 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { ModeToggle } from "@/components/mode-toggle";
-// import { Button } from "@/components/ui/button";
-// import { closeOverlay, openOverlay } from "@/api/overlay";
-// import { toast } from "sonner";
 
 function Row({
     label,
@@ -206,36 +203,6 @@ export function SettingsPage() {
                     </Row>
                 </CardContent>
             </Card>
-
-            {/*<Card className="md:col-span-2">*/}
-            {/*    <CardHeader>*/}
-            {/*        <CardTitle className="text-base">Overlay</CardTitle>*/}
-            {/*        <CardDescription>透明置顶子窗口</CardDescription>*/}
-            {/*    </CardHeader>*/}
-            {/*    <CardContent className="flex items-center gap-2">*/}
-            {/*        <Button*/}
-            {/*            size="sm"*/}
-            {/*            onClick={() =>*/}
-            {/*                openOverlay()*/}
-            {/*                    .then(() => toast.success("Overlay 已开启"))*/}
-            {/*                    .catch((e) => toast.error(String(e)))*/}
-            {/*            }*/}
-            {/*        >*/}
-            {/*            打开 Overlay*/}
-            {/*        </Button>*/}
-            {/*        <Button*/}
-            {/*            size="sm"*/}
-            {/*            variant="outline"*/}
-            {/*            onClick={() =>*/}
-            {/*                closeOverlay()*/}
-            {/*                    .then(() => toast.success("Overlay 已关闭"))*/}
-            {/*                    .catch((e) => toast.error(String(e)))*/}
-            {/*            }*/}
-            {/*        >*/}
-            {/*            关闭 Overlay*/}
-            {/*        </Button>*/}
-            {/*    </CardContent>*/}
-            {/*</Card>*/}
         </div>
     );
 }

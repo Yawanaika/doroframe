@@ -26,7 +26,7 @@ const GoalRow = memo(function GoalRow({ goal }: { goal: Goal }) {
                     badge={ goal.faction === "FC_Tenno" ? "Tenno" : tr(goal.faction)}
                     image={trImage(goal.icon)}
                     countdown={formatCountdown(sec)}
-                    redemption = {formatCountdown(gpSec)}
+                    {...(goal.gracePeriod && { redemption: formatCountdown(gpSec) })}
                 >
                     {goal?.healthPct ?(
                         <div className="space-y-2">

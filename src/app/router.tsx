@@ -23,9 +23,11 @@ import {
 import { StatePage } from "@/routes/state";
 import { WeeklyPage } from "@/routes/weekly";
 import {SettingsPage} from "@/routes/settings.tsx";
+import { NotFoundPage } from "@/routes/not-found";
 
 const rootRoute = createRootRoute({
     component: RootLayout,
+    notFoundComponent: NotFoundPage,
 });
 
 const indexRoute = createRoute({
@@ -52,11 +54,18 @@ const settingsRoute = createRoute({
     component: SettingsPage,
 });
 
+const notFoundRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "*",
+    component: NotFoundPage,
+});
+
 const routeTree = rootRoute.addChildren([
     indexRoute,
     stateRoute,
     weeklyRoute,
-    settingsRoute
+    settingsRoute,
+    notFoundRoute,
 ]);
 
 const initialPath =
@@ -85,7 +94,6 @@ function RootLayout() {
 
     return (
         <SidebarProvider>
-            {/*<NotificationDispatcher />*/}
             <AppSidebar />
             <SidebarInset>
                 <header className="flex h-12 shrink-0 items-center gap-2 border-b">
