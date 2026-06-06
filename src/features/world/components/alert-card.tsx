@@ -2,7 +2,6 @@ import { memo } from "react";
 import type { Alert } from "@/types/wf-state";
 import { EventCard } from "@/components/event-card";
 import { CardEmpty, CardError, CardSkeleton } from "@/components/card-states";
-import { Badge } from "@/components/ui/badge";
 import { useAlertsQuery } from "@/features/world/queries";
 import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
 import { resolveNode } from "@/lib/wpep/nodes";
@@ -19,29 +18,29 @@ const AlertRow = memo(function AlertRow({ alert }: { alert: Alert }) {
             badge={tr(alert.missionInfo.faction)}
             countdown={formatCountdown(sec)}
         >
-            <div className="flex items-center gap-2 text-sm">
-                {reward.credits > 0 ? (
-                    <Badge variant="outline">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground tabular-nums">
+                {reward.credits > 0 && (
+                    <span className="flex items-center gap-1">
                         {reward.credits}
-                        <img src="/images/Credits.png" alt="Credits" className="w-4 h-4"/>
-                    </Badge>
-                ) : null}
+                        <img src="/images/Credits.png" alt="" role="presentation" className="w-4 h-4" />
+                    </span>
+                )}
                 {reward.items.map((it) => (
-                    <Badge key={it} variant="outline">
+                    <span className="flex items-center gap-1">
                         {rewardName(it)}
-                        <img src={itemIcon(it)} alt={rewardName(it)} className="w-4 h-4" onError={(e) => {
+                        <img src={itemIcon(it)} alt={rewardName(it)} role="presentation" className="w-4 h-4" onError={(e) => {
                             e.currentTarget.style.display = 'none';
                         }}/>
-                    </Badge>
+                    </span>
                 ))}
                 {reward.countedItems.map((it) => (
-                    <Badge key={it.itemType} variant="outline">
+                    <span className="flex items-center gap-1">
                         {rewardName(it.itemType)}
-                        <img src={itemIcon(it.itemType)} alt={rewardName(it.itemType)} className="w-4 h-4" onError={(e) => {
+                        <img src={itemIcon(it.itemType)} alt={rewardName(it.itemType)} role="presentation" className="w-4 h-4" onError={(e) => {
                             e.currentTarget.style.display = 'none';
                         }}/>
                         × {it.itemCount}
-                    </Badge>
+                    </span>
                 ))}
             </div>
         </EventCard>

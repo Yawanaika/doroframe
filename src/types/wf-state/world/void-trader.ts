@@ -6,7 +6,7 @@ export interface VoidTrader extends Base {
     manifest?: VtItem[];
 }
 
-interface VtItem {
+export interface VtItem {
     itemType: string;
     primePrice: number;
     regularPrice: number;
