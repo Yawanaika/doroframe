@@ -10,6 +10,7 @@ interface VtItem {
     itemType: string;
     primePrice: number;
     regularPrice: number;
+    limit?: number;
 }
 
 export function voidTraderFromJson(json: any): VoidTrader {
@@ -35,6 +36,7 @@ function vtItemFromJson(json: any): VtItem {
         itemType: json?.ItemType ?? "",
         primePrice: json?.PrimePrice ?? 0,
         regularPrice: json?.RegularPrice ?? 0,
+        limit: json?.Limit ?? 0,
     };
 }
 
@@ -43,5 +45,6 @@ function vtItemToJson(i: VtItem) {
         itemType: i.itemType,
         primePrice: i.primePrice,
         regularPrice: i.regularPrice,
+        limit: i.limit,
     };
 }

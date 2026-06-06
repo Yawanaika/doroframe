@@ -2,11 +2,10 @@ import { memo } from "react";
 import type { VoidTrader } from "@/types/wf-state";
 import { EventCard } from "@/components/event-card";
 import { CardError, CardSkeleton } from "@/components/card-states";
-import { Badge } from "@/components/ui/badge";
 import { useVoidTradersQuery } from "@/features/world/queries";
 import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
 import { resolveNode } from "@/lib/wpep/nodes";
-import { tr } from "@/lib/wpep";
+import {itemDetail, itemIcon, itemName, tr} from "@/lib/wpep";
 import {useTranslation} from "react-i18next";
 
 const VoidTraderRow = memo(function VoidTraderRow({
@@ -31,18 +30,35 @@ const VoidTraderRow = memo(function VoidTraderRow({
                     : `${formatCountdown(arrivalSec)} ${t("trader.arrived")}`
             }
         >
-            {trader.manifest?.length ? (
-                <div className="flex flex-wrap gap-1.5 text-sm">
-                    {trader.manifest.slice(0, 8).map((it) => (
-                        <Badge key={it.itemType} variant="outline">
-                            {tr(it.itemType) || it.itemType} · {it.primePrice}DC
-                        </Badge>
-                    ))}
-                    {trader.manifest.length > 8 ? (
-                        <Badge variant="secondary">
-                            +{trader.manifest.length - 8}
-                        </Badge>
-                    ) : null}
+            {trader.manifest ? (
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                    {trader.manifest.map((it) => {
+                        const item = itemDetail(it.itemType);
+                        return (
+                            <EventCard
+                                key={it.itemType}
+                                title={item?.name? item.name : itemName(it.itemType)}
+                                subtitle={it.limit? `限购: ${it.limit}` : ""}
+                                image={item?.icon? item.icon : itemIcon(it.itemType)}
+                            >
+                                <div className="gap-1">
+                                    {it.primePrice > 0 && (
+                                        <div className="flex items-center gap-1">
+                                            {it.primePrice}
+                                            <img src="/images/PrimeBucks.png" alt="PrimeBucks" className="w-4 h-4"/>
+                                        </div>
+                                    )}
+                                    
+                                    {it.regularPrice > 0 && (
+                                        <div className="flex items-center gap-1">
+                                            {it.regularPrice}
+                                            <img src="/images/Credits.png" alt="Credits" className="w-4 h-4"/>
+                                        </div>
+                                    )}
+                                </div>
+                            </EventCard>
+                        )
+                    })}
                 </div>
             ) : (
                 <span className="text-xs text-muted-foreground">

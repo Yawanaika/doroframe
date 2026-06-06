@@ -46,6 +46,14 @@ import {
     ExportWeapons,
 } from "warframe-public-export-plus";
 import { tr, trImage } from "./index";
+import { i18n } from "@/lib/i18n";
+
+// 字典文件：public/data/{lang}/relic.dict.json（与 sorty.boss 模式一致）
+const RELIC_NS = "relic.dict";
+const trRelic = (key: string, fallback = key): string => {
+    const v = i18n.t(key, { ns: RELIC_NS, defaultValue: fallback });
+    return typeof v === "string" ? v : fallback;
+};
 
 export type ItemSource =
     | "resources"
@@ -188,7 +196,10 @@ export const getItem = <T = Record<string, unknown>>(
 export const itemName = (key: string | undefined | null): string => {
     const hit = findItem(key);
     if (!hit) return key ? tr(key) : "";
-    const item = hit.item as { name?: string; resultType?: string };
+    const item = hit.item as { name?: string; resultType?: string; era?: string; category?: string };
+    if (hit.source === "relics" && item.era) {
+        return relicDisplayName(item);
+    }
     const nameKey =
         hit.source === "recipes" ? item.resultType ?? item.name : item.name;
     return tr(nameKey) || tr(hit.key) || hit.key;
@@ -225,6 +236,9 @@ export const itemDetail = <T = Record<string, unknown>>(
         description?: string;
         icon?: string;
         resultType?: string;
+        era?: string;
+        category?: string;
+        quantity?: number;
     }>(key);
     if (!hit) return undefined;
 
@@ -234,12 +248,14 @@ export const itemDetail = <T = Record<string, unknown>>(
         source === "recipes" && item.resultType
             ? itemDetail(item.resultType)
             : undefined;
-
+    
     const name =
-        tr(item.name) ||
-        resultDetail?.name ||
-        tr(hit.key) ||
-        hit.key;
+        source === "relics" && item.era
+            ? relicDisplayName( item)
+            : tr(item.name) ||
+              resultDetail?.name ||
+              tr(hit.key) ||
+              hit.key;
 
     const description =
         tr(item.description) || resultDetail?.description || "";
@@ -258,23 +274,6 @@ export const itemDetail = <T = Record<string, unknown>>(
     };
 };
 
-// ── rewardName: 移植 cache_builder.dart 的 getRewardName + _appendItemCount ──
-
-const ERA_NAME: Record<string, string> = {
-    Lith: "古纪",
-    Meso: "前纪",
-    Neo: "中纪",
-    Axi: "后纪",
-    Requiem: "安魂",
-    Vanguard: "先锋",
-};
-
-const VPQ_NAME: Record<string, string> = {
-    VPQ_BRONZE: "完整",
-    VPQ_SILVER: "优良",
-    VPQ_GOLD: "无暇",
-    VPQ_PLATINUM: "光辉",
-};
 
 const SPECIAL_REWARD_NAMES: Record<string, string> = {
     "/Lotus/StoreItems/Upgrades/Mods/Fusers/LegendaryModFuser": "传说核心",
@@ -291,9 +290,15 @@ interface RelicLike {
 }
 
 const relicDisplayName = (item: RelicLike): string => {
-    const era = item.era ? ERA_NAME[item.era] ?? item.era : "";
-    const quality = item.quality ? VPQ_NAME[item.quality] ?? "未知" : "未知";
-    return `${era} ${item.category ?? ""} 遗物 (${quality})`.trim();
+    const era = item.era ? trRelic(item.era, item.era) : "";
+    const suffix = trRelic("relic.desc", "");
+    const quality = item.quality
+        ? trRelic(item.quality, item.quality)
+        : "";
+    const qualityPart = quality ? ` (${quality})` : "";
+    return `${era} ${item.category ?? ""} ${suffix}${qualityPart}`
+        .replace(/\s+/g, " ")
+        .trim();
 };
 
 const stripTitleTags = (s: string): string => {

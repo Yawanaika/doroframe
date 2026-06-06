@@ -5,7 +5,7 @@ export const SUPPORTED_LANGS = ["zh", "en"] as const;
 export type UiLang = (typeof SUPPORTED_LANGS)[number];
 
 // 对应 public/data/{lang}/*.json 的文件名（不含后缀）
-const DATA_FILES = ["common", "sorty.boss","sorty.modifer", "sorty.modifer.desc"] as const;
+const DATA_FILES = ["common", "sorty.boss","sorty.modifer", "sorty.modifer.desc", "relic.dict"] as const;
 
 // 硬编码回退：文件缺失时保证应用不崩
 // const FALLBACK: Record<UiLang, Record<string, Record<string, string>>> = {
