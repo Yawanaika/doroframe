@@ -32,7 +32,7 @@ const GoalRow = memo(function GoalRow({ goal }: { goal: Goal }) {
                         <div className="space-y-2">
                             <div className="flex justify-between text-sm">
                                 <span>{t("goal.pct")}</span>
-                                <span>{goal.healthPct * 100}%</span>
+                                <span>{(goal.healthPct * 100).toFixed(4)}%</span>
                             </div>
                             <Progress value={goal.healthPct * 100} />
                         </div>
