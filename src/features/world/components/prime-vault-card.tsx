@@ -25,17 +25,17 @@ const PrimVaultPrice = memo(function PrimVaultPrice({ items, title }: { items: P
                         title={`${item?.name}`}
                         image={item?.icon}
                     >
-                        <div className="gap-1">
+                        <div className="flex flex-col gap-1">
                             {it.primePrice != null && (
                                 <div className="flex items-center gap-1">
                                     {it.primePrice}
-                                    <img src="/images/PrimeToken.png" alt="Prime 御品" className="w-4 h-4" />
+                                    <img src="/images/PrimeToken.png" alt="" role="presentation" className="w-4 h-4" />
                                 </div>
                             )}
                             {it.regularPrice != null && (
                                 <div className="flex items-center gap-1">
                                     {it.regularPrice}
-                                    <img src="/images/Aya.png" alt="Aya" className="w-4 h-4" />
+                                    <img src="/images/Aya.png" alt="" role="presentation" className="w-4 h-4" />
                                 </div>
                             )}
                         </div>

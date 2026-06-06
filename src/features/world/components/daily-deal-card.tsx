@@ -1,7 +1,7 @@
 import { memo } from "react";
 import type { DailyDeal } from "@/types/wf-state";
 import { EventCard } from "@/components/event-card";
-import { CardError, CardSkeleton } from "@/components/card-states";
+import { CardEmpty, CardError, CardSkeleton } from "@/components/card-states";
 import { useDailyDealsQuery } from "@/features/world/queries";
 import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
 import {itemDetail, tr} from "@/lib/wpep";
@@ -16,7 +16,7 @@ const DailyDealRow = memo(function DailyDealRow({ deal }: { deal: DailyDeal }) {
             title={tr(detail?.name) || deal.storeItem}
             subtitle={`${deal.amountSold}/${deal.amountTotal} ${t("deal.sales")}`}
             image={detail?.icon}
-            imageAlt={detail?.description}
+            imageTip={detail?.name ?? deal.storeItem}
             badge={`-${deal.discount}%`}
             countdown={formatCountdown(sec)}
         >
@@ -24,12 +24,12 @@ const DailyDealRow = memo(function DailyDealRow({ deal }: { deal: DailyDeal }) {
                 <span className="text-muted-foreground tabular-nums flex items-center gap-4">
                     <div className="flex items-center gap-1">
                         {deal.salePrice}
-                        <img src="/images/Platinum.png" alt="Platinum" className="w-4 h-4"/>
+                        <img src="/images/Platinum.png" alt="" role="presentation" className="w-4 h-4"/>
                     </div>
-            
+
                     <div className="line-through flex items-center gap-1">
                         {deal.originalPrice}
-                        <img src="/images/Platinum.png" alt="Platinum" className="w-4 h-4"/>
+                        <img src="/images/Platinum.png" alt="" role="presentation" className="w-4 h-4"/>
                     </div>
                 </span>
             </div>
@@ -41,6 +41,7 @@ export function DailyDealList() {
     const { data, isPending, isError, error } = useDailyDealsQuery();
     if (isPending) return <CardSkeleton />;
     if (isError) return <CardError message={String(error)} />;
+    if (!data?.length) return <CardEmpty text="暂无每日折扣" />;
     return (
         <div className="grid gap-3 md:grid-cols-2">
             {data.map((d) => (

@@ -18,7 +18,7 @@ type EventCardProps = ComponentPropsWithoutRef<typeof Card> & {
     countdown?: string;
     redemption?: string;
     image?: string;
-    imageAlt?: string;
+    imageTip?: string;
     children?: ReactNode;
 };
 
@@ -30,7 +30,7 @@ export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(function Eve
     countdown,
     redemption,
     image,
-    imageAlt,
+    imageTip,
     children,
     className,
     ...rest
@@ -40,17 +40,17 @@ export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(function Eve
         <Card ref={ref} className={cn("flex flex-row gap-3 p-3", className)} {...rest}>
             {image ? (
                 <div className="size-16 shrink-0 rounded-md overflow-hidden backdrop-brightness-75 backdrop-contrast-125">
-                    {imageAlt ? (
+                    {imageTip ? (
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <img src={image} alt={imageAlt ?? title} className="w-full h-full object-cover" loading="lazy"/>
+                                <img src={image} alt={imageTip ?? title} className="w-full h-full object-cover" loading="lazy"/>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>{imageAlt}</p>
+                                <p>{imageTip}</p>
                             </TooltipContent>
                         </Tooltip>
                     ) : (
-                        <img src={image} alt={imageAlt ?? title} className="w-full h-full object-cover" loading="lazy"/>
+                        <img src={image} alt={imageTip ?? title} className="w-full h-full object-cover" loading="lazy"/>
                     )}
                 </div>
             ) : null}

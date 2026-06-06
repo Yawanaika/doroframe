@@ -24,6 +24,7 @@ import { StatePage } from "@/routes/state";
 import { WeeklyPage } from "@/routes/weekly";
 import {SettingsPage} from "@/routes/settings.tsx";
 import { NotFoundPage } from "@/routes/not-found";
+import { i18n } from "@/lib/i18n";
 
 const rootRoute = createRootRoute({
     component: RootLayout,
@@ -114,21 +115,22 @@ function RootLayout() {
                         </Breadcrumb>
                     </div>
                 </header>
-                <div className="flex flex-1 flex-col gap-4 p-4">
+                <main className="flex flex-1 flex-col gap-4 p-4">
                     <Outlet />
-                </div>
+                </main>
             </SidebarInset>
         </SidebarProvider>
     );
 }
 
 function breadcrumb(path: string): string {
-    if (path === "/state") return "Warframe 状态";
-    if (path.startsWith("/state/weekly")) return "周常任务";
-    if (path.startsWith("/market/items")) return "订单";
-    if (path.startsWith("/market/auctions")) return "拍卖";
-    if (path.startsWith("/market/me")) return "我的";
-    if (path.startsWith("/settings")) return "设置";
+    const t = i18n.t.bind(i18n);
+    if (path === "/state") return t("nav.state");
+    if (path.startsWith("/state/weekly")) return t("nav.weekly");
+    if (path.startsWith("/market/items")) return t("nav.market.items");
+    if (path.startsWith("/market/auctions")) return t("nav.market.auctions");
+    if (path.startsWith("/market/me")) return t("nav.market.me");
+    if (path.startsWith("/settings")) return t("nav.settings");
     return path;
 }
 

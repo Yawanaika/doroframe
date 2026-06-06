@@ -25,8 +25,7 @@ export function OverlayPage() {
 
     return (
         <div
-            className="h-screen w-screen bg-background/60 text-foreground p-3 font-medium backdrop-blur"
-            style={{ borderRadius: 12 }}
+            className="h-screen w-screen rounded-xl bg-background/60 text-foreground p-3 font-medium backdrop-blur"
         >
             <div className="flex h-full flex-col gap-2 text-sm">
                 <div className="text-xs text-muted-foreground">
@@ -42,7 +41,7 @@ export function OverlayPage() {
                         </div>
                     </div>
                 ) : (
-                    <div className="text-muted-foreground text-xs">无警报</div>
+                    <div className="text-xs text-muted-foreground">无警报</div>
                 )}
                 {trader ? (
                     <div className="rounded border px-2 py-1">

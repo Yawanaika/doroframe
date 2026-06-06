@@ -7,7 +7,6 @@ import { useGoalsQuery } from "@/features/world/queries";
 import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
 import { resolveNode } from "@/lib/wpep/nodes";
 import {tr, trImage} from "@/lib/wpep";
-import {Tooltip,TooltipContent, TooltipTrigger} from "@/components/ui/tooltip.tsx";
 import {Progress} from "@/components/ui/progress.tsx";
 import {useTranslation} from "react-i18next";
 
@@ -18,38 +17,31 @@ const GoalRow = memo(function GoalRow({ goal }: { goal: Goal }) {
     const node = resolveNode(goal.node);
     const [t] = useTranslation();
     return (
-        <Tooltip>
-            <TooltipTrigger asChild>
-                <EventCard
-                    title={tr(goal.desc) || goal.desc || "限时活动"}
-                    subtitle={`${node.nameZh} · ${node.systemNameZh}`}
-                    badge={ goal.faction === "FC_Tenno" ? "Tenno" : tr(goal.faction)}
-                    image={trImage(goal.icon)}
-                    countdown={formatCountdown(sec)}
-                    {...(goal.gracePeriod && { redemption: formatCountdown(gpSec) })}
-                >
-                    {goal?.healthPct ?(
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                                <span>{t("goal.pct")}</span>
-                                <span>{(goal.healthPct * 100).toFixed(4)}%</span>
-                            </div>
-                            <Progress value={goal.healthPct * 100} />
-                        </div>
-                    ): null}
-                    <div className="flex flex-wrap gap-1.5 text-sm">
-                        {goal.reward?.items.map((it) => (
-                            <Badge key={it} variant="outline">
-                                {tr(it) || it}
-                            </Badge>
-                        ))}
+        <EventCard
+            title={tr(goal.desc) || goal.desc || "限时活动"}
+            subtitle={`${node.nameZh} · ${node.systemNameZh}`}
+            badge={ goal.faction === "FC_Tenno" ? "Tenno" : tr(goal.faction)}
+            image={trImage(goal.icon)}
+            countdown={formatCountdown(sec)}
+            {...(goal.gracePeriod && { redemption: formatCountdown(gpSec) })}
+        >
+            {goal?.healthPct ?(
+                <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                        <span>{t("goal.pct")}</span>
+                        <span>{(goal.healthPct * 100).toFixed(1)}%</span>
                     </div>
-                </EventCard>
-            </TooltipTrigger>
-            <TooltipContent align="center">
-                <p>这是卡片的提示信息</p>
-            </TooltipContent>
-        </Tooltip>
+                    <Progress value={goal.healthPct * 100} />
+                </div>
+            ): null}
+            <div className="flex flex-wrap gap-1.5 text-sm">
+                {goal.reward?.items?.map((it) => (
+                    <Badge key={it} variant="outline">
+                        {tr(it) || it}
+                    </Badge>
+                ))}
+            </div>
+        </EventCard>
     );
 });
 

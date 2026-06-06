@@ -1,7 +1,7 @@
 import { memo } from "react";
 import type { VoidTrader } from "@/types/wf-state";
 import { EventCard } from "@/components/event-card";
-import { CardError, CardSkeleton } from "@/components/card-states";
+import { CardEmpty, CardError, CardSkeleton } from "@/components/card-states";
 import { useVoidTradersQuery } from "@/features/world/queries";
 import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
 import { resolveNode } from "@/lib/wpep/nodes";
@@ -41,18 +41,18 @@ const VoidTraderRow = memo(function VoidTraderRow({
                                 subtitle={it.limit? `限购: ${it.limit}` : ""}
                                 image={item?.icon? item.icon : itemIcon(it.itemType)}
                             >
-                                <div className="gap-1">
+                                <div className="flex flex-col gap-1">
                                     {it.primePrice > 0 && (
                                         <div className="flex items-center gap-1">
                                             {it.primePrice}
-                                            <img src="/images/PrimeBucks.png" alt="PrimeBucks" className="w-4 h-4"/>
+                                            <img src="/images/PrimeBucks.png" alt="" role="presentation" className="w-4 h-4"/>
                                         </div>
                                     )}
                                     
                                     {it.regularPrice > 0 && (
                                         <div className="flex items-center gap-1">
                                             {it.regularPrice}
-                                            <img src="/images/Credits.png" alt="Credits" className="w-4 h-4"/>
+                                            <img src="/images/Credits.png" alt="" role="presentation" className="w-4 h-4"/>
                                         </div>
                                     )}
                                 </div>
@@ -73,6 +73,7 @@ export function VoidTraderList() {
     const { data, isPending, isError, error } = useVoidTradersQuery();
     if (isPending) return <CardSkeleton />;
     if (isError) return <CardError message={String(error)} />;
+    if (!data?.length) return <CardEmpty text="暂无虚空商人" />;
     return (
         <div className="grid gap-3">
             {data.map((t) => (

@@ -18,12 +18,17 @@ import { CalendarSeasonList } from "@/features/world/components/calendar-card";
 function Section({
     title,
     children,
+    index = 0,
 }: {
     title: string;
     children: React.ReactNode;
+    index?: number;
 }) {
     return (
-        <section className="space-y-2">
+        <section
+            className="space-y-2 animate-fade-up"
+            style={{ animationDelay: `${index * 60}ms` }}
+        >
             <h2 className="text-lg font-semibold">{title}</h2>
             {children}
         </section>
@@ -32,58 +37,32 @@ function Section({
 
 export function StatePage() {
     const { t } = useTranslation();
+    let i = 0;
+    const S = ({ title, children }: { title: string; children: React.ReactNode }) => (
+        <Section title={title} index={i++}>
+            {children}
+        </Section>
+    );
     return (
         <div className="space-y-6">
-            <Section title={t("state.title.goal")}>
-                <GoalList />
-            </Section>
-            <Section title={t("state.title.alert")}>
-                <AlertList />
-            </Section>
-            <Section title={t("state.title.arby")}>
-                <ActiveMissionList />
-            </Section>
+            <S title={t("state.title.goal")}><GoalList /></S>
+            <S title={t("state.title.alert")}><AlertList /></S>
+            <S title={t("state.title.arby")}><ActiveMissionList /></S>
             <div className="grid gap-3 md:grid-cols-2">
-                <Section title={t("state.title.sortie")}>
-                    <SortyList />
-                </Section>
-                <Section title={t("state.title.lite-sortie")}>
-                    <LiteSortyList />
-                </Section>
+                <S title={t("state.title.sortie")}><SortyList /></S>
+                <S title={t("state.title.lite-sortie")}><LiteSortyList /></S>
             </div>
-            <Section title={t("state.title.syndicate")}>
-                <SyndicateList />
-            </Section>
-            <Section title={t("state.title.invasion")}>
-                <InvasionList />
-            </Section>
-            <Section title={t("state.title.void-trader")}>
-                <VoidTraderList />
-            </Section>
-            <Section title={t("state.title.prime-vault")}>
-                <PrimeVaultList />
-            </Section>
-            <Section title={t("state.title.void-storm")}>
-                <VoidStormList />
-            </Section>
-            <Section title={t("state.title.daily-deal")}>
-                <DailyDealList />
-            </Section>
-            <Section title={t("state.title.conquest")}>
-                <ConquestList />
-            </Section>
-            <Section title={t("state.title.descent")}>
-                <DescentList />
-            </Section>
-            <Section title={t("state.title.endless-xp")}>
-                <EndlessXpList />
-            </Section>
-            <Section title={t("state.title.season-info")}>
-                <SeasonInfoCard />
-            </Section>
-            <Section title={t("state.title.calendar")}>
-                <CalendarSeasonList />
-            </Section>
+            <S title={t("state.title.syndicate")}><SyndicateList /></S>
+            <S title={t("state.title.invasion")}><InvasionList /></S>
+            <S title={t("state.title.void-trader")}><VoidTraderList /></S>
+            <S title={t("state.title.prime-vault")}><PrimeVaultList /></S>
+            <S title={t("state.title.void-storm")}><VoidStormList /></S>
+            <S title={t("state.title.daily-deal")}><DailyDealList /></S>
+            <S title={t("state.title.conquest")}><ConquestList /></S>
+            <S title={t("state.title.descent")}><DescentList /></S>
+            <S title={t("state.title.endless-xp")}><EndlessXpList /></S>
+            <S title={t("state.title.season-info")}><SeasonInfoCard /></S>
+            <S title={t("state.title.calendar")}><CalendarSeasonList /></S>
         </div>
     );
 }
