@@ -44,5 +44,6 @@
   "trader.leave": "离开",
   "trader.manifest.unpublished": "商品清单未公布",
   "conquest.CT_LAB":  "深层科研",
-  "conquest.CT_HEX":  "时光科研"
+  "conquest.CT_HEX":  "时光科研",
+  "npc.Varzia": "瓦奇娅"
 }

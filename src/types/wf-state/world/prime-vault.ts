@@ -10,7 +10,7 @@ export interface PrimeVault extends Base{
 interface PrimeItem {
     itemType: string;
     primePrice?: number;
-    regualarPrice?: number;
+    regularPrice?: number;
 }
 
 interface FeaturedItem extends Base{
@@ -42,7 +42,7 @@ function primeItemFromJson(json: any): PrimeItem {
     return {
         itemType: json?.ItemType ?? "",
         primePrice: json?.PrimePrice,
-        regualarPrice: json?.RegularPrice,
+        regularPrice: json?.RegularPrice,
     };
 }
 
@@ -50,7 +50,7 @@ function primeItemToJson(i: PrimeItem) {
     return {
         itemType: i.itemType,
         primePrice: i.primePrice,
-        regualarPrice: i.regualarPrice,
+        regularPrice: i.regularPrice,
     };
 }
 

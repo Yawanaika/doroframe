@@ -2,10 +2,50 @@ import { memo } from "react";
 import type { PrimeVault } from "@/types/wf-state";
 import { EventCard } from "@/components/event-card";
 import { CardEmpty, CardError, CardSkeleton } from "@/components/card-states";
-import { Badge } from "@/components/ui/badge";
 import { usePrimeVaultTradersQuery } from "@/features/world/queries";
 import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
-import { tr } from "@/lib/wpep";
+import { useTranslation } from "react-i18next";
+import { itemDetail } from "@/lib/wpep";
+
+interface PrimVaultItem {
+    itemType: string;
+    primePrice?: number;
+    regularPrice?: number;
+}
+
+const PrimVaultPrice = memo(function PrimVaultPrice({ items, title }: { items: PrimVaultItem[]; title: string }) {
+    return (
+        <EventCard title={title}>
+            <div className="flex flex-col gap-2">
+                {items.map((it) => {
+                const item = itemDetail(it.itemType);
+                return (
+                    <EventCard
+                        key={it.itemType}
+                        title={`${item?.name}`}
+                        image={item?.icon}
+                    >
+                        <div className="gap-1">
+                            {it.primePrice != null && (
+                                <div className="flex items-center gap-1">
+                                    {it.primePrice}
+                                    <img src="/images/PrimeToken.png" alt="Prime 御品" className="w-4 h-4" />
+                                </div>
+                            )}
+                            {it.regularPrice != null && (
+                                <div className="flex items-center gap-1">
+                                    {it.regularPrice}
+                                    <img src="/images/Aya.png" alt="Aya" className="w-4 h-4" />
+                                </div>
+                            )}
+                        </div>
+                    </EventCard>
+                );
+            })}
+            </div>
+        </EventCard>
+    );
+});
 
 const PrimeVaultRow = memo(function PrimeVaultRow({
     vault,
@@ -13,23 +53,16 @@ const PrimeVaultRow = memo(function PrimeVaultRow({
     vault: PrimeVault;
 }) {
     const sec = useCountdown(vault.expiry);
+    const [t] = useTranslation();
     return (
         <EventCard
-            title="Prime 宝库"
-            subtitle={`常驻 ${vault.evergreenManifest.length} 件 · 限时 ${vault.manifest.length} 件`}
+            title={`${t("npc.Varzia")}`}
+            image="/images/Varzia.png"
             countdown={formatCountdown(sec)}
         >
-            <div className="flex flex-wrap gap-1.5 text-sm">
-                {vault.manifest.slice(0, 10).map((it) => (
-                    <Badge key={it.itemType} variant="outline">
-                        {tr(it.itemType) || it.itemType}
-                    </Badge>
-                ))}
-                {vault.manifest.length > 10 ? (
-                    <Badge variant="secondary">
-                        +{vault.manifest.length - 10}
-                    </Badge>
-                ) : null}
+            <div className="grid grid-cols-2 gap-2 text-sm">
+                <PrimVaultPrice items={vault.manifest} title="限时" />
+                <PrimVaultPrice items={vault.evergreenManifest} title="常驻" />
             </div>
         </EventCard>
     );
