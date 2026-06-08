@@ -46,18 +46,12 @@ export function sortVoidEvents<T extends VoidEvent>(items: readonly T[]): T[] {
         const weightA = tierWeightOf(tierA);
         const weightB = tierWeightOf(tierB);
         if (weightA !== weightB) return weightA - weightB;
-
-        const isT5A = tierA === "VoidT5";
-        const isT5B = tierB === "VoidT5";
+        
         const baseA = resolveNode(a.node).maxEnemyLevel;
         const baseB = resolveNode(b.node).maxEnemyLevel;
 
-        const levelA = hardA
-            ? isT5A ? 170 : baseA + 105
-            : isT5A ? 70 : baseA + 5;
-        const levelB = hardB
-            ? isT5B ? 170 : baseB + 105
-            : isT5B ? 70 : baseB + 5;
+        const levelA = modifyVoidEnemyLevel(hardA, tierA, baseA)
+        const levelB = modifyVoidEnemyLevel(hardB, tierB, baseB)
 
         return levelA - levelB;
     });

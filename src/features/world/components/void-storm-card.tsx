@@ -14,7 +14,7 @@ const VoidStormRow = memo(function VoidStormRow({ storm }: { storm: VoidStorm })
     const [vd] = useTranslation('void.dict');
     return (
         <EventCard
-            title={`${node.missionTypeZh} (${node.maxEnemyLevel + 10} - ${node.maxEnemyLevel + 10})`}
+            title={`${node.missionTypeZh} (${node.minEnemyLevel + 10} - ${node.maxEnemyLevel + 10})`}
             subtitle={`${node.nameZh}· ${node.systemNameZh}`}
             image={`/void/${storm.activeMissionTier}.png`}
             badge={storm.hard ? "钢铁" : "普通"}
