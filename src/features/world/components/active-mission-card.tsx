@@ -35,7 +35,7 @@ export function ActiveMissionList() {
     const { data, isPending, isError, error } = useActiveMissionsQuery();
     if (isPending) return <CardSkeleton />;
     if (isError) return <CardError message={String(error)} />;
-    if (!data?.length) return <CardEmpty text="无仲裁" />;
+    if (!data?.length) return <CardEmpty text="无虚空裂缝" />;
     return (
         <div className="grid gap-3 md:grid-cols-2">
             {data.map((m) => (

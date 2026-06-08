@@ -5,18 +5,21 @@ import { CardEmpty, CardError, CardSkeleton } from "@/components/card-states";
 import { useVoidStormsQuery } from "@/features/world/queries";
 import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
 import { resolveNode } from "@/lib/wpep/nodes";
+import {useTranslation} from "react-i18next";
 
 const VoidStormRow = memo(function VoidStormRow({ storm }: { storm: VoidStorm }) {
     const sec = useCountdown(storm.expiry);
     const node = resolveNode(storm.node);
+    const [vd] = useTranslation('void.dict');
     return (
         <EventCard
-            title={node.nameZh || storm.node}
-            subtitle={storm.activeMissionTier}
+            title={`${node.missionTypeZh} (${node.maxEnemyLevel + 10} - ${node.maxEnemyLevel + 10})`}
+            subtitle={`${node.nameZh}· ${node.systemNameZh}`}
+            image={`/void/${storm.activeMissionTier}.png`}
             badge={storm.isHard ? "钢铁" : "普通"}
             countdown={formatCountdown(sec)}
         >
-            <div className="text-xs text-muted-foreground">{node.factionNameZh}</div>
+            <div className="text-xs text-muted-foreground">{`${vd(storm.activeMissionTier)} ${node.factionNameZh}` }</div>
         </EventCard>
     );
 });
@@ -25,7 +28,7 @@ export function VoidStormList() {
     const { data, isPending, isError, error } = useVoidStormsQuery();
     if (isPending) return <CardSkeleton />;
     if (isError) return <CardError message={String(error)} />;
-    if (!data?.length) return <CardEmpty text="无虚空裂缝" />;
+    if (!data?.length) return <CardEmpty text="无虚空风暴" />;
     return (
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {data.map((s) => (
