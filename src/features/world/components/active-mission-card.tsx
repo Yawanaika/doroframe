@@ -1,12 +1,15 @@
-import { memo } from "react";
+import { memo, useMemo, useState } from "react";
 import type { ActiveMission } from "@/types/wf-state";
 import { EventCard } from "@/components/event-card";
 import { CardEmpty, CardError, CardSkeleton } from "@/components/card-states";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useActiveMissionsQuery } from "@/features/world/queries";
 import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
 import { resolveNode } from "@/lib/wpep/nodes";
 import {modifyVoidEnemyLevel, sortVoidEvents} from "@/features/world/sort-void-events.ts";
 import {useTranslation} from "react-i18next";
+
+type DifficultyFilter = "normal" | "hard";
 
 const ActiveMissionRow = memo(function ActiveMissionRow({
     mission,
@@ -38,15 +41,45 @@ const ActiveMissionRow = memo(function ActiveMissionRow({
 
 export function ActiveMissionList() {
     const { data, isPending, isError, error } = useActiveMissionsQuery();
+    const [difficulty, setDifficulty] = useState<DifficultyFilter>("normal");
+
+    const { normalCount, hardCount, visible } = useMemo(() => {
+        const list = data ?? [];
+        const normal = list.filter((m) => !m.hard);
+        const hard = list.filter((m) => m.hard);
+        return {
+            normalCount: normal.length,
+            hardCount: hard.length,
+            visible: sortVoidEvents(difficulty === "hard" ? hard : normal),
+        };
+    }, [data, difficulty]);
+
     if (isPending) return <CardSkeleton />;
     if (isError) return <CardError message={String(error)} />;
     if (!data?.length) return <CardEmpty text="无虚空裂缝" />;
-    const sortedData = sortVoidEvents(data);
+
     return (
-        <div className="grid gap-3 md:grid-cols-2">
-            {sortedData.map((m) => (
-                <ActiveMissionRow key={m.id} mission={m} />
-            ))}
+        <div className="space-y-3">
+            <Tabs
+                value={difficulty}
+                onValueChange={(v) => setDifficulty(v as DifficultyFilter)}
+            >
+                <TabsList>
+                    <TabsTrigger value="normal">普通 · {normalCount}</TabsTrigger>
+                    <TabsTrigger value="hard">钢铁 · {hardCount}</TabsTrigger>
+                </TabsList>
+            </Tabs>
+            {visible.length === 0 ? (
+                <CardEmpty
+                    text={difficulty === "hard" ? "无钢铁虚空裂缝" : "无普通虚空裂缝"}
+                />
+            ) : (
+                <div className="grid gap-3 md:grid-cols-2">
+                    {visible.map((m) => (
+                        <ActiveMissionRow key={m.id} mission={m} />
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
