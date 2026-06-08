@@ -47,7 +47,8 @@ export function StatePage() {
         <div className="space-y-6">
             <S title={t("state.title.goal")}><GoalList /></S>
             <S title={t("state.title.alert")}><AlertList /></S>
-            <S title={t("state.title.arby")}><ActiveMissionList /></S>
+            <S title={t("state.title.active-mission")}><ActiveMissionList /></S>
+            <S title={t("state.title.void-storm")}><VoidStormList /></S>
             <div className="grid gap-3 md:grid-cols-2">
                 <S title={t("state.title.sortie")}><SortyList /></S>
                 <S title={t("state.title.lite-sortie")}><LiteSortyList /></S>
@@ -56,7 +57,6 @@ export function StatePage() {
             <S title={t("state.title.invasion")}><InvasionList /></S>
             <S title={t("state.title.void-trader")}><VoidTraderList /></S>
             <S title={t("state.title.prime-vault")}><PrimeVaultList /></S>
-            <S title={t("state.title.void-storm")}><VoidStormList /></S>
             <S title={t("state.title.daily-deal")}><DailyDealList /></S>
             <S title={t("state.title.conquest")}><ConquestList /></S>
             <S title={t("state.title.descent")}><DescentList /></S>
