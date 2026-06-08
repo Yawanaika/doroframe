@@ -6,7 +6,7 @@ export interface ActiveMission extends Base {
     node: string;
     missionType: string;
     modifier: string;
-    hard?: boolean;
+    hard: boolean;
 }
 
 export function activeMissionFromJson(json: any): ActiveMission {
@@ -17,7 +17,7 @@ export function activeMissionFromJson(json: any): ActiveMission {
         node: json?.Node ?? "",
         missionType: json?.MissionType ?? "",
         modifier: json?.Modifier ?? "",
-        hard: json?.Hard,
+        hard: json?.Hard ?? false,
     };
 }
 

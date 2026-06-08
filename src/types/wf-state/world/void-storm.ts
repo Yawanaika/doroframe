@@ -3,7 +3,7 @@ import { Base, parseBase, serializeBase } from "@/types/wf-state/world/base.ts";
 export interface VoidStorm extends Base {
     node: string;
     activeMissionTier: string;
-    isHard?: boolean;
+    hard?: boolean;
 }
 
 export function voidStormFromJson(json: any): VoidStorm {
@@ -11,7 +11,7 @@ export function voidStormFromJson(json: any): VoidStorm {
         ...parseBase(json),
         node: json?.Node ?? "",
         activeMissionTier: json?.ActiveMissionTier ?? "",
-        isHard: json?.IsHard ?? false,
+        hard: json?.IsHard ?? false,
     };
 }
 
@@ -20,6 +20,6 @@ export function voidStormToJson(s: VoidStorm) {
         ...serializeBase(s),
         node: s.node,
         activeMissionTier: s.activeMissionTier,
-        isHard: s.isHard,
+        hard: s.hard,
     };
 }

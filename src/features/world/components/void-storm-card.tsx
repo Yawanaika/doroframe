@@ -6,6 +6,7 @@ import { useVoidStormsQuery } from "@/features/world/queries";
 import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
 import { resolveNode } from "@/lib/wpep/nodes";
 import {useTranslation} from "react-i18next";
+import {sortVoidEvents} from "@/features/world/sort-void-events.ts";
 
 const VoidStormRow = memo(function VoidStormRow({ storm }: { storm: VoidStorm }) {
     const sec = useCountdown(storm.expiry);
@@ -16,7 +17,7 @@ const VoidStormRow = memo(function VoidStormRow({ storm }: { storm: VoidStorm })
             title={`${node.missionTypeZh} (${node.maxEnemyLevel + 10} - ${node.maxEnemyLevel + 10})`}
             subtitle={`${node.nameZh}· ${node.systemNameZh}`}
             image={`/void/${storm.activeMissionTier}.png`}
-            badge={storm.isHard ? "钢铁" : "普通"}
+            badge={storm.hard ? "钢铁" : "普通"}
             countdown={formatCountdown(sec)}
         >
             <div className="text-xs text-muted-foreground">{`${vd(storm.activeMissionTier)} ${node.factionNameZh}` }</div>
@@ -29,9 +30,10 @@ export function VoidStormList() {
     if (isPending) return <CardSkeleton />;
     if (isError) return <CardError message={String(error)} />;
     if (!data?.length) return <CardEmpty text="无虚空风暴" />;
+    const sortedData = sortVoidEvents(data);
     return (
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {data.map((s) => (
+            {sortedData.map((s) => (
                 <VoidStormRow key={s.id} storm={s} />
             ))}
         </div>
