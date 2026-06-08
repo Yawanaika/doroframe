@@ -83,12 +83,10 @@ function serializeKey(key: string): string {
         .replace('DullBlades', 'ComboCountChance')
         .replace('Undersupplied', 'MaxAmmo');
 }
-function serializeValue(value: string): string {
+export function serializeValue(value: string): string {
     // 处理value中的特殊字符
-    return value.replace("<DT_ELECTRICITY>","")
-        .replace("<DT_PUNCTURE>","")
-        .replace("<DT_SLASH>","")
-        .replace("<DT_POISON_COLOR>","")
+    // 异常 异常颜色 技能描述
+    return value.replace(/<DT_[^>]*>/g, "")
         // 缩短技能
         .replace("技能持续时间减少 |val|", "技能持续时间减少 50")
         // 嗜睡护盾
