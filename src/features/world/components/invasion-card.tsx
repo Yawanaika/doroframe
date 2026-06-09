@@ -7,6 +7,7 @@ import {itemName, Regions, tr} from "@/lib/wpep";
 import { cn } from "@/lib/utils";
 import {EventCard} from "@/components/event-card.tsx";
 import { Progress } from "@/components/ui/progress";
+import {useTranslation} from "react-i18next";
 
 const INFESTATION = "FC_INFESTATION";
 const ASSASSINATION = "MT_ASSASSINATION";
@@ -129,9 +130,10 @@ const GroupedCard = memo(function GroupedCard({ group }: { group: SystemGroup })
     const defenderPct = (i ? 100 - avg * 100 : -avg * 100).toFixed(2);
 
     const phorid = isPhorid(group);
+    const [invDict] = useTranslation("invasion.dict");
     const titleText = phorid
-        ? `${group.systemNameZh} (Phorid 现形)`
-        : `${group.systemNameZh} (${tr(head.faction)})`;
+        ? `${group.systemNameZh} (${invDict("invasion.Infestation.phorid")})`
+        : `${group.systemNameZh} (${invDict(`invasion.${tr(head.faction)}`)})`;
 
     return (
         <EventCard

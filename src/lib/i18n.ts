@@ -4,8 +4,8 @@ import { initReactI18next } from "react-i18next";
 export const SUPPORTED_LANGS = ["zh", "en"] as const;
 export type UiLang = (typeof SUPPORTED_LANGS)[number];
 
-// 对应 public/data/{lang}/*.json 的文件名（不含后缀）
-const DATA_FILES = ["common", "sorty.boss","sorty.modifer", "sorty.modifer.desc", "relic.dict", "void.dict"] as const;
+// 对应 public/lang/{lang}/*.json 的文件名（不含后缀）
+const DATA_FILES = ["common", "sorty.boss","sorty.modifer", "sorty.modifer.desc", "relic.dict", "void.dict","invasion.dict"] as const;
 
 // 硬编码回退：文件缺失时保证应用不崩
 // const FALLBACK: Record<UiLang, Record<string, Record<string, string>>> = {
@@ -83,7 +83,7 @@ const fetchLocaleFile = async (
     ns: string,
 ): Promise<Record<string, string> | null> => {
     try {
-        const r = await fetch(`/data/${lang}/${ns}.json`);
+        const r = await fetch(`/lang/${lang}/${ns}.json`);
         if (!r.ok) return null;
         return (await r.json()) as Record<string, string>;
     } catch {
@@ -91,7 +91,7 @@ const fetchLocaleFile = async (
     }
 };
 
-/** 从 public/data/{lang}/*.json 加载翻译，并与回退字典合并 */
+/** 从 public/lang/{lang}/*.json 加载翻译，并与回退字典合并 */
 export const loadLangBundle = async (lang: UiLang = "zh"): Promise<void> => {
     const done = loadedFiles[lang] ?? new Set<string>();
     const toLoad = DATA_FILES.filter((ns) => !done.has(ns));
@@ -113,7 +113,7 @@ export const loadLangBundle = async (lang: UiLang = "zh"): Promise<void> => {
     await i18n.changeLanguage(lang);
 };
 
-// 初始化：先用回退字典启动，再异步覆盖 public/data 文件
+// 初始化：先用回退字典启动，再异步覆盖 public/lang 文件
 void i18n.use(initReactI18next).init({
     // resources: FALLBACK as Record<string, Record<string, Record<string, string>>>,
     lng: "zh",

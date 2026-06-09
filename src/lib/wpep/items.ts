@@ -48,7 +48,7 @@ import {
 import { tr, trImage } from "./index";
 import { i18n } from "@/lib/i18n";
 
-// 字典文件：public/data/{lang}/relic.dict.json
+// 字典文件：public/lang/{lang}/relic.dict.json
 const RELIC_NS = "relic.dict";
 const trRelic = (key: string, fallback = key): string => {
     const v = i18n.t(key, { ns: RELIC_NS, defaultValue: fallback });
