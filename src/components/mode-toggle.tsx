@@ -1,6 +1,6 @@
 import { Monitor, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSettingsStore, type ThemeMode } from "@/features/settings/store";
+import { useSettingsStore, type ThemeMode } from "@/store";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
 import {useTranslation} from "react-i18next";
 

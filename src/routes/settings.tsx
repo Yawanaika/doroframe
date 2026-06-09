@@ -4,7 +4,7 @@ import {
     PRIMARY_OPTIONS,
     BASE_OPTIONS,
     CHART_OPTIONS,
-} from "@/features/settings/store";
+} from "@/store";
 import {
     Card,
     CardContent,

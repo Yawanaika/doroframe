@@ -1,9 +1,9 @@
 import {
     useQuery,
-    type UseQueryOptions,
     type UseQueryResult,
 } from "@tanstack/react-query";
 import { fetchWorld } from "@/api/world";
+import { useSettingsStore } from "@/store/settings";
 import type {
     World,
     Alert,
@@ -26,16 +26,18 @@ import type {
 
 const WORLD_KEY = ["world"] as const;
 
-// 共享同一个 fetch / 轮询节奏；每个 selector 独立比较返回值，未变化的切片不会触发对应组件 re-render
-const worldQueryOptions = {
-    queryKey: WORLD_KEY,
-    queryFn: fetchWorld,
-    refetchInterval: 30_000,
-    staleTime: 25_000,
-} satisfies UseQueryOptions<World>;
-
+// 共享同一个 fetch / 轮询节奏；每个 selector 独立比较返回值，未变化的切片不会触发对应组件 re-render。
+// 轮询间隔来自设置页的 autoRefreshSec（秒），并设 5 秒下限避免误填过小值导致狂刷。
 function useWorldSelect<T>(select: (w: World) => T): UseQueryResult<T> {
-    return useQuery({ ...worldQueryOptions, select });
+    const autoRefreshSec = useSettingsStore((s) => s.autoRefreshSec);
+    const intervalMs = Math.max(5, autoRefreshSec) * 1000;
+    return useQuery({
+        queryKey: WORLD_KEY,
+        queryFn: fetchWorld,
+        refetchInterval: intervalMs,
+        staleTime: Math.max(0, intervalMs - 5_000),
+        select,
+    });
 }
 
 export const useAlertsQuery = (): UseQueryResult<Alert[]> =>
