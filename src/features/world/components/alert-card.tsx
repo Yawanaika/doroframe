@@ -22,7 +22,7 @@ const AlertRow = memo(function AlertRow({ alert }: { alert: Alert }) {
                 {reward.credits > 0 && (
                     <span className="flex items-center gap-1">
                         {reward.credits}
-                        <img src="/images/Credits.png" alt="" role="presentation" className="w-4 h-4" />
+                        <img src="/images/resources/Credits.png" alt="" role="presentation" className="w-4 h-4" />
                     </span>
                 )}
                 {reward.items.map((it) => (

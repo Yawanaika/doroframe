@@ -24,12 +24,12 @@ const DailyDealRow = memo(function DailyDealRow({ deal }: { deal: DailyDeal }) {
                 <span className="text-muted-foreground tabular-nums flex items-center gap-4">
                     <div className="flex items-center gap-1">
                         {deal.salePrice}
-                        <img src="/images/Platinum.png" alt="" role="presentation" className="w-4 h-4"/>
+                        <img src="/images/resources/Platinum.png" alt="" role="presentation" className="w-4 h-4"/>
                     </div>
 
                     <div className="line-through flex items-center gap-1">
                         {deal.originalPrice}
-                        <img src="/images/Platinum.png" alt="" role="presentation" className="w-4 h-4"/>
+                        <img src="/images/resources/Platinum.png" alt="" role="presentation" className="w-4 h-4"/>
                     </div>
                 </span>
             </div>

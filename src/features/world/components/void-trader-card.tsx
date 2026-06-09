@@ -43,13 +43,13 @@ const VoidTraderItemRow = memo(function VoidTraderItemRow({ item: it }: { item: 
                 {it.primePrice > 0 && (
                     <span className="flex items-center gap-1">
                         {it.primePrice}
-                        <img src="/images/PrimeBucks.png" alt="" role="presentation" className="w-4 h-4" />
+                        <img src="/images/resources/PrimeBucks.png" alt="" role="presentation" className="w-4 h-4" />
                     </span>
                 )}
                 {it.regularPrice > 0 && (
                     <span className="flex items-center gap-1">
                         {it.regularPrice}
-                        <img src="/images/Credits.png" alt="" role="presentation" className="w-4 h-4" />
+                        <img src="/images/resources/Credits.png" alt="" role="presentation" className="w-4 h-4" />
                     </span>
                 )}
             </div>
@@ -113,7 +113,7 @@ const VoidTraderRow = memo(function VoidTraderRow({
         <EventCard
             title={tr(trader.charater)}
             subtitle={`${node.nameZh} · ${node.systemNameZh}`}
-            prefixImg={"/images/Baro'Ki Teel.png"}
+            prefixImg={"/images/npc/Baro'Ki Teel.png"}
             badge={arrived ? t("trader.arrived") : t("trader.departed")}
             countdown={
                 arrived

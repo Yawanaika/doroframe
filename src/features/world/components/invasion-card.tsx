@@ -138,9 +138,9 @@ const GroupedCard = memo(function GroupedCard({ group }: { group: SystemGroup })
     return (
         <EventCard
             title={titleText}
-            prefixImg={`/camp/${head.faction}.png`}
+            prefixImg={`/images/camp/${head.faction}.png`}
             prefixTip={tr(head.faction)}
-            endImg={`/camp/${head.defenderFaction}.png`}
+            endImg={`/images/camp/${head.defenderFaction}.png`}
             endTip={tr(head.defenderFaction)}
             className="cursor-pointer"
             onClick={() => setExpanded((v) => !v)}

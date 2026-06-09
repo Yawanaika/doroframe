@@ -41,13 +41,13 @@ const PrimeVaultItemRow = memo(function PrimeVaultItemRow({ item: it }: { item: 
                 {it.primePrice != null && (
                     <span className="flex items-center gap-1">
                         {it.primePrice}
-                        <img src="/images/PrimeToken.png" alt="" role="presentation" className="w-4 h-4" />
+                        <img src="/images/resources/PrimeToken.png" alt="" role="presentation" className="w-4 h-4" />
                     </span>
                 )}
                 {it.regularPrice != null && (
                     <span className="flex items-center gap-1">
                         {it.regularPrice}
-                        <img src="/images/Aya.png" alt="" role="presentation" className="w-4 h-4" />
+                        <img src="/images/resources/Aya.png" alt="" role="presentation" className="w-4 h-4" />
                     </span>
                 )}
             </div>
@@ -107,7 +107,7 @@ const PrimeVaultRow = memo(function PrimeVaultRow({
     return (
         <EventCard
             title={`${t("npc.Varzia")}`}
-            prefixImg="/images/Varzia.png"
+            prefixImg="/images/npc/Varzia.png"
             countdown={formatCountdown(sec)}
         >
             <Tabs defaultValue="manifest" className="w-full">

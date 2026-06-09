@@ -26,11 +26,11 @@ const ActiveMissionRow = memo(function ActiveMissionRow({
             title={`${node.missionTypeZh} (${minEnemyLevel} - ${maxEnemyLevel})`}
             subtitle={`${node.nameZh}· ${node.systemNameZh}`}
             prefixImg={mission.modifier === 'VoidT6'?[
-                'void/VoidT1.png',
-                'void/VoidT2.png',
-                'void/VoidT3.png',
-                'void/VoidT4.png',
-            ]:`/void/${mission.modifier}.png`}
+                '/images/void/VoidT1.png',
+                '/images/void/VoidT2.png',
+                '/images/void/VoidT3.png',
+                '/images/void/VoidT4.png',
+            ]:`/images/void/${mission.modifier}.png`}
             badge={mission.hard ? "钢铁" : "普通"}
             countdown={formatCountdown(sec)}
         >
