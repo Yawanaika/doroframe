@@ -148,11 +148,6 @@ const GroupedCard = memo(function GroupedCard({ group }: { group: SystemGroup })
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
                     <ProgressBar value={barValue} />
-                    <img
-                        src={`/camp/${head.defenderFaction}.png`}
-                        alt={head.defenderFaction}
-                        className="w-6 h-6 shrink-0 object-contain"
-                    />
                 </div>
                 <div className="flex items-center justify-between text-xs">
                     <span>
