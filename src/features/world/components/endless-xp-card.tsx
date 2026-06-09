@@ -65,11 +65,11 @@ const ChoiceRow = memo(function ChoiceRow({
                                 src={icon}
                                 alt={name}
                                 loading="lazy"
-                                className="absolute inset-0 m-auto h-24 w-24 object-contain"
+                                className="absolute inset-x-0 top-0 mx-auto h-24 w-24 object-contain"
                             />
                             <div
                                 className={cn(
-                                    "absolute inset-x-1 bottom-1 text-center text-xs font-bold drop-shadow",
+                                    "absolute inset-x-1 bottom-8 text-center text-xs font-bold drop-shadow",
                                     accent,
                                 )}
                             >
