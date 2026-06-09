@@ -21,7 +21,7 @@ const GoalRow = memo(function GoalRow({ goal }: { goal: Goal }) {
             title={tr(goal.desc) || goal.desc || "限时活动"}
             subtitle={`${node.nameZh} · ${node.systemNameZh}`}
             badge={ goal.faction === "FC_Tenno" ? "Tenno" : tr(goal.faction)}
-            image={trImage(goal.icon)}
+            prefixImg={trImage(goal.icon)}
             countdown={formatCountdown(sec)}
             {...(goal.gracePeriod && { redemption: formatCountdown(gpSec) })}
         >

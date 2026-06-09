@@ -113,7 +113,7 @@ const VoidTraderRow = memo(function VoidTraderRow({
         <EventCard
             title={tr(trader.charater)}
             subtitle={`${node.nameZh} · ${node.systemNameZh}`}
-            image={"/images/Baro'Ki Teel.png"}
+            prefixImg={"/images/Baro'Ki Teel.png"}
             badge={arrived ? t("trader.arrived") : t("trader.departed")}
             countdown={
                 arrived

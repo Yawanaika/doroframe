@@ -107,7 +107,7 @@ const PrimeVaultRow = memo(function PrimeVaultRow({
     return (
         <EventCard
             title={`${t("npc.Varzia")}`}
-            image="/images/Varzia.png"
+            prefixImg="/images/Varzia.png"
             countdown={formatCountdown(sec)}
         >
             <Tabs defaultValue="manifest" className="w-full">

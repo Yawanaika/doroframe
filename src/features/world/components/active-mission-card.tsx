@@ -25,7 +25,7 @@ const ActiveMissionRow = memo(function ActiveMissionRow({
         <EventCard
             title={`${node.missionTypeZh} (${minEnemyLevel} - ${maxEnemyLevel})`}
             subtitle={`${node.nameZh}· ${node.systemNameZh}`}
-            image={mission.modifier === 'VoidT6'?[
+            prefixImg={mission.modifier === 'VoidT6'?[
                 'void/VoidT1.png',
                 'void/VoidT2.png',
                 'void/VoidT3.png',

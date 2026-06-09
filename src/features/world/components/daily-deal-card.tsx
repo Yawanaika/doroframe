@@ -15,8 +15,8 @@ const DailyDealRow = memo(function DailyDealRow({ deal }: { deal: DailyDeal }) {
         <EventCard
             title={tr(detail?.name) || deal.storeItem}
             subtitle={`${deal.amountSold}/${deal.amountTotal} ${t("deal.sales")}`}
-            image={detail?.icon}
-            imageTip={detail?.name ?? deal.storeItem}
+            prefixImg={detail?.icon}
+            prefixTip={detail?.name ?? deal.storeItem}
             badge={`-${deal.discount}%`}
             countdown={formatCountdown(sec)}
         >

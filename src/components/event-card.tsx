@@ -21,8 +21,10 @@ type EventCardProps = ComponentPropsWithoutRef<typeof Card> & {
     badge?: string;
     countdown?: string;
     redemption?: string;
-    image?: EventCardImage;
-    imageTip?: string;
+    prefixImg?: EventCardImage;
+    prefixTip?: string;
+    endImg?: EventCardImage;
+    endTip?: string;
     children?: ReactNode;
 };
 
@@ -58,8 +60,10 @@ export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(function Eve
     badge,
     countdown,
     redemption,
-    image,
-    imageTip,
+    prefixImg,
+    prefixTip,
+    endImg,
+    endTip,
     children,
     className,
     ...rest
@@ -67,20 +71,20 @@ export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(function Eve
     const [t] = useTranslation();
     return (
         <Card ref={ref} className={cn("flex flex-row gap-3 p-3", className)} {...rest}>
-            {image && (Array.isArray(image) ? image.length > 0 : true) ? (
-                imageTip ? (
+            {prefixImg && (Array.isArray(prefixImg) ? prefixImg.length > 0 : true) ? (
+                prefixTip ? (
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <span className="shrink-0">
-                                <Thumbnail image={image} alt={imageTip ?? title} />
+                                <Thumbnail image={prefixImg} alt={prefixTip ?? title} />
                             </span>
                         </TooltipTrigger>
                         <TooltipContent>
-                            <p>{imageTip}</p>
+                            <p>{prefixTip}</p>
                         </TooltipContent>
                     </Tooltip>
                 ) : (
-                    <Thumbnail image={image} alt={imageTip ?? title} />
+                    <Thumbnail image={prefixImg} alt={prefixTip ?? title} />
                 )
             ) : null}
             <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -110,6 +114,22 @@ export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(function Eve
                 </CardHeader>
                 {children ? <CardContent className="p-0">{children}</CardContent> : null}
             </div>
+            {endImg && (Array.isArray(endImg) ? endImg.length > 0 : true) ? (
+                endTip ? (
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="shrink-0">
+                                <Thumbnail image={endImg} alt={endTip ?? title} />
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>{endTip}</p>
+                        </TooltipContent>
+                    </Tooltip>
+                ) : (
+                    <Thumbnail image={endImg} alt={endTip ?? title} />
+                )
+            ) : null}
         </Card>
     );
 });
