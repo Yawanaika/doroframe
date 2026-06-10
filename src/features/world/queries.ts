@@ -3,6 +3,7 @@ import {
     type UseQueryResult,
 } from "@tanstack/react-query";
 import { fetchWorld } from "@/api/world";
+import { fetchArby, fetchSpIncursions, fetchBountyCycle } from "@/api/browse";
 import { useSettingsStore } from "@/store/settings";
 import type {
     World,
@@ -22,6 +23,9 @@ import type {
     Conquest,
     Descent,
     Goal,
+    Arby,
+    SpIncursion,
+    BountyCycle,
 } from "@/types/wf-state";
 
 const WORLD_KEY = ["world"] as const;
@@ -90,3 +94,28 @@ export const useDescentsQuery = (): UseQueryResult<Descent[]> =>
 
 export const useGoalsQuery = (): UseQueryResult<Goal[]> =>
     useWorldSelect((w) => w.goals);
+
+// browse.wf 系列：与 worldState 不同源，各自独立的 Tauri command + 后端缓存，
+// 因此用各自的 queryKey 单独 useQuery（不能走 useWorldSelect）。轮询节奏沿用设置项。
+function useBrowseQuery<T>(
+    key: string,
+    queryFn: () => Promise<T>,
+): UseQueryResult<T> {
+    const autoRefreshSec = useSettingsStore((s) => s.autoRefreshSec);
+    const intervalMs = Math.max(5, autoRefreshSec) * 1000;
+    return useQuery({
+        queryKey: ["browse", key],
+        queryFn,
+        refetchInterval: intervalMs,
+        staleTime: Math.max(0, intervalMs - 5_000),
+    });
+}
+
+export const useArbyQuery = (): UseQueryResult<Arby> =>
+    useBrowseQuery("arby", fetchArby);
+
+export const useSpIncursionsQuery = (): UseQueryResult<SpIncursion[]> =>
+    useBrowseQuery("sp-incursions", fetchSpIncursions);
+
+export const useBountyCycleQuery = (): UseQueryResult<BountyCycle> =>
+    useBrowseQuery("bounty-cycle", fetchBountyCycle);

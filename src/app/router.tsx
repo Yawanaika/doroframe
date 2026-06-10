@@ -20,6 +20,7 @@ import {
     BreadcrumbList,
     BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
+import { HomePage } from "@/routes/home";
 import { StatePage } from "@/routes/state";
 import { WeeklyPage } from "@/routes/weekly";
 import {SettingsPage} from "@/routes/settings.tsx";
@@ -34,7 +35,7 @@ const rootRoute = createRootRoute({
 const indexRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/",
-    component: StatePage,
+    component: HomePage,
 });
 
 const stateRoute = createRoute({
@@ -72,7 +73,7 @@ const routeTree = rootRoute.addChildren([
 const initialPath =
     typeof window !== "undefined" && window.location.hash.startsWith("#/")
         ? window.location.hash.slice(1)
-        : "/state";
+        : "/";
 
 export const router = createRouter({
     routeTree,
@@ -125,6 +126,7 @@ function RootLayout() {
 
 function breadcrumb(path: string): string {
     const t = i18n.t.bind(i18n);
+    if (path === "/") return t("nav.home");
     if (path === "/state") return t("nav.state");
     if (path.startsWith("/state/weekly")) return t("nav.weekly");
     if (path.startsWith("/market/items")) return t("nav.market.items");

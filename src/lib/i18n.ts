@@ -14,6 +14,8 @@ const DATA_FILES = [
     "void.dict",
     "invasion.dict",
     "descent.dict",
+    "syndicate.jobs",
+    "npc"
 ] as const;
 
 // 硬编码回退：文件缺失时保证应用不崩

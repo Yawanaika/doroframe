@@ -43,7 +43,7 @@ export function DailyDealList() {
     if (isError) return <CardError message={String(error)} />;
     if (!data?.length) return <CardEmpty text="暂无每日折扣" />;
     return (
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-3 md:grid-cols-1">
             {data.map((d) => (
                 <DailyDealRow key={d.id} deal={d} />
             ))}

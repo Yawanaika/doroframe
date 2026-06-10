@@ -1,4 +1,7 @@
 {
+  "nav.home": "Home",
+  "home.title.region": "Regional Bounties",
+  "home.title.highlight": "Key Rotations",
   "nav.state": "World State",
   "nav.weekly": "Weekly",
   "nav.market.items": "Market · Items",
@@ -23,6 +26,7 @@
   "state.title.endless-xp": "Elite Sanctuary",
   "state.title.season-info": "Nightwave",
   "state.title.calendar": "1999 Calendar",
+  "state.title.bounty-cycle": "地区赏金",
   "common.loading": "Loading…",
   "common.error": "Failed to load",
   "common.empty": "No data",

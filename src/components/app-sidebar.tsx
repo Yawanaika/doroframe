@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sidebar"
 import {
   BotIcon,
+  HomeIcon,
   Settings2Icon,
   WaypointsIcon,
 } from "lucide-react"
@@ -20,14 +21,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const data = {
     navMain: [
       {
-        title: t("nav.state"),
+        title: t("nav.home"),
         url: "/",
+        icon: <HomeIcon />,
+        isActive: true,
+      },
+      {
+        title: t("nav.state"),
+        url: "/state",
         icon: <WaypointsIcon />,
         items: [
           { title: t("nav.state"), url: "/state" },
           { title: t("nav.weekly"), url: "/state/weekly" }
         ],
-        isActive: true,
       },
       {
         title: "Warframe Market",

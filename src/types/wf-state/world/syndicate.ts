@@ -1,4 +1,6 @@
-export interface Syndicate {
+import {Base, parseBase, serializeBase} from "./base";
+
+export interface Syndicate extends Base{
     tag: string;
     seed: number;
     nodes?: string[];
@@ -18,6 +20,7 @@ interface Job {
 
 export function syndicateFromJson(json: any): Syndicate {
     return {
+        ...parseBase( json),
         tag: json?.Tag ?? "",
         seed: json?.Seed ?? 0,
         nodes: json?.Nodes,
@@ -27,6 +30,7 @@ export function syndicateFromJson(json: any): Syndicate {
 
 export function syndicateToJson(s: Syndicate) {
     return {
+        ...serializeBase(s),
         tag: s.tag,
         seed: s.seed,
         nodes: s.nodes,

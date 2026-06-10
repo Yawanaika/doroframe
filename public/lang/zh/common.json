@@ -1,4 +1,7 @@
 {
+  "nav.home": "首页",
+  "home.title.region": "地区赏金",
+  "home.title.highlight": "重点循环",
   "nav.state": "Warframe 状态",
   "nav.weekly": "周常任务",
   "nav.market.items": "WM 订单",
@@ -23,6 +26,7 @@
   "state.title.endless-xp": "无尽回廊",
   "state.title.season-info": "午夜电波",
   "state.title.calendar": "1999 日历",
+  "state.title.bounty-cycle": "地区赏金",
   "common.loading": "加载中…",
   "common.error": "加载失败",
   "common.empty": "暂无数据",

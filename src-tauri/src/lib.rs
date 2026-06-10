@@ -18,12 +18,16 @@ pub fn run() {
         )
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .manage(commands::world::WorldHttp::new())
+        .manage(commands::browse::BrowseHttp::new())
 //         .setup(|app| {
 //             commands::overlay::start_overlay_ticker(app.handle().clone());
 //             Ok(())
 //         })
         .invoke_handler(tauri::generate_handler![
             commands::world::get_world_state,
+            commands::browse::get_arby,
+            commands::browse::get_sp_incursions,
+            commands::browse::get_bounty_cycle,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
