@@ -50,5 +50,11 @@
   "trader.manifest.unpublished": "商品清单未公布",
   "conquest.CT_LAB":  "深层科研",
   "conquest.CT_HEX":  "时光科研",
-  "npc.Varzia": "瓦奇娅"
+  "npc.Varzia": "瓦奇娅",
+  "syndicate.cetus": "希图斯",
+  "syndicate.fortuna": "福尔图娜",
+  "syndicate.deimos": "魔胎之境",
+  "syndicate.sanctum": "解剖圣所",
+  "syndicate.zariman": "扎里曼",
+  "syndicate.hex": "六人组"
 }

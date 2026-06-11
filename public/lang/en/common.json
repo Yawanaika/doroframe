@@ -50,5 +50,11 @@
   "trader.manifest.unpublished": "Manifest Unpublished",
   "conquest.CT_LAB":  "Deep Archimedea",
   "conquest.CT_HEX":  "Temporal Archimedea",
-  "npc.Varzia": "Varzia"
+  "npc.Varzia": "Varzia",
+  "syndicate.cetus": "Cetus",
+  "syndicate.fortuna": "Fortuna",
+  "syndicate.deimos": "Cambion Drift",
+  "syndicate.sanctum": "Sanctum Anatomica",
+  "syndicate.zariman": "Zariman Ten Zero",
+  "syndicate.hex": "The Hex"
 }

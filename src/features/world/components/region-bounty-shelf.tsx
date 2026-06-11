@@ -13,7 +13,7 @@ import {
 } from "@/hooks/use-cycle";
 import {itemDetail, tr} from "@/lib/wpep";
 import { cn } from "@/lib/utils";
-import type { BountyJob, Syndicate } from "@/types/wf-state";
+import { BountyJob, Syndicate} from "@/types/wf-state";
 import {EventCard} from "@/components/event-card.tsx";
 import {useTranslation} from "react-i18next";
 
@@ -24,47 +24,46 @@ export type RegionConfig = {
     caption: string;
     icon: string;
 };
-
 export const REGIONS: RegionConfig[] = [
     {
         id: "cetus",
         tag: "CetusSyndicate",
-        name: "希图斯",
+        name: "syndicate.cetus",
         caption: "平原赏金",
         icon: "/images/syndicate/CetusSyndicate.png",
     },
     {
         id: "fortuna",
         tag: "SolarisSyndicate",
-        name: "福尔图娜",
+        name: "syndicate.fortuna",
         caption: "奥布山谷",
         icon: "/images/syndicate/SolarisSyndicate.png",
     },
     {
         id: "deimos",
         tag: "EntratiSyndicate",
-        name: "魔胎之境",
+        name: "syndicate.deimos",
         caption: "隔离库与赏金",
         icon: "/images/syndicate/EntratiSyndicate.png",
     },
     {
         id: "sanctum",
         tag: "EntratiLabSyndicate",
-        name: "解剖圣所",
+        name: "syndicate.sanctum",
         caption: "实验室赏金",
         icon: "/images/syndicate/EntratiLabSyndicate.png",
     },
     {
         id: "zariman",
         tag: "ZarimanSyndicate",
-        name: "扎里曼",
+        name: "syndicate.zariman",
         caption: "虚空航舰",
         icon: "/images/syndicate/ZarimanSyndicate.png",
     },
     {
         id: "hex",
         tag: "HexSyndicate",
-        name: "六人组",
+        name: "syndicate.hex",
         caption: "1999 委托",
         icon: "/images/syndicate/HexSyndicate.png",
     },
@@ -76,11 +75,11 @@ const BOUNTY_CYCLE_REGION_TAGS = new Set([
     "HexSyndicate",
 ]);
 
-// 昼夜/冷暖轮换（对应 syndicate.dart）：希图斯/魔胎之境以集团本轮 activation 为锚点，
+// 昼夜/冷暖轮换：希图斯/魔胎之境以集团本轮 activation 为锚点，
 // 福尔图娜按固定温暖起点循环；轮换计算与每秒推进的工具函数见 @/hooks/use-cycle。
 function useRegionCycle(
     region: RegionConfig,
-    syndicates: Syndicate[] | undefined,
+    syndicates: Syndicate[] |undefined,
 ): RegionCycle | null {
     const isCyclic =
         region.id === "cetus" ||
@@ -150,6 +149,7 @@ function RegionColumn({
     onClick: () => void;
 }) {
     const cycle = useRegionCycle(region, syndicates);
+    const [t] = useTranslation();
     return (
         <Button
             type="button"
@@ -170,24 +170,26 @@ function RegionColumn({
                     loading="lazy"
                 />
             </span>
-            <span className=" tracking-[0.35em] text-sm font-semibold">
-                {region.name}
+            <span className="tracking-[0.35em] text-sm font-semibold text-center whitespace-pre-line">
+                {t(region.name).replace(/ /g, '\n')}
             </span>
-            {cycle ? (
-                <span
-                    className={cn(
-                        "flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium tabular-nums",
-                        cycle.tone === "warm"
-                            ? "bg-amber-500/15 text-amber-500"
-                            : "bg-sky-500/15 text-sky-400",
-                    )}
-                >
-                    <span>{cycle.label}</span>
-                    <span className="opacity-80">
-                        {formatCycleRemaining(cycle.remainingMs)}
+            <div className="mt-auto w-full">
+                {cycle ? (
+                    <span
+                        className={cn(
+                            "flex items-center justify-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium tabular-nums",
+                            cycle.tone === "warm"
+                                ? "bg-amber-500/15 text-amber-500"
+                                : "bg-sky-500/15 text-sky-400",
+                        )}
+                    >
+                        <span>{cycle.label}</span>
+                        <span className="opacity-80">
+                            {formatCycleRemaining(cycle.remainingMs)}
+                        </span>
                     </span>
-                </span>
-            ) : null}
+                ) : null}
+            </div>
         </Button>
     );
 }
