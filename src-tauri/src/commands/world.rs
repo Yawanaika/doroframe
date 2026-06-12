@@ -3,7 +3,7 @@ use std::time::{Duration, Instant};
 use serde_json::Value;
 use tokio::sync::Mutex;
 
-const WORLD_STATE_URL: &str = "https://content.warframe.com/dynamic/worldState.php";
+const WORLD_STATE_URL: &str = "https://api.warframe.com/cdn/worldState.php";
 // const WORLD_STATE_MOCK_URL: &str = "http://127.0.0.1:4523/m2/7149342-6873232-default/366666521";
 const CACHE_TTL: Duration = Duration::from_secs(20);
 
