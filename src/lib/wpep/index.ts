@@ -156,6 +156,16 @@ export {
     itemIcon,
     itemDetail,
     rewardName,
+    isRewardTable,
+    rewardTableDetail,
+    rewardTableDrops,
     normalizeItemKey,
 } from "./items";
-export type { ItemLookup, ItemSource, ItemDetail, RewardNameOptions } from "./items";
+export type {
+    ItemLookup,
+    ItemSource,
+    ItemDetail,
+    RewardNameOptions,
+    RewardDrop,
+    RewardRotation,
+} from "./items";

@@ -34,6 +34,7 @@ import {
     ExportRegions,
     ExportRelics,
     ExportResources,
+    ExportRewards,
     ExportSentinels,
     ExportSyndicates,
     ExportSystems,
@@ -382,3 +383,67 @@ export const rewardName = (
 
     return name;
 };
+
+
+/** 奖励表（ExportRewards）原始掉落项 */
+interface RawRewardDrop {
+    type: string;
+    itemCount: number;
+    probability: number;
+}
+
+/** 解析后的单条掉落：物品 key + 数量 + 概率 + 物品明细 */
+export interface RewardDrop {
+    /** 物品 key（可再交给 itemDetail / rewardName 处理） */
+    type: string;
+    /** 掉落数量 */
+    itemCount: number;
+    /** 掉落概率（0~1） */
+    probability: number;
+    /** itemDetail(type) 的结果，未命中物品表时为 undefined */
+    detail: ItemDetail | undefined;
+}
+
+/** 一个轮换（rotation）内的掉落列表 */
+export type RewardRotation = RewardDrop[];
+
+/**
+ * 判断一个 key 是否为奖励表（drop table）引用。
+ * 例：/Lotus/Types/Game/MissionDecks/DeimosMissionRewards/VaultBountyTierBTableCRewards
+ */
+export const isRewardTable = (key: string | undefined | null): boolean =>
+    !!key && Array.isArray((ExportRewards as Record<string, unknown>)[key]);
+
+/**
+ * 解析奖励表 key，返回按轮换（rotation）分组的掉落明细。
+ *
+ * ExportRewards[key] 的结构是二维数组：外层为 rotation（赏金各阶段/A·B·C 轮换），
+ * 内层为该轮的掉落项 { type, itemCount, probability }。每个 type 才是真正的物品 key，
+ * 这里顺带调用 itemDetail() 补上 name/icon 等明细。
+ *
+ * 非奖励表 key（普通物品）返回 undefined —— 此时调用方应改走 itemDetail()/rewardName()。
+ */
+export const rewardTableDetail = (
+    key: string | undefined | null,
+): RewardRotation[] | undefined => {
+    if (!key) return undefined;
+    const table = (ExportRewards as Record<string, unknown>)[key];
+    if (!Array.isArray(table)) return undefined;
+
+    return (table as RawRewardDrop[][]).map((rotation) =>
+        (rotation ?? []).map((d) => ({
+            type: d.type,
+            itemCount: d.itemCount,
+            probability: d.probability,
+            detail: itemDetail(d.type),
+        })),
+    );
+};
+
+/**
+ * 解析奖励表并把所有轮换的掉落拍平为一维列表（不区分 rotation）。
+ * 适合只想展示「掉落表里可能掉哪些东西」、不关心轮换归属的场景。
+ */
+export const rewardTableDrops = (
+    key: string | undefined | null,
+): RewardDrop[] | undefined => rewardTableDetail(key)?.flat();
