@@ -41,6 +41,8 @@
   "event.expiry":"剩余",
   "event.grace":"兑换",
   "goal.pct": "进度",
+  "goal.rewards": "奖励阶梯",
+  "goal.xp": "经验",
   "deal.sales": "已售",
   "sorty.title": "击败 |Boss| 的部队",
   "sorty.title.lite": "执行官猎杀: |Boss|",

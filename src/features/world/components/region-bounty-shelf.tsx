@@ -23,6 +23,7 @@ export type RegionConfig = {
     name: string;
     caption: string;
     icon: string;
+    flag?: string;
 };
 export const REGIONS: RegionConfig[] = [
     {
@@ -31,6 +32,7 @@ export const REGIONS: RegionConfig[] = [
         name: "syndicate.cetus",
         caption: "平原赏金",
         icon: "/images/syndicate/CetusSyndicate.png",
+        flag: "/images/syndicate-flag/OstronSyndicateFlag.webp"
     },
     {
         id: "fortuna",

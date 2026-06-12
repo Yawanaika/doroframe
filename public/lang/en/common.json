@@ -41,6 +41,8 @@
   "event.expiry": "Expiry",
   "event.grace": "Grace Period",
   "goal.pct": "Progress",
+  "goal.rewards": "Reward Tiers",
+  "goal.xp": "XP",
   "deal.sales": "Sales",
   "sorty.title": "Defeat |Boss|'s Troops",
   "sorty.title.lite": "Archon Hunt: |Boss|",

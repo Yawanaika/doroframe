@@ -1,0 +1,192 @@
+{
+  "/Lotus/Upgrades/Calendar/ElectricStatusDamageAndChance": {
+    "name": "Bottled Lightning",
+    "desc": "Add 25% Status Damage and Electricity Status Chance to all weapons",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/AmirAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/OvershieldCap": {
+    "name": "Harden Up",
+    "desc": "Increase Overshield cap by 50%. Kills grant 50 shields",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/AmirAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/EnergyOrbToAbilityRange": {
+    "name": "Broadened Horizons",
+    "desc": "On Energy Pickup increase Ability Range by 10% for 10s",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/AoiAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/AbilityStrength": {
+    "name": "Power Gains",
+    "desc": "Increase Ability Strength +25%",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/AoiAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/HealingEffects": {
+    "name": "Emergency Medicine",
+    "desc": "All restoration effects by Orb pickups increased by 25%",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/LettieAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/EnergyRestoration": {
+    "name": "Espresso Shots",
+    "desc": "Increase energy restoration by 2/s",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/LettieAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/MagazineCapacity": {
+    "name": "Heavy Mags",
+    "desc": "Increase magazine capacity by 25%",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/QuincyAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/PunchToPrimary": {
+    "name": "Punchcard",
+    "desc": "Add +1.5m Punch Through to primary weapons",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/QuincyAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/GasChanceToPrimaryAndSecondary": {
+    "name": "Toxic Shot",
+    "desc": "Add 30% Gas Status Chance to Primary and Secondary Weapons",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/QuincyAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/CompanionDamage": {
+    "name": "Got Your Back",
+    "desc": "Specters and Companions gain +250% damage",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/EleanorAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/RadiationProcOnTakeDamage": {
+    "name": "Psionic Feedback",
+    "desc": "On Damaged 10% chance to set off a 250 damage, 5m radius blast of Radiation on taking damage.",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/EleanorAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/Armor": {
+    "name": "Thick Skin",
+    "desc": "Gain +250 Armor",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/EleanorAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/MeleeAttackSpeed": {
+    "name": "No Quarter",
+    "desc": "+25% Melee Attack Speed",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/ArthurAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/MeleeCritChance": {
+    "name": "Practiced Precision",
+    "desc": "+20% Melee Critical Chance (x2 for Heavy Attacks)",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/ArthurAllyAgent"
+  },
+  "name": {
+    "name": "Dynamo Jump",
+    "desc": "On landing from a bullet jump gain 50% Electricity Damage for 5s.",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/AmirAllyAgent"
+  },
+  "name": {
+    "name": "Frequent Flyer Benefits",
+    "desc": "Reload Speed, Fire Rate, Casting Speed and Melee Attack Speed is increased by 100% whie airborne",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/AmirAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/AttackAndMovementSpeedOnCritMelee": {
+    "name": "Hit'N'Split",
+    "desc": "Critical melee hits have a chance to increase attack and movement speed by 5% for 10s.",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/AmirAllyAgent"
+  },
+  "name": {
+    "name": "Static Buildup",
+    "desc": "Each meter traveled grants 1  Electricity damage. Attacking consumes 10% of the accumulated charge.",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/AmirAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/MagnetStatusPull": {
+    "name": "Force of Attraction",
+    "desc": "Magnetic Status Effects also pull in enemies within 1m per stack",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/AoiAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/MagnitizeWithinRangeEveryXCasts": {
+    "name": "Magnetic Menace",
+    "desc": "Every 5th ability cast applies a Magnetic Status Effect to an enemy in front of you within 50m",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/AoiAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/PowerStrengthAndEfficiencyPerEnergySpent": {
+    "name": "Overpower",
+    "desc": "Casting abilities increases Ability Strength by 2% and Ability Efficiency by -1% per unit of energy used by ability, for 5s. Capped at 150% Ability Strength and -75% Ability Efficiency",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/AoiAllyAgent"
+  },
+  "name": {
+    "name": "Sharing is Caring",
+    "desc": "Every 10th ability cast makes the next one free for yourself and allies.",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/AoiAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/FinisherChancePerComboMultiplier": {
+    "name": "Combo Killer",
+    "desc": "Combo Multiplier increases the chance of enemies being susceptible to finishers after a melee hit. 5% per multiplier Max 65% with Venka Prime",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/ArthurAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/EnergyWavesOnCombo": {
+    "name": "Combo Wave",
+    "desc": "Upon gaining 7x combo multiplier all melee attacks fire off waves of energy",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/ArthurAllyAgent"
+  },
+  "name": {
+    "name": "Heavy Javelin",
+    "desc": "Heavy melee attacks trigger Radial Javelin with 3m range and 1000 damage scaling both with combo multiplier",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/ArthurAllyAgent"
+  },
+  "name": {
+    "name": "Slice & Dice",
+    "desc": "Melee slide attacks increase slide attack Critical Chance by 5%, slide speed by 20% and reduce slide friction by 10% for 10 seconds with each slide melee attack. Max 10 stacks.",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/ArthurAllyAgent"
+  },
+  "name": {
+    "name": "Copy & Paste",
+    "desc": "Create a spectral clone of a random currently active specter or companion every 125 energy spent",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/EleanorAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/CompanionsRadiationChance": {
+    "name": "Friendly Fallout",
+    "desc": "Attacks from Specters or Companions have a 25% chance to cause Radiation Status",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/EleanorAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/CompanionsBuffNearbyPlayer": {
+    "name": "More the Merrier",
+    "desc": "Non-Tenno Allies within 20m all gain +5% Melee Attack Speed and +20% Fire Rate for each one in range",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/EleanorAllyAgent"
+  },
+  "name": {
+    "name": "Redemptive Chance",
+    "desc": "Killed enemies have a chance of reviving as allied specters at 1% chance per status stack. Lasts 30 seconds",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/EleanorAllyAgent"
+  },
+  "name": {
+    "name": "Bad Medicine",
+    "desc": "Health Orbs create a 10m wide explosion on pickup, damaging enemies. Gain +50 Armor for each enemy hit, for 30 seconds.",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/LettieAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/GenerateOmniOrbsOnWeakKill": {
+    "name": "Involuntary Transfusion",
+    "desc": "Weakpoint kills have a 25% chance to generate a Universal Orb",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/LettieAllyAgent"
+  },
+  "name": {
+    "name": "Powered Shields",
+    "desc": "Energy Orbs grant +100 shields and Overshield.",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/LettieAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/OrbsDuplicateOnPickup": {
+    "name": "Targeted Medicine",
+    "desc": "Shoot Health Orbs to collect them. Health Orbs now have a 25% chance to duplicate on pickup",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/LettieAllyAgent"
+  },
+  "name": {
+    "name": "Cumulative Cartridges",
+    "desc": "+1% Status Chance per shot until reload",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/QuincyAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/RefundBulletOnStatusProc": {
+    "name": "Free Shot",
+    "desc": "Triggering a status proc has a 10% chance to reload the triggering bullet into the clip",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/QuincyAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/BlastEveryXShots": {
+    "name": "Have A Blast",
+    "desc": "Every 10th shot adds 10  Blast stacks on hit",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/QuincyAllyAgent"
+  },
+  "/Lotus/Upgrades/Calendar/GuidingMissilesChance": {
+    "name": "Tickshots",
+    "desc": "Shots gain a 10% chance to fire a seeking projectile for each successful hit. Firing weapons reduces the chance by 5%",
+    "ally": "/Lotus/Types/Gameplay/1999Wf/ProtoframeAllies/QuincyAllyAgent"
+  }
+}
