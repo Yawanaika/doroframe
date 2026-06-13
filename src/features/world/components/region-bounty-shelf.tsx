@@ -267,6 +267,7 @@ function SyndicateJobTile({
         job.minEnemyLevel || job.maxEnemyLevel
             ? `${job.minEnemyLevel} - ${job.maxEnemyLevel} 级`
             : "等级未知";
+    // const rewards = rewardTableDrops(job.rewards)
     return (
         <EventCard
             title={detail?.name || t(job.jobType) ||t(job.locationTag??"")}
@@ -277,6 +278,35 @@ function SyndicateJobTile({
             <span className="text-xs text-muted-foreground">
                 {detail?.description}
             </span>
+            {/*{rewards && rewards.length > 0 ? (*/}
+            {/*    <div className="mt-2 space-y-1">*/}
+            {/*        {rewards.map((re, rotationIndex) => (*/}
+            {/*            <div key={`rotation-${rotationIndex}`} className="flex flex-wrap items-center gap-1.5">*/}
+            {/*                <span className="text-[10px] font-medium text-muted-foreground">*/}
+            {/*                    {String.fromCharCode(65 + rotationIndex)}:*/}
+            {/*                </span>*/}
+            {/*                    */}
+            {/*                <span*/}
+            {/*                    key={`drop-${re}`}*/}
+            {/*                    className="inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 text-[10px]"*/}
+            {/*                >*/}
+            {/*                    {re.detail?.icon ? (*/}
+            {/*                        <img*/}
+            {/*                            src={re.detail?.icon}*/}
+            {/*                            alt=""*/}
+            {/*                            className="size-3 object-contain"*/}
+            {/*                            loading="lazy"*/}
+            {/*                        />*/}
+            {/*                    ) : null}*/}
+            {/*                    {re.detail?.name ?? re.type}*/}
+            {/*                    <span className="text-muted-foreground">*/}
+            {/*                        ({(re.probability * 100).toFixed(0)}%)*/}
+            {/*                    </span>*/}
+            {/*                </span>*/}
+            {/*            </div>*/}
+            {/*        ))}*/}
+            {/*    </div>*/}
+            {/*) : null}*/}
         </EventCard>
     );
 }

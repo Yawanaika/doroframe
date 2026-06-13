@@ -250,13 +250,21 @@ export const itemDetail = <T = Record<string, unknown>>(
             ? itemDetail(item.resultType)
             : undefined;
     
-    const name =
+    let name =
         source === "relics" && item.era
             ? relicDisplayName( item)
             : tr(item.name) ||
               resultDetail?.name ||
               tr(hit.key) ||
               hit.key;
+    
+    // 去除名称内的特殊字符
+    name = name.replace('<SHARD_RED_SIMPLE>', '') // 深红源力石
+        .replace('<SHARD_BLUE_SIMPLE>', '') // 蔚蓝源力石
+        .replace('<SHARD_GREEN_SIMPLE>', '') // 翡翠源力石
+        .replace('<SHARD_YELLOW_SIMPLE>', '') // 琥珀源力石
+        .replace('<SHARD_ORANGE_SIMPLE>', '') //黄玉源力石
+        .replace('<SHARD_VIOLET_SIMPLE>', ''); //紫晶源力石
 
     const description =
         tr(item.description) || resultDetail?.description || "";
