@@ -244,20 +244,17 @@ export const itemDetail = <T = Record<string, unknown>>(
     if (!hit) return undefined;
 
     const { item, source } = hit;
-    // recipes 的"成品名"在 resultType 指向的条目里
+    // recipes 的"成品名"在 resultType 指向的条目里（description / icon 仍要回退到成品）
     const resultDetail =
         source === "recipes" && item.resultType
             ? itemDetail(item.resultType)
             : undefined;
-    
-    let name =
-        source === "relics" && item.era
-            ? relicDisplayName( item)
-            : tr(item.name) ||
-              resultDetail?.name ||
-              tr(hit.key) ||
-              hit.key;
-    
+
+    // 复用 rewardName 的命名逻辑：SPECIAL_REWARD_NAMES / recipes resultType /
+    // 遗物名 / titleTag 提取 / Blueprint→蓝图后缀。
+    // 传原始 key（而非 hit.key），以便 special 表（StoreItems 形式）能命中。
+    let name = rewardName(key);
+
     // 去除名称内的特殊字符
     name = name.replace('<SHARD_RED_SIMPLE>', '') // 深红源力石
         .replace('<SHARD_BLUE_SIMPLE>', '') // 蔚蓝源力石
@@ -332,6 +329,7 @@ export interface RewardNameOptions {
  *   4. rewardKey 以 "Blueprint" 结尾时追加 " 蓝图"；
  *   5. itemCount 处理（含内融核心特殊倍乘）。
  */
+const FUSION_BUNDLE_KEY = "/Lotus/Language/Items/FusionBundle";
 export const rewardName = (
     key: string | undefined | null,
     opts: RewardNameOptions = {},
@@ -382,7 +380,7 @@ export const rewardName = (
     const count = opts.itemCount;
     if (typeof count === "number" && count > 1) {
         let n = count;
-        if (name === "内融核心") {
+        if (key === FUSION_BUNDLE_KEY) {
             const fp = hit?.item.fusionPoints;
             if (typeof fp === "number") n *= fp;
         }
