@@ -27,7 +27,8 @@ const SeasonRow = memo(function SeasonRow({
             badge={`v${season.version}`}
         >
             {season.days.map((d) => (
-                <EventCard key={d.day} title={`${dayOfYearTo1999Date(d.day)}`}>
+                <div key={d.day} className="mb-2">
+                    <EventCard title={`${dayOfYearTo1999Date(d.day)}`}>
                     {d.events.map((e, eventIndex) => {
                         switch (e.type) {
                             case "CET_UPGRADE": {
@@ -101,6 +102,7 @@ const SeasonRow = memo(function SeasonRow({
                         }
                     })}
                 </EventCard>
+                </div>
             ))}
         </EventCard>
     );
