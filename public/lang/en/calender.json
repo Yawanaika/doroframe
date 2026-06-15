@@ -124,7 +124,7 @@
     "desc": "Heavy melee attacks trigger Radial Javelin with 3m range and 1000 damage scaling both with combo multiplier",
     "ally": "Arthur"
   },
-  "name": {
+  "/Lotus/Upgrades/Calendar/MeleeSlideFowardMomentumOnEnemyHit": {
     "name": "Slice & Dice",
     "desc": "Melee slide attacks increase slide attack Critical Chance by 5%, slide speed by 20% and reduce slide friction by 10% for 10 seconds with each slide melee attack. Max 10 stacks.",
     "ally": "Arthur"
@@ -144,12 +144,12 @@
     "desc": "Non-Tenno Allies within 20m all gain +5% Melee Attack Speed and +20% Fire Rate for each one in range",
     "ally": "Eleanor"
   },
-  "name": {
+  "/Lotus/Upgrades/Calendar/ReviveEnemyAsSpectreOnKill": {
     "name": "Redemptive Chance",
     "desc": "Killed enemies have a chance of reviving as allied specters at 1% chance per status stack. Lasts 30 seconds",
     "ally": "Eleanor"
   },
-  "name": {
+  "/Lotus/Upgrades/Calendar/ExplodingHealthOrbs": {
     "name": "Bad Medicine",
     "desc": "Health Orbs create a 10m wide explosion on pickup, damaging enemies. Gain +50 Armor for each enemy hit, for 30 seconds.",
     "ally": "Lettie"

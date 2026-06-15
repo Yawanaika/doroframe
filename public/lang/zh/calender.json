@@ -124,7 +124,7 @@
     "desc": "近战重击会发射一枚范围为3米、基础伤害为1000的广域标枪，并受到连击倍率加成。",
     "ally": "Arthur"
   },
-  "name": {
+  "/Lotus/Upgrades/Calendar/MeleeSlideFowardMomentumOnEnemyHit": {
     "name": "斩筋断骨",
     "desc": "每次近战滑行攻击都会增加5%滑行攻击暴击几率，20%滑行速度，同时减少10%滑行摩擦力，持续10秒。最多可叠加10层。",
     "ally": "Arthur"
@@ -144,14 +144,14 @@
     "desc": "20米范围内每名非Tenno友军增加5%近战攻击速度和20%射速。",
     "ally": "Eleanor"
   },
-  "name": {
-    "name": "Redemptive Chance",
-    "desc": "Killed enemies have a chance of reviving as allied specters at 1% chance per status stack. Lasts 30 seconds",
+  "/Lotus/Upgrades/Calendar/ReviveEnemyAsSpectreOnKill": {
+    "name": "救赎契机",
+    "desc": "敌人死亡时每有一层异常状态增加1%几率复活为友军，持续30秒。",
     "ally": "Eleanor"
   },
-  "name": {
-    "name": "Bad Medicine",
-    "desc": "Health Orbs create a 10m wide explosion on pickup, damaging enemies. Gain +50 Armor for each enemy hit, for 30 seconds.",
+  "/Lotus/Upgrades/Calendar/ExplodingHealthOrbs": {
+    "name": "劣质医疗",
+    "desc": "生命球拾取后会产生范围10米的爆炸，伤害附近的敌人. 每击中一个敌人，获得50护甲，持续30秒",
     "ally": "Lettie"
   },
   "/Lotus/Upgrades/Calendar/GenerateOmniOrbsOnWeakKill": {
