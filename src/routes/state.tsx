@@ -10,7 +10,7 @@ import { ConquestList } from "@/features/world/components/conquest-card";
 import { DescentList } from "@/features/world/components/descent-card";
 import { EndlessXpList } from "@/features/world/components/endless-xp-card";
 import { SeasonInfoCard } from "@/features/world/components/season-info-card";
-import { CalendarSeasonList } from "@/features/world/components/calendar-card";
+import { CalendarMonthList } from "@/features/world/components/calendar-month-card";
 
 function Section({
     title,
@@ -60,7 +60,7 @@ export function StatePage() {
             <S title={t("state.title.endless-xp")}><EndlessXpList /></S>
             {/*<S title={t("state.title.bounty-cycle")}><BountyCycleList /></S>*/}
             <S title={t("state.title.season-info")}><SeasonInfoCard /></S>
-            <S title={t("state.title.calendar")}><CalendarSeasonList /></S>
+            <S title={t("state.title.calendar")}><CalendarMonthList /></S>
         </div>
     );
 }

@@ -1,0 +1,17 @@
+{
+  "CST_SPRING": "SPRING",
+  "CST_SUMMER": "SUMMER",
+  "CST_AUTUMN": "AUTUMN",
+  "CST_WINTER": "WINTER",
+  "season.next": "Next Season",
+  "lable.monday": "Mon.",
+  "lable.tuesday": "Tues.",
+  "lable.wednesday": "Wed.",
+  "lable.thursday": "Thurs.",
+  "lable.friday": "Fri.",
+  "lable.saturday": "Sat.",
+  "lable.sunday": "Sun.",
+  "event.challenge": "TO DO",
+  "event.reward": "Reward",
+  "event.upgrade": "Upgrade"
+}

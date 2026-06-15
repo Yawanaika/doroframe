@@ -6,12 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function dayOfYearTo1999Date( i:number) {
-  // 检查输入是否合法
-  if (i < 1 || i > 365) return;
-  
-  // 1999年不是闰年，所以2月有28天
-  const daysInMonths = [
+export const DAYS_IN_MONTH = [
     31, // 一月
     28, // 二月
     31, // 三月
@@ -24,32 +19,37 @@ export function dayOfYearTo1999Date( i:number) {
     31, // 十月
     30, // 十一月
     31, // 十二月
-  ];
+];
+
+export const MONTH_NAMES = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+]
+
+export function dayOfYearTo1999Date( i:number) {
+  // 检查输入是否合法
+  if (i < 1 || i > 365) return;
   
-  const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December"
-  ]
-  
+  // 1999年不是闰年，所以2月有28天
   const [t] = useTranslation("month")
   
   let dayCount = 0;
-  for (let month = 0; month < daysInMonths.length; month++) {
-    if (i <= dayCount + daysInMonths[month]) {
+  for (let month = 0; month < DAYS_IN_MONTH.length; month++) {
+    if (i <= dayCount + DAYS_IN_MONTH[month]) {
       const dayOfMonth = i - dayCount;
-      return `${t(monthNames[month])} ${dayOfMonth}日`;
+      return `${t(MONTH_NAMES[month])} ${dayOfMonth}日`;
     }
-    dayCount += daysInMonths[month];
+    dayCount += DAYS_IN_MONTH[month];
   }
   
   // 理论上不会到达这里

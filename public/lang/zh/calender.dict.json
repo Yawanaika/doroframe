@@ -1,0 +1,17 @@
+{
+  "CST_SPRING": "春季",
+  "CST_SUMMER": "夏季",
+  "CST_AUTUMN": "秋季",
+  "CST_WINTER": "冬季",
+  "season.next": "下一个季节",
+  "lable.monday": "星期一",
+  "lable.tuesday": "星期二",
+  "lable.wednesday": "星期三",
+  "lable.thursday": "星期四",
+  "lable.friday": "星期五",
+  "lable.saturday": "星期六",
+  "lable.sunday": "星期日",
+  "event.challenge": "待办事项",
+  "event.reward": "选择奖励",
+  "event.upgrade": "增益覆写"
+}
