@@ -1,0 +1,52 @@
+/*
+ * Base: BiliBili — 中性表面
+ *   dark  灰阶取自 heroui 的 220 6% 系列（冷调近黑）
+ *   light 灰阶取自 0 0% 系列（中性浅灰），card 浮白
+ *   destructive = 哔哩哔哩 danger 红 hsl(1 98% 61%)
+ */
+:root {
+    --background: hsl(0 0% 95%);
+    --foreground: hsl(0 0% 12%);
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(0 0% 12%);
+    --popover: hsl(0 0% 100%);
+    --popover-foreground: hsl(0 0% 12%);
+    --secondary: hsl(0 0% 90%);
+    --secondary-foreground: hsl(0 0% 12%);
+    --muted: hsl(0 0% 92%);
+    --muted-foreground: hsl(0 0% 40%);
+    --accent: hsl(0 0% 88%);
+    --accent-foreground: hsl(0 0% 12%);
+    --destructive: hsl(1 98% 61%);
+    --border: hsl(0 0% 85%);
+    --input: hsl(0 0% 85%);
+    --radius: 0.75rem;
+    --sidebar: hsl(0 0% 100%);
+    --sidebar-foreground: hsl(0 0% 12%);
+    --sidebar-accent: hsl(0 0% 90%);
+    --sidebar-accent-foreground: hsl(0 0% 12%);
+    --sidebar-border: hsl(0 0% 85%);
+}
+
+.dark {
+    --background: hsl(220 6% 5%);
+    --foreground: hsl(220 6% 90%);
+    --card: hsl(220 6% 10%);
+    --card-foreground: hsl(220 6% 90%);
+    --popover: hsl(220 6% 10%);
+    --popover-foreground: hsl(220 6% 90%);
+    --secondary: hsl(220 6% 15%);
+    --secondary-foreground: hsl(220 6% 90%);
+    --muted: hsl(220 6% 15%);
+    --muted-foreground: hsl(220 6% 60%);
+    --accent: hsl(220 6% 22%);
+    --accent-foreground: hsl(220 6% 96%);
+    --destructive: hsl(1 98% 61%);
+    --border: hsl(220 6% 18%);
+    --input: hsl(220 6% 22%);
+    --sidebar: hsl(220 6% 8%);
+    --sidebar-foreground: hsl(220 6% 90%);
+    --sidebar-accent: hsl(220 6% 22%);
+    --sidebar-accent-foreground: hsl(220 6% 96%);
+    --sidebar-border: hsl(220 6% 18%);
+}

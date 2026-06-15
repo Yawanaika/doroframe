@@ -1,0 +1,22 @@
+/*
+ * Primary: BiliBili — 哔哩哔哩粉 #FB7299
+ *   light: hsl(343 94% 72%)  亮粉
+ *   dark:  hsl(339 61% 57%)  深色下降饱和的粉
+ */
+:root {
+    --primary: hsl(343 94% 72%);
+    --primary-foreground: hsl(0 0% 100%);
+    --ring: hsl(343 94% 72%);
+    --sidebar-primary: hsl(343 94% 72%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-ring: hsl(343 94% 72%);
+}
+
+.dark {
+    --primary: hsl(339 61% 57%);
+    --primary-foreground: hsl(0 0% 100%);
+    --ring: hsl(339 61% 57%);
+    --sidebar-primary: hsl(339 61% 57%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-ring: hsl(339 61% 57%);
+}

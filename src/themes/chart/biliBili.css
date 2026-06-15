@@ -1,0 +1,19 @@
+/*
+ * Chart: BiliBili — 品牌色板
+ *   1 粉 / 2 金 / 3 橙 / 4 红 / 5 蓝(#00AEEC)
+ */
+:root {
+    --chart-1: hsl(343 94% 72%);
+    --chart-2: hsl(44 79% 54%);
+    --chart-3: hsl(17 71% 52%);
+    --chart-4: hsl(1 98% 61%);
+    --chart-5: hsl(196 100% 46%);
+}
+
+.dark {
+    --chart-1: hsl(339 61% 57%);
+    --chart-2: hsl(44 79% 54%);
+    --chart-3: hsl(17 71% 52%);
+    --chart-4: hsl(1 98% 61%);
+    --chart-5: hsl(196 100% 46%);
+}
