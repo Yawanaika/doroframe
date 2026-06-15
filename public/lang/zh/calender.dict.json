@@ -12,6 +12,7 @@
   "lable.saturday": "星期六",
   "lable.sunday": "星期日",
   "event.challenge": "待办事项",
-  "event.reward": "选择奖励",
-  "event.upgrade": "增益覆写"
+  "event.reward": "大奖！",
+  "event.upgrade": "增益覆写",
+  "event.birthday": "生日"
 }

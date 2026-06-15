@@ -146,7 +146,7 @@
   },
   "/Lotus/Upgrades/Calendar/ReviveEnemyAsSpectreOnKill": {
     "name": "救赎契机",
-    "desc": "敌人死亡时每有一层异常状态增加1%几率复活为友军，持续30秒。",
+    "desc": "敌人死亡时每有一层异常状态，就增加1%几率复活为友军魅影，持续30秒。",
     "ally": "Eleanor"
   },
   "/Lotus/Upgrades/Calendar/ExplodingHealthOrbs": {
