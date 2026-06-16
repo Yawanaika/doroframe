@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { HomePage } from "@/routes/home";
 import { StatePage } from "@/routes/state";
-import { WeeklyPage } from "@/routes/weekly";
 import {SettingsPage} from "@/routes/settings.tsx";
 import { NotFoundPage } from "@/routes/not-found";
 import { i18n } from "@/lib/i18n";
@@ -44,12 +43,6 @@ const stateRoute = createRoute({
     component: StatePage,
 });
 
-const weeklyRoute = createRoute({
-    getParentRoute: () => rootRoute,
-    path: "/state/weekly",
-    component: WeeklyPage,
-});
-
 const settingsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/settings",
@@ -65,7 +58,6 @@ const notFoundRoute = createRoute({
 const routeTree = rootRoute.addChildren([
     indexRoute,
     stateRoute,
-    weeklyRoute,
     settingsRoute,
     notFoundRoute,
 ]);
@@ -79,12 +71,6 @@ export const router = createRouter({
     routeTree,
     history: createMemoryHistory({ initialEntries: [initialPath] }),
 });
-
-declare module "@tanstack/react-router" {
-    interface Register {
-        router: typeof router;
-    }
-}
 
 function RootLayout() {
     const path = useRouterState({ select: (s) => s.location.pathname });
@@ -128,12 +114,17 @@ function breadcrumb(path: string): string {
     const t = i18n.t.bind(i18n);
     if (path === "/") return t("nav.home");
     if (path === "/state") return t("nav.state");
-    if (path.startsWith("/state/weekly")) return t("nav.weekly");
     if (path.startsWith("/market/items")) return t("nav.market.items");
     if (path.startsWith("/market/auctions")) return t("nav.market.auctions");
     if (path.startsWith("/market/me")) return t("nav.market.me");
     if (path.startsWith("/settings")) return t("nav.settings");
     return path;
+}
+
+declare module "@tanstack/react-router" {
+    interface Register {
+        router: typeof router;
+    }
 }
 
 export { Link };
