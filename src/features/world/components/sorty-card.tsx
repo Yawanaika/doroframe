@@ -26,7 +26,7 @@ const SortyRow = memo(function SortyRow({
     const [tsmd] = useTranslation('sorty.modifer.desc');
     return (
         <EventCard
-            title={t(title).replace("|Boss|",tb(sorty.boss))}
+            title={t(title, {boss:tb(sorty.boss)})}
             countdown={formatCountdown(sec)}
         >
             <div className="grid gap-1.5 text-sm">

@@ -43,7 +43,7 @@ export function userFromJson(json: any): User {
     return {
         ingameName: json?.ingameName ?? json?.ingame_name,
         platform: json.platform,
-        locale: json.locale,
+        locale: json?.locale ?? json?.local,
         region: json.region,
         crossplay: json.crossplay,
         id: json?.id,

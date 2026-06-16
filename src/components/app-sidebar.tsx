@@ -32,7 +32,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: <WaypointsIcon />,
         items: [
           { title: t("nav.state"), url: "/state" },
-          { title: t("nav.weekly"), url: "/state/weekly" }
         ],
       },
       {

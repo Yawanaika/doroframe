@@ -19,6 +19,7 @@ pub fn run() {
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .manage(commands::world::WorldHttp::new())
         .manage(commands::browse::BrowseHttp::new())
+        .manage(commands::market::MarketHttp::new())
 //         .setup(|app| {
 //             commands::overlay::start_overlay_ticker(app.handle().clone());
 //             Ok(())
@@ -28,6 +29,9 @@ pub fn run() {
             commands::browse::get_arby,
             commands::browse::get_sp_incursions,
             commands::browse::get_bounty_cycle,
+            commands::market::get_market_items,
+            commands::market::get_market_orders,
+            commands::market::get_market_set,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

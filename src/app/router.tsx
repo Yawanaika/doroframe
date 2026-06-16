@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { HomePage } from "@/routes/home";
 import { StatePage } from "@/routes/state";
+import { MarketItemsPage } from "@/routes/market-items";
 import {SettingsPage} from "@/routes/settings.tsx";
 import { NotFoundPage } from "@/routes/not-found";
 import { i18n } from "@/lib/i18n";
@@ -43,6 +44,12 @@ const stateRoute = createRoute({
     component: StatePage,
 });
 
+const marketItemsRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/market/items",
+    component: MarketItemsPage,
+});
+
 const settingsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/settings",
@@ -58,6 +65,7 @@ const notFoundRoute = createRoute({
 const routeTree = rootRoute.addChildren([
     indexRoute,
     stateRoute,
+    marketItemsRoute,
     settingsRoute,
     notFoundRoute,
 ]);
