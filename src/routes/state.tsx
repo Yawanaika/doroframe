@@ -11,6 +11,7 @@ import { DescentList } from "@/features/world/components/descent-card";
 import { EndlessXpList } from "@/features/world/components/endless-xp-card";
 import { SeasonInfoCard } from "@/features/world/components/season-info-card";
 import { CalendarMonthList } from "@/features/world/components/calendar-month-card";
+import {SpIncursionsCard} from "@/features/world/components/sp-incursions-card.tsx";
 
 function Section({
     title,
@@ -44,6 +45,7 @@ export function StatePage() {
         <div className="space-y-6">
             <S title={t("state.title.goal")}><GoalList /></S>
             <S title={t("state.title.alert")}><AlertList /></S>
+            <S title={t("state.title.sp-incursions")}><SpIncursionsCard /></S>
             <S title={t("state.title.active-mission")}><ActiveMissionList /></S>
             <S title={t("state.title.void-storm")}><VoidStormList /></S>
             {/*<div className="grid gap-3 md:grid-cols-2">*/}
