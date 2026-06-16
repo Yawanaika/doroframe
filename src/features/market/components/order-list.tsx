@@ -1,9 +1,11 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import { ArrowDownIcon, ArrowUpIcon, ChevronsUpDownIcon, CopyIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import {
     type ColumnDef,
+    type Row,
     flexRender,
     getCoreRowModel,
     getSortedRowModel,
@@ -30,6 +32,9 @@ import {
 } from "@/components/ui/table";
 import { CardEmpty, CardSkeleton } from "@/components/card-states";
 import { cn } from "@/lib/utils";
+
+const ROW_ESTIMATE_SIZE = 58;
+const ROW_OVERSCAN = 12;
 
 interface Props {
     orders: ItemOrder[];
@@ -75,6 +80,30 @@ function sortOrders(orders: ItemOrder[], orderType: OrderTypeCode): ItemOrder[] 
         });
 }
 
+function OrderTableRow({
+    row,
+    accent,
+}: {
+    row: Row<ItemOrder>;
+    accent: string;
+}) {
+    return (
+        <TableRow
+            data-index={row.index}
+            style={{ borderLeft: `3px solid ${accent}` }}
+        >
+            {row.getVisibleCells().map((cell) => (
+                <TableCell key={cell.id}>
+                    {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                    )}
+                </TableCell>
+            ))}
+        </TableRow>
+    );
+}
+
 export function OrderList({
     orders,
     orderType,
@@ -90,14 +119,14 @@ export function OrderList({
         [orders, orderType],
     );
 
-    const copy = async (text: string) => {
+    const copy = useCallback(async (text: string) => {
         try {
             await navigator.clipboard.writeText(text);
             toast.success(t("market.whisper.copied"));
         } catch {
             toast.error(t("market.whisper.copy-failed"));
         }
-    };
+    }, [t]);
 
     const columns = useMemo<ColumnDef<ItemOrder>[]>(
         () => [
@@ -111,7 +140,7 @@ export function OrderList({
                     return (
                         <div className="flex items-center gap-3">
                             <Avatar size="lg">
-                                <AvatarImage src={avatarUrl(order.user?.avatar)} />
+                                <AvatarImage src={avatarUrl(order.user?.avatar)} alt=""/>
                                 <AvatarFallback>
                                     {(order.user?.ingameName ?? "?").slice(0, 1)}
                                 </AvatarFallback>
@@ -182,7 +211,6 @@ export function OrderList({
                 header: () => t("market.column.subtype"),
                 cell: ({ row }) => (
                     <span className="flex items-center gap-1 text-sm">
-                        <img src="/images/Coupon.png" alt="qty" className="size-4" />
                         {row.original.subtype}
                     </span>
                 ),
@@ -225,8 +253,7 @@ export function OrderList({
                 },
             },
         ],
-        // copy 为稳定闭包；其余依赖随语言/物品名变化
-        [t, lang, itemNameZh, itemNameEn],
+        [t, lang, itemNameZh, itemNameEn, copy],
     );
 
     // 这些列的数据可能整列缺失：无任何订单含该字段时，隐藏表头与整列
@@ -252,16 +279,32 @@ export function OrderList({
         getRowId: (o) => String(o.id),
     });
 
+    const accent = ORDER_TYPES[orderType].accent;
+    const tableContainerRef = useRef<HTMLDivElement>(null);
+    const rows = table.getRowModel().rows;
+    const rowVirtualizer = useVirtualizer({
+        count: rows.length,
+        getScrollElement: () => tableContainerRef.current,
+        estimateSize: () => ROW_ESTIMATE_SIZE,
+        overscan: ROW_OVERSCAN,
+    });
+    const virtualRows = rowVirtualizer.getVirtualItems();
+    const topPadding = virtualRows[0]?.start ?? 0;
+    const bottomPadding =
+        virtualRows.length > 0
+            ? rowVirtualizer.getTotalSize() -
+              virtualRows[virtualRows.length - 1].end
+            : 0;
+    const visibleColumnCount = table.getVisibleLeafColumns().length;
+
     if (isLoading) return <CardSkeleton rows={5} />;
     if (!hasQuery) return <CardEmpty text={t("market.empty.no-query")} />;
     if (sorted.length === 0) return <CardEmpty text={t("market.empty.no-match")} />;
 
-    const accent = ORDER_TYPES[orderType].accent;
-
     return (
-        <div className="rounded-xl border bg-card">
+        <div ref={tableContainerRef} className="h-full overflow-auto rounded-xl border bg-card">
             <Table>
-                <TableHeader>
+                <TableHeader className="sticky top-0 z-10 bg-card">
                     {table.getHeaderGroups().map((group) => (
                         <TableRow key={group.id}>
                             {group.headers.map((header) => {
@@ -300,21 +343,34 @@ export function OrderList({
                     ))}
                 </TableHeader>
                 <TableBody>
-                    {table.getRowModel().rows.map((row) => (
-                        <TableRow
-                            key={row.id}
-                            style={{ borderLeft: `3px solid ${accent}` }}
-                        >
-                            {row.getVisibleCells().map((cell) => (
-                                <TableCell key={cell.id}>
-                                    {flexRender(
-                                        cell.column.columnDef.cell,
-                                        cell.getContext(),
-                                    )}
-                                </TableCell>
-                            ))}
+                    {topPadding > 0 && (
+                        <TableRow>
+                            <TableCell
+                                colSpan={visibleColumnCount}
+                                className="p-0"
+                                style={{ height: topPadding }}
+                            />
                         </TableRow>
-                    ))}
+                    )}
+                    {virtualRows.map((virtualRow) => {
+                        const row = rows[virtualRow.index];
+                        return (
+                            <OrderTableRow
+                                key={row.id}
+                                row={row}
+                                accent={accent}
+                            />
+                        );
+                    })}
+                    {bottomPadding > 0 && (
+                        <TableRow>
+                            <TableCell
+                                colSpan={visibleColumnCount}
+                                className="p-0"
+                                style={{ height: bottomPadding }}
+                            />
+                        </TableRow>
+                    )}
                 </TableBody>
             </Table>
         </div>
