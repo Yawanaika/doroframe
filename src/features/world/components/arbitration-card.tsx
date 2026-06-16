@@ -5,16 +5,25 @@ import { useArbyQuery } from "@/features/world/queries";
 import { resolveNode } from "@/lib/wpep/nodes";
 import type { ArbyEntry } from "@/types/wf-state";
 import {useTranslation} from "react-i18next";
+import {formatCountdown, useCountdown} from "@/hooks/use-countdown.ts";
 
 export function ArbitrationCard() {
     const { data, isPending, isError, error } = useArbyQuery();
     const entries = useMemo(() => pickArbitrationEntries(data ?? []), [data]);
     const [t] = useTranslation();
+
+    // 当前仲裁的剩余时间 = 下一条的激活时刻（即当前这条结束的时刻）
+    // activation 是 Unix 秒，useCountdown 内部按毫秒处理，需要 * 1000
+    const next = entries[entries.length - 1];
+    const expiry = next ? String(Math.floor(next.activation * 1000)) : undefined;
+    const countdown = useCountdown(expiry);
+    
     return (
         <EventCard
             title={t("state.title.arby")}
             prefixImg={"/images/resources/Elitium.png"}
             prefixTip={t("resource.elitium")}
+            countdown={formatCountdown(countdown)}
         >
             {isPending ? <CardSkeleton rows={2} /> : null}
             {!isPending && isError ? <CardError message={String(error)} /> : null}
