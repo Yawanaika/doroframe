@@ -11,13 +11,14 @@ import {sortVoidEvents} from "@/features/world/sort-void-events.ts";
 const VoidStormRow = memo(function VoidStormRow({ storm }: { storm: VoidStorm }) {
     const sec = useCountdown(storm.expiry);
     const node = resolveNode(storm.node);
+    const [t] = useTranslation();
     const [vd] = useTranslation('void.dict');
     return (
         <EventCard
             title={`${node.missionTypeZh} (${node.minEnemyLevel + 10} - ${node.maxEnemyLevel + 10})`}
             subtitle={`${node.nameZh}· ${node.systemNameZh}`}
             prefixImg={`/images/void/${storm.activeMissionTier}.png`}
-            badge={storm.hard ? "钢铁" : "普通"}
+            badge={storm.hard ? t("event.hard") : t("event.normal")}
             countdown={formatCountdown(sec)}
         >
             <div className="text-xs text-muted-foreground">{`${vd(storm.activeMissionTier)} ${node.factionNameZh}` }</div>

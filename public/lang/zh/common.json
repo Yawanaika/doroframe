@@ -41,6 +41,14 @@
   "time.over": "已结束",
   "event.expiry":"剩余",
   "event.grace":"兑换",
+  "event.now": "当前",
+  "event.next": "下一轮",
+  "event.normal": "普通",
+  "event.hard": "钢铁",
+  "event.time.limit": "限时",
+  "event.time.ever": "常驻",
+  "event.more": "查看更多",
+  "event.less": "收起",
   "goal.pct": "进度",
   "goal.rewards": "奖励阶梯",
   "goal.xp": "经验",
@@ -59,5 +67,6 @@
   "syndicate.deimos": "魔胎之境",
   "syndicate.sanctum": "解剖圣所",
   "syndicate.zariman": "扎里曼",
-  "syndicate.hex": "六人组"
+  "syndicate.hex": "六人组",
+  "resource.elitium": "生息精华"
 }

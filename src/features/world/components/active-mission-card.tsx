@@ -18,6 +18,7 @@ const ActiveMissionRow = memo(function ActiveMissionRow({
 }) {
     const sec = useCountdown(mission.expiry);
     const node = resolveNode(mission.node);
+    const [t] = useTranslation();
     const [vd] = useTranslation('void.dict');
     const maxEnemyLevel = modifyVoidEnemyLevel(mission.hard, mission.modifier, node.maxEnemyLevel);
     const minEnemyLevel = modifyVoidEnemyLevel(mission.hard, mission.modifier, node.minEnemyLevel);
@@ -31,7 +32,7 @@ const ActiveMissionRow = memo(function ActiveMissionRow({
                 '/images/void/VoidT3.png',
                 '/images/void/VoidT4.png',
             ]:`/images/void/${mission.modifier}.png`}
-            badge={mission.hard ? "钢铁" : "普通"}
+            badge={mission.hard ? t("event.hard") : t("event.normal")}
             countdown={formatCountdown(sec)}
         >
             <div className="text-xs text-muted-foreground">{`${vd(mission.modifier)} ${node.factionNameZh}` }</div>
@@ -53,11 +54,11 @@ export function ActiveMissionList() {
             visible: sortVoidEvents(difficulty === "hard" ? hard : normal),
         };
     }, [data, difficulty]);
-
+    
+    const [t] = useTranslation();
     if (isPending) return <CardSkeleton />;
     if (isError) return <CardError message={String(error)} />;
     if (!data?.length) return <CardEmpty text="无虚空裂缝" />;
-
     return (
         <div className="space-y-3">
             <Tabs
@@ -65,8 +66,8 @@ export function ActiveMissionList() {
                 onValueChange={(v) => setDifficulty(v as DifficultyFilter)}
             >
                 <TabsList>
-                    <TabsTrigger value="normal">普通 · {normalCount}</TabsTrigger>
-                    <TabsTrigger value="hard">钢铁 · {hardCount}</TabsTrigger>
+                    <TabsTrigger value="normal">{t("event.normal")} · {normalCount}</TabsTrigger>
+                    <TabsTrigger value="hard">{t("event.hard")} · {hardCount}</TabsTrigger>
                 </TabsList>
             </Tabs>
             {visible.length === 0 ? (

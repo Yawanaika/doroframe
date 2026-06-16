@@ -4,16 +4,17 @@ import { CardEmpty, CardError, CardSkeleton } from "@/components/card-states";
 import { useArbyQuery } from "@/features/world/queries";
 import { resolveNode } from "@/lib/wpep/nodes";
 import type { ArbyEntry } from "@/types/wf-state";
+import {useTranslation} from "react-i18next";
 
 export function ArbitrationCard() {
     const { data, isPending, isError, error } = useArbyQuery();
     const entries = useMemo(() => pickArbitrationEntries(data ?? []), [data]);
-
+    const [t] = useTranslation();
     return (
         <EventCard
-            title="仲裁"
+            title={t("state.title.arby")}
             prefixImg={"/images/resources/Elitium.png"}
-            prefixTip="生息精华"
+            prefixTip={t("resource.elitium")}
         >
             {isPending ? <CardSkeleton rows={2} /> : null}
             {!isPending && isError ? <CardError message={String(error)} /> : null}
@@ -30,7 +31,7 @@ export function ArbitrationCard() {
                                 className="flex items-center justify-between gap-2 text-sm"
                             >
                                 <span className="min-w-0 truncate">
-                                    {i === 0 ? "当前" : "下一轮"}
+                                    {i === 0 ? t("event.now") : t("event.next")}
                                     {` : `}
                                     {`${node.nameZh} · ${node.systemNameZh} · ${node.missionTypeZh}`}
                                 </span>

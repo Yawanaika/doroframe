@@ -61,7 +61,7 @@ const PrimeVaultItemList = memo(function PrimeVaultItemList({ items }: { items: 
     if (!items.length) {
         return <div className="py-3 text-xs text-muted-foreground">暂无商品</div>;
     }
-
+    const [t] = useTranslation();
     const collapsible = items.length > COLLAPSE_THRESHOLD;
     const visible = collapsible && !expanded ? items.slice(0, COLLAPSED_VISIBLE) : items;
     const hiddenCount = items.length - COLLAPSED_VISIBLE;
@@ -82,12 +82,12 @@ const PrimeVaultItemList = memo(function PrimeVaultItemList({ items }: { items: 
                 >
                     {expanded ? (
                         <>
-                            收起
+                            {t("event.less")}
                             <ChevronUpIcon className="size-3.5" />
                         </>
                     ) : (
                         <>
-                            查看更多 · {hiddenCount}
+                            {t("event.more")} · {hiddenCount}
                             <ChevronDownIcon className="size-3.5" />
                         </>
                     )}
@@ -113,10 +113,10 @@ const PrimeVaultRow = memo(function PrimeVaultRow({
             <Tabs defaultValue="manifest" className="w-full">
                 <TabsList>
                     <TabsTrigger value="manifest">
-                        限时 · {vault.manifest.length}
+                        {t("event.time.limit")} · {vault.manifest.length}
                     </TabsTrigger>
                     <TabsTrigger value="evergreen">
-                        常驻 · {vault.evergreenManifest.length}
+                        {t("event.time.ever")} · {vault.evergreenManifest.length}
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="manifest" className="mt-2">

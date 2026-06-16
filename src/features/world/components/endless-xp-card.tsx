@@ -5,6 +5,7 @@ import { CardEmpty, CardError, CardSkeleton } from "@/components/card-states";
 import { useEndlessXpChoicesQuery } from "@/features/world/queries";
 import { tr, trImage } from "@/lib/wpep";
 import { cn } from "@/lib/utils";
+import {useTranslation} from "react-i18next";
 
 const WARFRAME_ICON =
     "/Lotus/Interface/Icons/StoreIcons/Warframes/{}.png";
@@ -41,8 +42,9 @@ const ChoiceRow = memo(function ChoiceRow({
 }: {
     choice: EndlessXpChoice;
 }) {
+    const [t] = useTranslation();
     const title =
-        choice.category === EXC_NORMAL ? "无尽回廊" : "无尽回廊 (钢铁)";
+        choice.category === EXC_NORMAL ? t("event.normal") : t("event.hard");
     return (
         <EventCard title={title}>
             <div className="flex gap-2 overflow-x-auto pb-1">

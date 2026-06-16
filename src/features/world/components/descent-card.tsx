@@ -22,11 +22,12 @@ const HIDE_PENANCE = new Set([
 ]);
 const MILESTONE_INDEXES = new Set([7, 14, 21]);
 
-const DescentRow = memo(function DescentRow({ descent }: { descent: Descent }) {
+const DescentRow = memo(function DescentRow({ descent, index }: { descent: Descent , index: number }) {
     const sec = useCountdown(descent.expiry);
     const [t] = useTranslation("descent.dict");
+    const week = t("week").replace("{}",String(index));
     return (
-        <EventCard title="沉沦之地" countdown={formatCountdown(sec)}>
+        <EventCard title={week} countdown={formatCountdown(sec)}>
             <div className="flex h-48 flex-col gap-1.5 overflow-y-auto text-sm">
                 {descent.challenges.map((c) => {
                     // 同一挑战可能带 NC_ 前缀（如 NC_Darkness / Darkness 均表示同一挑战）
@@ -74,8 +75,8 @@ export function DescentList() {
     if (!data?.length) return <CardEmpty text="无沉沦之地" />;
     return (
         <div className="grid gap-3 md:grid-cols-2">
-            {data.map((d) => (
-                <DescentRow key={d.id} descent={d} />
+            {data.map((d,i) => (
+                <DescentRow key={d.id} descent={d} index={i+1}/>
             ))}
         </div>
     );

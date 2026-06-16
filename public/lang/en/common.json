@@ -41,6 +41,14 @@
   "time.over": "Over",
   "event.expiry": "Expiry",
   "event.grace": "Grace Period",
+  "event.now": "Now",
+  "event.next": "Next",
+  "event.normal": "Normal",
+  "event.hard": "Hard",
+  "event.time.limit": "Limited",
+  "event.time.ever": "Permanent",
+  "event.more": "Check More",
+  "event.less": "Close",
   "goal.pct": "Progress",
   "goal.rewards": "Reward Tiers",
   "goal.xp": "XP",
@@ -59,5 +67,6 @@
   "syndicate.deimos": "Cambion Drift",
   "syndicate.sanctum": "Sanctum Anatomica",
   "syndicate.zariman": "Zariman Ten Zero",
-  "syndicate.hex": "The Hex"
+  "syndicate.hex": "The Hex",
+  "resource.elitium": "Elitium"
 }
