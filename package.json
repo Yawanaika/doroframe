@@ -14,10 +14,12 @@
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {
+    "@base-ui/react": "^1.5.0",
     "@fontsource-variable/geist": "^5.2.9",
     "@tailwindcss/vite": "^4.3.0",
     "@tanstack/react-query": "^5.100.14",
     "@tanstack/react-router": "^1.170.10",
+    "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.14.1",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-global-shortcut": "^2.3.2",
