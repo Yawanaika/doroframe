@@ -113,6 +113,50 @@ pub async fn get_market_set(
     fetch_data(&state.client, &format!("{V2}/item/{slug}/set"), &language).await
 }
 
+/// `GET /v2/orders/user/{slug}` —— 当前登录用户的全部订单。
+/// 公开订单无需登录也能拉取；携带 JWT cookie 可一并取回不可见(visible=false)的订单。
+#[tauri::command]
+pub async fn get_user_orders(
+    state: tauri::State<'_, MarketHttp>,
+    slug: String,
+    token: Option<String>,
+    language: String,
+) -> Result<Value, String> {
+    let mut req = state
+        .client
+        .get(format!("{V2}/orders/user/{slug}"))
+        .header("Platform", "pc")
+        .header("Language", &language);
+    if let Some(token) = token.filter(|t| !t.is_empty()) {
+        req = req.header("Cookie", token);
+    }
+
+    let resp = req
+        .send()
+        .await
+        .map_err(|e| format!("user orders request failed: {e}"))?;
+
+    let status = resp.status();
+    let mut body: Value = resp
+        .json()
+        .await
+        .map_err(|e| format!("user orders decode failed: {e}"))?;
+
+    if let Some(error) = body.get("error") {
+        if !error.is_null() {
+            return Err(format!("market api error: {error}"));
+        }
+    }
+    if !status.is_success() {
+        return Err(format!("user orders http {status}"));
+    }
+
+    match body.get_mut("data") {
+        Some(data) => Ok(data.take()),
+        None => Err("user orders response missing data".to_string()),
+    }
+}
+
 /// `POST /v2/order` —— 创建订单。需登录态：携带 JWT cookie。
 /// 成功后返回创建的订单数据。
 #[tauri::command]

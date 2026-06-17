@@ -14,6 +14,7 @@ import { useAuthStore } from "@/store";
 import { useSettingsStore } from "@/store/settings";
 import { avatarUrl, assetUrl } from "@/features/market/assets";
 import { statusOf } from "@/features/market/constants";
+import { MyOrders } from "@/features/market/components/my-orders";
 import {
     Card,
     CardContent,
@@ -70,8 +71,8 @@ function Profile() {
     const lastSeen = lastSeenText(user.lastSeen, lang);
 
     return (
-        // flex-col gap-4 容器：个人信息卡为横向 header，后续信息卡向下堆叠
-        <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+        // flex-col gap-4 容器：个人信息卡为横向 header，订单等信息向下堆叠
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-4">
             <Card className="relative gap-0 overflow-hidden p-0">
                 <ProfileBanner background={user.background} />
 
@@ -178,6 +179,9 @@ function Profile() {
                     </div>
                 </CardContent>
             </Card>
+
+            {/* 订单展示：出售 / 求购 双栏 */}
+            <MyOrders slug={user.slug} />
         </div>
     );
 }

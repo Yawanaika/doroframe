@@ -33,6 +33,7 @@ pub fn run() {
             commands::market::get_market_items,
             commands::market::get_market_orders,
             commands::market::get_market_set,
+            commands::market::get_user_orders,
             commands::market::create_market_order,
             commands::auth::market_sign_in,
             commands::auth::market_sign_out,

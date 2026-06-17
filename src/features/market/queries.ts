@@ -10,6 +10,7 @@ import {
     fetchMarketItems,
     fetchItemOrders,
     fetchItemSet,
+    fetchUserOrders,
     createOrder,
 } from "@/api/market";
 import { useSettingsStore } from "@/store/settings";
@@ -56,6 +57,20 @@ export function useItemOrdersQuery(slug: string): UseQueryResult<ItemOrder[]> {
         queryKey: ["market", "orders", slug, lang],
         queryFn: () => fetchItemOrders(slug, lang),
         enabled: !!slug,
+        staleTime: 30_000,
+    });
+}
+
+/** 当前登录用户的全部订单：依赖 slug + token，30s 实时性 */
+export function useUserOrdersQuery(
+    slug: string | undefined,
+): UseQueryResult<ItemOrder[]> {
+    const lang = useSettingsStore((s) => s.lang);
+    const token = useAuthStore((s) => s.token);
+    return useQuery({
+        queryKey: ["market", "user-orders", slug, lang],
+        queryFn: () => fetchUserOrders(slug!, token, lang),
+        enabled: !!slug && !!token,
         staleTime: 30_000,
     });
 }

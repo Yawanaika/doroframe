@@ -42,6 +42,20 @@ export async function fetchItemOrders(
     return (raw ?? []).map(itemOrderFromJson);
 }
 
+/** `GET /v2/orders/user/{slug}` —— 当前用户的全部订单（带 token 可取回隐藏订单） */
+export async function fetchUserOrders(
+    slug: string,
+    token: string | null,
+    lang: LangCode,
+): Promise<ItemOrder[]> {
+    const raw = await invoke<unknown[]>("get_user_orders", {
+        slug,
+        token,
+        language: toMarketLang(lang),
+    });
+    return (raw ?? []).map(itemOrderFromJson);
+}
+
 /** `GET /v2/item/{slug}/set` —— 物品所属套装（主件 + 部件） */
 export async function fetchItemSet(
     slug: string,
