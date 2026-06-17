@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/store";
 import { avatarUrl } from "@/features/market/assets";
@@ -6,12 +6,20 @@ import {
     Card,
     CardContent,
     CardDescription,
+    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
+import {
+    Field,
+    FieldDescription,
+    FieldGroup,
+    FieldLabel,
+} from "@/components/ui/field";
 
 export function MarketMePage() {
     const { hydrated, hydrate, isLoggedIn } = useAuthStore();
@@ -45,31 +53,31 @@ function Profile() {
     return (
         <Card className="mx-auto w-full max-w-md">
             <CardHeader>
-                <CardTitle className="text-base">{t("market.me.title")}</CardTitle>
+                <CardTitle>{t("market.me.title")}</CardTitle>
             </CardHeader>
-            <CardContent className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                    <Avatar size="lg">
-                        <AvatarImage src={avatarUrl(user?.avatar)} alt={name} />
-                        <AvatarFallback>{name.slice(0, 2)}</AvatarFallback>
-                    </Avatar>
-                    <div className="space-y-0.5">
-                        <div className="text-sm font-medium">
-                            {user?.slug ?? "-"}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                            {user?.ingameName ?? "-"}
-                        </div>
-                    </div>
+            <CardContent className="flex items-center gap-4">
+                <Avatar className="size-12">
+                    <AvatarImage src={avatarUrl(user?.avatar)} alt={name} />
+                    <AvatarFallback>{name.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col gap-0.5">
+                    <span className="text-sm font-medium">{user?.slug ?? "-"}</span>
+                    <span className="text-xs text-muted-foreground">
+                        {user?.ingameName ?? "-"}
+                    </span>
                 </div>
+            </CardContent>
+            <CardFooter>
                 <Button
                     variant="outline"
+                    className="w-full"
                     disabled={pending}
                     onClick={handleLogout}
                 >
+                    {pending ? <Spinner data-icon="inline-start" /> : null}
                     {t("market.me.logout")}
                 </Button>
-            </CardContent>
+            </CardFooter>
         </Card>
     );
 }
@@ -84,7 +92,7 @@ function LoginForm() {
 
     const canSubmit = email.trim().length > 0 && password.length > 0 && !pending;
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e :React.SyntheticEvent) => {
         e.preventDefault();
         if (!canSubmit) return;
         setPending(true);
@@ -101,41 +109,47 @@ function LoginForm() {
     return (
         <Card className="mx-auto w-full max-w-sm">
             <CardHeader>
-                <CardTitle className="text-base">{t("market.me.login")}</CardTitle>
+                <CardTitle>{t("market.me.login")}</CardTitle>
                 <CardDescription>{t("market.me.login.desc")}</CardDescription>
             </CardHeader>
             <CardContent>
-                <form className="space-y-4" onSubmit={handleSubmit}>
-                    <div className="space-y-1.5">
-                        <label className="text-sm font-medium" htmlFor="email">
-                            {t("market.me.email")}
-                        </label>
-                        <Input
-                            id="email"
-                            type="email"
-                            autoComplete="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </div>
-                    <div className="space-y-1.5">
-                        <label className="text-sm font-medium" htmlFor="password">
-                            {t("market.me.password")}
-                        </label>
-                        <Input
-                            id="password"
-                            type="password"
-                            autoComplete="current-password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                    </div>
-                    {error ? (
-                        <div className="text-xs text-destructive">{error}</div>
-                    ) : null}
-                    <Button type="submit" className="w-full" disabled={!canSubmit}>
-                        {pending ? t("common.loading") : t("market.me.login")}
-                    </Button>
+                <form onSubmit={handleSubmit}>
+                    <FieldGroup>
+                        <Field>
+                            <FieldLabel htmlFor="email">
+                                {t("market.me.email")}
+                            </FieldLabel>
+                            <Input
+                                id="email"
+                                type="email"
+                                autoComplete="email"
+                                aria-label={t("market.me.email")}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </Field>
+                        <Field data-invalid={error ? true : undefined}>
+                            <FieldLabel htmlFor="password">
+                                {t("market.me.password")}
+                            </FieldLabel>
+                            <Input
+                                id="password"
+                                type="password"
+                                autoComplete="current-password"
+                                aria-label={t("market.me.password")}
+                                aria-invalid={error ? true : undefined}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            {error ? (
+                                <FieldDescription>{error}</FieldDescription>
+                            ) : null}
+                        </Field>
+                        <Button type="submit" disabled={!canSubmit}>
+                            {pending ? <Spinner data-icon="inline-start" /> : null}
+                            {t("market.me.login")}
+                        </Button>
+                    </FieldGroup>
                 </form>
             </CardContent>
         </Card>

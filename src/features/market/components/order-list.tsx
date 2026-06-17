@@ -209,11 +209,15 @@ export function OrderList({
                 id: "subtype",
                 accessorKey: "subtype",
                 header: () => t("market.column.subtype"),
-                cell: ({ row }) => (
-                    <span className="flex items-center gap-1 text-sm">
-                        {row.original.subtype}
-                    </span>
-                ),
+                cell: ({ row }) =>
+                    row.original.subtype ? (
+                        <span className="flex items-center gap-1 text-sm">
+                            {t(row.original.subtype, {
+                                ns: "subtype",
+                                defaultValue: row.original.subtype,
+                            })}
+                        </span>
+                    ) : null,
             },
             {
                 id: "rank",

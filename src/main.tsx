@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { warmupTrCache } from "@/lib/wpep";
-import { useSettingsStore } from "@/store";
+import { useSettingsStore, useAuthStore } from "@/store";
 import "@/lib/i18n";
 import "./style.css";
 import App from "@/App.tsx";
@@ -10,6 +10,7 @@ import App from "@/App.tsx";
 warmupTrCache("zh");
 
 useSettingsStore.getState().hydrate();
+void useAuthStore.getState().hydrate();
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>

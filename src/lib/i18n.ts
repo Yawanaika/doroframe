@@ -18,7 +18,8 @@ const DATA_FILES = [
     "npc",
     "month",
     "calender",
-    "calender.dict"
+    "calender.dict",
+    "subtype"
 ] as const;
 
 // 按语言记录已 fetch 过的文件，避免切回去再拉一次
