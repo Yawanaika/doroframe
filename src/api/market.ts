@@ -6,6 +6,8 @@ import {
     itemOrderFromJson,
     SetInfo,
     setInfoFromJson,
+    type SubmitItemOrder,
+    submitItemOrderToJson,
 } from "@/types/wf-market";
 import type { LangCode } from "@/store/settings";
 
@@ -50,4 +52,17 @@ export async function fetchItemSet(
         language: toMarketLang(lang),
     });
     return setInfoFromJson(raw);
+}
+
+/** `POST /v2/order` —— 创建订单，需登录态（token 为 JWT cookie） */
+export async function createOrder(
+    order: SubmitItemOrder,
+    token: string | null,
+    lang: LangCode,
+): Promise<void> {
+    await invoke("create_market_order", {
+        token,
+        order: submitItemOrderToJson(order),
+        language: toMarketLang(lang),
+    });
 }

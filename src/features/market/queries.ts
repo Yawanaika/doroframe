@@ -1,9 +1,21 @@
 import { useMemo } from "react";
-import { useQuery, type UseQueryResult } from "@tanstack/react-query";
-import { fetchMarketItems, fetchItemOrders, fetchItemSet } from "@/api/market";
+import {
+    useMutation,
+    useQuery,
+    useQueryClient,
+    type UseMutationResult,
+    type UseQueryResult,
+} from "@tanstack/react-query";
+import {
+    fetchMarketItems,
+    fetchItemOrders,
+    fetchItemSet,
+    createOrder,
+} from "@/api/market";
 import { useSettingsStore } from "@/store/settings";
+import { useAuthStore } from "@/store/auth";
 import { itemDisplayName } from "./assets";
-import type { Item, ItemOrder, SetInfo } from "@/types/wf-market";
+import type { Item, ItemOrder, SetInfo, SubmitItemOrder } from "@/types/wf-market";
 
 /** 搜索建议项：展示名 → slug */
 export interface Suggestion {
@@ -55,5 +67,22 @@ export function useItemSetQuery(slug: string): UseQueryResult<SetInfo> {
         queryFn: () => fetchItemSet(slug, lang),
         enabled: !!slug,
         staleTime: ITEMS_STALE,
+    });
+}
+
+/** 创建订单：成功后让对应物品的订单查询失效以便刷新 */
+export function useCreateOrderMutation(): UseMutationResult<
+    void,
+    Error,
+    SubmitItemOrder
+> {
+    const lang = useSettingsStore((s) => s.lang);
+    const token = useAuthStore((s) => s.token);
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (order: SubmitItemOrder) => createOrder(order, token, lang),
+        onSuccess: () => {
+            void qc.invalidateQueries({ queryKey: ["market", "orders"] });
+        },
     });
 }

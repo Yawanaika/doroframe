@@ -20,6 +20,7 @@ pub fn run() {
         .manage(commands::world::WorldHttp::new())
         .manage(commands::browse::BrowseHttp::new())
         .manage(commands::market::MarketHttp::new())
+        .manage(commands::auth::AuthHttp::new())
 //         .setup(|app| {
 //             commands::overlay::start_overlay_ticker(app.handle().clone());
 //             Ok(())
@@ -32,6 +33,9 @@ pub fn run() {
             commands::market::get_market_items,
             commands::market::get_market_orders,
             commands::market::get_market_set,
+            commands::market::create_market_order,
+            commands::auth::market_sign_in,
+            commands::auth::market_sign_out,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

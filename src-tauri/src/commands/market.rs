@@ -112,3 +112,49 @@ pub async fn get_market_set(
 ) -> Result<Value, String> {
     fetch_data(&state.client, &format!("{V2}/item/{slug}/set"), &language).await
 }
+
+/// `POST /v2/order` —— 创建订单。需登录态：携带 JWT cookie。
+/// 成功后返回创建的订单数据。
+#[tauri::command]
+pub async fn create_market_order(
+    state: tauri::State<'_, MarketHttp>,
+    token: Option<String>,
+    order: Value,
+    language: String,
+) -> Result<Value, String> {
+    let mut req = state
+        .client
+        .post(format!("{V2}/order"))
+        .header("Content-Type", "application/json")
+        .header("Platform", "pc")
+        .header("Language", &language)
+        .json(&order);
+    if let Some(token) = token.filter(|t| !t.is_empty()) {
+        req = req.header("Cookie", token);
+    }
+
+    let resp = req
+        .send()
+        .await
+        .map_err(|e| format!("create order request failed: {e}"))?;
+
+    let status = resp.status();
+    let mut body: Value = resp
+        .json()
+        .await
+        .map_err(|e| format!("create order decode failed: {e}"))?;
+
+    if let Some(error) = body.get("error") {
+        if !error.is_null() {
+            return Err(format!("market api error: {error}"));
+        }
+    }
+    if !status.is_success() {
+        return Err(format!("create order http {status}: {body}"));
+    }
+
+    match body.get_mut("data") {
+        Some(data) => Ok(data.take()),
+        None => Err("create order response missing data".to_string()),
+    }
+}

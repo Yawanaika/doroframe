@@ -4,12 +4,15 @@ import { SearchBar } from "@/features/market/components/search-bar";
 import { OrderList } from "@/features/market/components/order-list";
 import { ItemDetail } from "@/features/market/components/item-detail";
 import { SetDisplay } from "@/features/market/components/set-display";
+import { CreateOrderDialog } from "@/features/market/components/create-order-dialog";
 import {
     useSuggestions,
     useItemOrdersQuery,
     useItemSetQuery,
+    useMarketItemsQuery,
 } from "@/features/market/queries";
 import type { OrderTypeCode } from "@/features/market/constants";
+import { useAuthStore } from "@/store";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CardError } from "@/components/card-states";
@@ -24,10 +27,20 @@ export function MarketItemsPage() {
     const [name, setName] = useState("");
     const [setAnchor, setSetAnchor] = useState("");
     const [orderType, setOrderType] = useState<OrderTypeCode>("sell");
+    const [orderOpen, setOrderOpen] = useState(false);
+
+    const isLoggedIn = useAuthStore((s) => s.isLoggedIn());
 
     // 订单按选中物品各自查询；套装信息只在「跨套装」时才换锚点重查
     const orders = useItemOrdersQuery(slug);
     const set = useItemSetQuery(setAnchor);
+    const items = useMarketItemsQuery();
+
+    // 下单需要完整 Item（maxRank/subtypes/tags）：优先取套装内对象，回退全量列表
+    const orderItem =
+        set.data?.items.find((it) => it.slug === slug) ??
+        items.data?.find((it) => it.slug === slug) ??
+        null;
 
     // 喊话物品名按订单所有者语言决定：取选中物品的中/英文名（套装未加载时回退当前展示名）
     const selectedItem = set.data?.items.find((it) => it.slug === slug);
@@ -82,7 +95,18 @@ export function MarketItemsPage() {
                                     {t("market.type.buy")}
                                 </Button>
                             </div>
-                            <ItemDetail setInfo={set.data} slug={slug} />
+                            <div className="flex items-center gap-4">
+                                <ItemDetail setInfo={set.data} slug={slug} />
+                                {isLoggedIn && (
+                                    <Button
+                                        size="sm"
+                                        disabled={!orderItem}
+                                        onClick={() => setOrderOpen(true)}
+                                    >
+                                        {t("order.title")}
+                                    </Button>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -102,6 +126,12 @@ export function MarketItemsPage() {
                     />
                 )}
             </div>
+
+            <CreateOrderDialog
+                open={orderOpen}
+                onOpenChange={setOrderOpen}
+                item={orderItem}
+            />
         </div>
     );
 }

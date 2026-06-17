@@ -53,3 +53,26 @@ export const USER_STATUS: Record<UserStatusCode, UserStatusDef> = {
 
 export const statusOf = (code: string | undefined): UserStatusDef =>
     USER_STATUS[(code as UserStatusCode)] ?? USER_STATUS.offline;
+
+// 物品 subtype 取值 → 中文展示名
+export const SUBTYPE_LABELS: Record<string, string> = {
+    intact: "完整",
+    exceptional: "优良",
+    flawless: "无暇",
+    radiant: "光辉",
+    small: "小",
+    medium: "中",
+    large: "大",
+    basic: "基本级",
+    adorned: "装饰级",
+    magnificent: "华丽级",
+};
+
+// 含这些 tag 的物品按「每次交易」计数（perTrade=1）
+export const PER_TRADE_TAGS = new Set<string>([
+    "arcane_enhancement",
+    "ayatan_sculpture",
+    "gem",
+    "fish",
+    "relic",
+]);
