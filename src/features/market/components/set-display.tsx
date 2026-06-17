@@ -47,7 +47,7 @@ export function SetDisplay({ setInfo, slug, onSelect, isLoading }: Props) {
                     className={cn(
                         "block overflow-hidden rounded-full border bg-muted transition-all",
                         selected
-                            ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.5)]"
+                            ? "border-primary ring-2 ring-primary"
                             : "border-border hover:border-primary",
                     )}
                     style={{ width: size, height: size }}
@@ -59,7 +59,7 @@ export function SetDisplay({ setInfo, slug, onSelect, isLoading }: Props) {
                     />
                 </span>
                 {sub && (item.quantityInSet ?? 1) > 1 && (
-                    <span className="absolute -bottom-1 -right-1 rounded-md border border-primary/40 bg-black px-1 text-[9px] font-bold text-white">
+                    <span className="absolute -bottom-1 -right-1 rounded-md border border-primary/40 bg-foreground px-1 text-[9px] font-bold text-background">
                         x{item.quantityInSet}
                     </span>
                 )}

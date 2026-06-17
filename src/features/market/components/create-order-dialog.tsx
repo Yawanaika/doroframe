@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { OrderTypeToggle } from "./order-type-toggle";
 import { Spinner } from "@/components/ui/spinner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSettingsStore } from "@/store";
@@ -243,7 +244,7 @@ export function CreateOrderDialog({
                 {/* 内层裁剪圆角；弹层作为 DialogContent 直接子节点不受此 overflow 影响 */}
                 <div className="flex overflow-hidden rounded-xl">
                     {/* 左侧物品展示面板（白底） */}
-                    <div className="hidden w-56 shrink-0 flex-col justify-center border-r bg-white p-6 sm:flex dark:bg-muted">
+                    <div className="hidden w-56 shrink-0 flex-col justify-center border-r bg-card p-6 sm:flex dark:bg-muted">
                         <Avatar className="size-40 shadow-sm ring-1 ring-border">
                             <AvatarImage
                                 src={item ? itemIconUrl(item, lang, !item.setRoot) : ""}
@@ -278,24 +279,11 @@ export function CreateOrderDialog({
                                     <FieldLabel id="order-type-label">
                                         {t("order.field.type")}
                                     </FieldLabel>
-                                    <div className="flex gap-2" aria-labelledby="order-type-label">
-                                        <Button
-                                            type="button"
-                                            size="sm"
-                                            variant={orderType === "sell" ? "default" : "outline"}
-                                            onClick={() => setOrderType("sell")}
-                                        >
-                                            {t("market.type.sell")}
-                                        </Button>
-                                        <Button
-                                            type="button"
-                                            size="sm"
-                                            variant={orderType === "buy" ? "default" : "outline"}
-                                            onClick={() => setOrderType("buy")}
-                                        >
-                                            {t("market.type.buy")}
-                                        </Button>
-                                    </div>
+                                    <OrderTypeToggle
+                                        value={orderType}
+                                        onChange={setOrderType}
+                                        aria-labelledby="order-type-label"
+                                    />
                                 </Field>
                                 <Field className="items-end">
                                     <FieldLabel id="order-visibility-label">

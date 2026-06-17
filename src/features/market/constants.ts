@@ -10,7 +10,10 @@ export interface OrderTypeDef {
     /** 我方对这条订单要执行的动作（卖单→我买；买单→我卖），用于喊话模板 */
     actionZh: string;
     actionEn: string;
-    /** 强调色（卖单绿、买单蓝），对应 doroprime accentColor */
+    /**
+     * 行首 1px 发丝线的语义色（DESIGN.md 调色板内）：
+     * 卖单 = ingame green（与 USER_STATUS.ingame 同源），买单 = Tactical Blue。
+     */
     accent: string;
 }
 
@@ -21,7 +24,7 @@ export const ORDER_TYPES: Record<OrderTypeCode, OrderTypeDef> = {
         labelEn: "WTS",
         actionZh: "购买",
         actionEn: "buy",
-        accent: "rgba(34,197,94,0.7)",
+        accent: "#22c55e",
     },
     buy: {
         code: "buy",
@@ -29,7 +32,7 @@ export const ORDER_TYPES: Record<OrderTypeCode, OrderTypeDef> = {
         labelEn: "WTB",
         actionZh: "出售",
         actionEn: "sell",
-        accent: "rgba(59,130,246,0.7)",
+        accent: "#548af7",
     },
 };
 
