@@ -306,7 +306,7 @@ export function OrderList({
     if (sorted.length === 0) return <CardEmpty text={t("market.empty.no-match")} />;
 
     return (
-        <div ref={tableContainerRef} className="h-full overflow-auto rounded-xl border bg-card">
+        <div ref={tableContainerRef} className="h-full overflow-auto rounded-xl border bg-card tabular-nums">
             <Table>
                 <TableHeader className="sticky top-0 z-10 bg-card">
                     {table.getHeaderGroups().map((group) => (
