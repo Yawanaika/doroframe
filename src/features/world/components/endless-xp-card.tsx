@@ -6,6 +6,7 @@ import {useEndlessXpScheduleQuery} from "@/features/world/queries";
 import { tr, trImage } from "@/lib/wpep";
 import { cn } from "@/lib/utils";
 import {useTranslation} from "react-i18next";
+import {formatCountdown, useCountdown} from "@/hooks/use-countdown.ts";
 
 const WARFRAME_ICON =
     "/Lotus/Interface/Icons/StoreIcons/Warframes/{}.png";
@@ -43,11 +44,15 @@ const ChoiceRow = memo(function ChoiceRow({
     schedule:  EndlessXpSchedule
 }) {
     const [t] = useTranslation();
+    const countDowm = useCountdown(schedule.expiry);
     return (
         schedule.categoryChoices.map((exc) => {
             const title = exc.category === EXC_NORMAL ? t("event.normal") : t("event.hard");
             return (
-                <EventCard title={title}>
+                <EventCard
+                    title={title}
+                    countdown={formatCountdown(countDowm)}
+                >
                     <div className="flex gap-2 overflow-x-auto pb-1">
                         {exc.choice.map((c) => {
                             const { icon, title: name, accent } = choiceMeta(
