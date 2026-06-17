@@ -46,6 +46,7 @@ import {
 } from "../queries";
 import { draftToSubmitOrder } from "../order-mapper";
 import { itemDisplayName, itemIconUrl } from "../assets";
+import type { OrderTypeCode } from "../constants";
 import type { Item, SetInfo } from "@/types/wf-market";
 
 interface Props {
@@ -58,8 +59,6 @@ interface Props {
     /** 触发器：作为 DialogTrigger 的子元素渲染 */
     trigger?: React.ReactNode;
 }
-
-type OrderType = "sell" | "buy";
 
 interface FieldErrors {
     platinum?: string;
@@ -141,7 +140,7 @@ export function CreateOrderDialog({
         }
     }, [open, externalItem, lang]);
 
-    const [orderType, setOrderType] = useState<OrderType>("sell");
+    const [orderType, setOrderType] = useState<OrderTypeCode>("sell");
     const [visible, setVisible] = useState(true);
     const [numbers, setNumbers] = useState<Record<NumberKey, string>>({
         ...EMPTY_NUMBERS,
