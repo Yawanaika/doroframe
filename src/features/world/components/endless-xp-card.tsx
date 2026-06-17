@@ -1,8 +1,8 @@
 import { memo } from "react";
-import type { EndlessXpChoice } from "@/types/wf-state";
+import {EndlessXpSchedule} from "@/types/wf-state";
 import { EventCard } from "@/components/event-card";
 import { CardEmpty, CardError, CardSkeleton } from "@/components/card-states";
-import { useEndlessXpChoicesQuery } from "@/features/world/queries";
+import {useEndlessXpScheduleQuery} from "@/features/world/queries";
 import { tr, trImage } from "@/lib/wpep";
 import { cn } from "@/lib/utils";
 import {useTranslation} from "react-i18next";
@@ -38,62 +38,66 @@ function choiceMeta(category: string, name: string) {
 }
 
 const ChoiceRow = memo(function ChoiceRow({
-    choice,
+    schedule,
 }: {
-    choice: EndlessXpChoice;
+    schedule:  EndlessXpSchedule
 }) {
     const [t] = useTranslation();
-    const title =
-        choice.category === EXC_NORMAL ? t("event.normal") : t("event.hard");
     return (
-        <EventCard title={title}>
-            <div className="flex gap-2 overflow-x-auto pb-1">
-                {choice.choice.map((c) => {
-                    const { icon, title: name, accent } = choiceMeta(
-                        choice.category,
-                        c,
-                    );
-                    return (
-                        <div
-                            key={c}
-                            className="relative h-40 w-28 shrink-0 overflow-hidden rounded-md"
-                        >
-                            <img
-                                src="/images/endless/bg.png"
-                                alt=""
-                                className="absolute inset-0 h-full w-full object-cover"
-                            />
-                            <img
-                                src={icon}
-                                alt={name}
-                                loading="lazy"
-                                className="absolute inset-x-0 top-0 mx-auto h-24 w-24 object-contain"
-                            />
-                            <div
-                                className={cn(
-                                    "absolute inset-x-1 bottom-8 text-center text-xs font-bold drop-shadow",
-                                    accent,
-                                )}
-                            >
-                                {name}
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
-        </EventCard>
-    );
+        schedule.categoryChoices.map((exc) => {
+            const title = exc.category === EXC_NORMAL ? t("event.normal") : t("event.hard");
+            return (
+                <EventCard title={title}>
+                    <div className="flex gap-2 overflow-x-auto pb-1">
+                        {exc.choice.map((c) => {
+                            const { icon, title: name, accent } = choiceMeta(
+                                exc.category,
+                                c,
+                            );
+                            return (
+                                <div
+                                    key={c}
+                                    className="relative h-40 w-28 shrink-0 overflow-hidden rounded-md"
+                                >
+                                    <img
+                                        src="/images/endless/bg.png"
+                                        alt=""
+                                        className="absolute inset-0 h-full w-full object-cover"
+                                    />
+                                    <img
+                                        src={icon}
+                                        alt={name}
+                                        loading="lazy"
+                                        className="absolute inset-x-0 top-0 mx-auto h-24 w-24 object-contain"
+                                    />
+                                    <div
+                                        className={cn(
+                                            "absolute inset-x-1 bottom-8 text-center text-xs font-bold drop-shadow",
+                                            accent,
+                                        )}
+                                    >
+                                        {name}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </EventCard>
+            );
+        })
+    )
+   
 });
 
 export function EndlessXpList() {
-    const { data, isPending, isError, error } = useEndlessXpChoicesQuery();
+    const { data, isPending, isError, error } = useEndlessXpScheduleQuery();
     if (isPending) return <CardSkeleton />;
     if (isError) return <CardError message={String(error)} />;
     if (!data?.length) return <CardEmpty text="无无尽回廊" />;
     return (
         <div className="grid gap-3 md:grid-cols-2">
             {data.map((c) => (
-                <ChoiceRow key={c.id} choice={c} />
+                <ChoiceRow key={c.id} schedule={c} />
             ))}
         </div>
     );
