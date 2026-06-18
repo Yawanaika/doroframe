@@ -4,9 +4,9 @@ import {
     useCreateOrderMutation,
     useEditOrderMutation,
     useCloseOrderMutation,
-    useDeleteOrderMutation,
+    useDeleteOrderMutation, useShowOrderMutation,
 } from "@/features/market/queries";
-import type { SubmitItemOrder } from "@/types/wf-market";
+import type {ItemOrder, SubmitItemOrder} from "@/types/wf-market";
 
 /**
  * 订单写操作的统一入口：把 create/edit/close/delete 四个 mutation
@@ -19,6 +19,7 @@ export function useOrderActions() {
     const { t } = useTranslation();
     const createMut = useCreateOrderMutation();
     const editMut = useEditOrderMutation();
+    const showMut = useShowOrderMutation();
     const closeMut = useCloseOrderMutation();
     const deleteMut = useDeleteOrderMutation();
 
@@ -37,6 +38,20 @@ export function useOrderActions() {
     };
 
     const handleEdit = async (
+        id: string,
+        order: SubmitItemOrder,
+    ): Promise<boolean> => {
+        try {
+            await editMut.mutateAsync({ id, order });
+            toast.success(t("order.edit.success"));
+            return true;
+        } catch (e) {
+            fail(e);
+            return false;
+        }
+    };
+    
+    const handleShow = async (
         id: string,
         order: SubmitItemOrder,
     ): Promise<boolean> => {
@@ -78,11 +93,53 @@ export function useOrderActions() {
     return {
         handleSubmit,
         handleEdit,
+        handleShow,
         handleClose,
         handleDelete,
         creating: createMut.isPending,
         editing: editMut.isPending,
+        showing: showMut.isPending,
         closing: closeMut.isPending,
         deleting: deleteMut.isPending,
     };
+}
+
+export type OrderAuction = "submit" | "close" | "show" | "edit";
+
+export const ToSubmit=(order: ItemOrder, auction:OrderAuction):SubmitItemOrder=>{
+    switch (auction){
+        case "submit":
+            return {
+                id: order.id,
+                itemId: order.itemId,
+                type: order.type,
+                platinum: order.platinum,
+                quantity: order.quantity,
+                visible: order.visible,
+                perTrade: order.perTrade,
+                rank: order.rank,
+                charges: order.charges,
+                subtype: order.subtype,
+                amberStars: order.amberStars,
+                cyanStars: order.cyanStars,
+            }
+        case "close":
+            return {
+                quantity: order.perTrade,
+            }
+        case "show":
+            return{
+                visible: !order.visible,
+            }
+        case "edit":
+            return{
+                platinum: order.platinum,
+                quantity: order.quantity,
+                visible: order.visible,
+                rank: order.rank,
+                charges: order.charges,
+                amberStars: order.amberStars,
+                cyanStars: order.cyanStars,
+            }
+    }
 }

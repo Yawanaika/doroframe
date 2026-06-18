@@ -113,6 +113,21 @@ export async function editOrder(
     return itemOrderFromJson(raw);
 }
 
+export async function showOrder(
+    id: string,
+    order: SubmitItemOrder,
+    token: string | null,
+    lang: LangCode,
+): Promise<ItemOrder> {
+    const raw = await invoke("edit_market_order", {
+        id,
+        token,
+        order: submitItemOrderToJson(order),
+        language: toMarketLang(lang),
+    });
+    return itemOrderFromJson( raw);
+}
+
 export async function closeOrder(
     id: string,
     token: string | null,

@@ -9,7 +9,7 @@ export interface Transaction {
     createdAt: string;
     updatedAt: string;
     item: Item;
-    user: User;
+    user?: User;
 }
 
 interface Item{
@@ -26,7 +26,7 @@ export function transactionFromJson(json: any): Transaction {
         createdAt: json.createdAt,
         updatedAt: json.updatedAt,
         item: itemFromJson(json.item),
-        user: userFromJson(json.user),
+        user: json.user? userFromJson(json.user): undefined,
     }
 }
 
@@ -40,7 +40,7 @@ export function transactionToJson(transaction: Transaction): any {
         createdAt: transaction.createdAt,
         updatedAt: transaction.updatedAt,
         item: itemToJson(transaction.item),
-        user: userToJson(transaction.user),
+        user: transaction.user? userToJson(transaction.user): undefined,
     }
 }
 

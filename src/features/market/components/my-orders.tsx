@@ -1,14 +1,16 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { EyeOffIcon, PackageOpenIcon } from "lucide-react";
+import {CheckIcon, EyeIcon, EyeOffIcon, PackageOpenIcon, SquarePenIcon, Trash2Icon} from "lucide-react";
 import { useSettingsStore } from "@/store/settings";
-import { useMarketItemsQuery, useUserOrdersQuery } from "../queries";
-import { ORDER_TYPES, type OrderTypeCode } from "../constants";
-import { itemDisplayName, itemIconUrl } from "../assets";
+import { useMarketItemsQuery, useUserOrdersQuery } from "@/features/market/queries";
+import { ToSubmit, useOrderActions} from "@/features/market/order-actions";
+import { ORDER_TYPES, type OrderTypeCode } from "@/features/market/constants";
+import { itemDisplayName, itemIconUrl } from "@/features/market/assets";
 import type { Item, ItemOrder } from "@/types/wf-market";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button.tsx";
 
 /**
  * 当前登录用户的订单展示。
@@ -154,10 +156,14 @@ function OrderRow({
     lang: "zh" | "en";
 }) {
     const { t } = useTranslation();
+    const { handleClose, handleDelete, handleShow, closing, deleting } = useOrderActions();
     const name = item ? itemDisplayName(item, lang) : (order.itemId ?? "—");
     const iconUrl = item ? itemIconUrl(item, lang, !item.setRoot) : "";
     const dimmed = order.visible === false;
-
+    
+    const onClose = () => void handleClose(order.id, ToSubmit(order, "close"));
+    const onDelete = () => void handleDelete(order.id);
+    const onShow = () => void handleShow(order.id, ToSubmit(order, "show"));
     return (
         <li
             className={cn(
@@ -220,6 +226,40 @@ function OrderRow({
                 <span className="font-mono text-xs tabular-nums text-muted-foreground">
                     ×{order.quantity}
                 </span>
+            </div>
+            <div className="flex shrink-0 flex-col items-end gap-0.5">
+                <Button
+                    type="button"
+                    onClick={onClose}
+                    disabled={closing || deleting}
+                >
+                    <CheckIcon data-icon="inline-start" />
+                    已售出
+                </Button>
+                <Button
+                    type="button"
+                    disabled={closing || deleting}
+                >
+                    <SquarePenIcon data-icon="inline-start" />
+                    编辑
+                </Button>
+                <Button
+                    type="button"
+                    onClick={onShow}
+                    disabled={closing || deleting}
+                >
+                    {dimmed?<EyeIcon data-icon="inline-start" />:<EyeOffIcon data-icon="inline-start" />}
+                    {dimmed?"展示":"隐藏"}
+                </Button>
+                <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={onDelete}
+                    disabled={closing || deleting}
+                >
+                    <Trash2Icon data-icon="inline-start" />
+                    删除
+                </Button>
             </div>
         </li>
     );

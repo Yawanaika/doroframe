@@ -13,7 +13,7 @@ import {
     fetchUserOrders,
     createOrder,
     editOrder,
-    fetchItemOrdersTop, closeOrder, deleteOrder,
+    fetchItemOrdersTop, closeOrder, deleteOrder, showOrder,
 } from "@/api/market";
 import { useSettingsStore } from "@/store/settings";
 import { useAuthStore } from "@/store/auth";
@@ -130,6 +130,22 @@ export function useEditOrderMutation(): UseMutationResult<
             void qc.invalidateQueries({ queryKey: ["market", "user-orders"] });
         },
     });
+}
+
+export function useShowOrderMutation(): UseMutationResult<
+    ItemOrder,
+    Error,
+    { id: string; order: SubmitItemOrder }
+> {
+    const lang = useSettingsStore((s) => s.lang);
+    const token = useAuthStore((s) => s.token);
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, order }) => showOrder(id, order, token, lang),
+        onSuccess: () => {
+            void qc.invalidateQueries({ queryKey: ["market", "orders"] });
+        }
+    })
 }
 
 /** 关闭（成交）订单：成功后让物品订单与「我的订单」查询失效以刷新 */
