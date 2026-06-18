@@ -17,7 +17,7 @@ import {
 } from "@/api/market";
 import { useSettingsStore } from "@/store/settings";
 import { useAuthStore } from "@/store/auth";
-import { itemDisplayName } from "./assets";
+import { itemDisplayName } from "@/features/market/assets";
 import type { Item, ItemOrder, SetInfo, SubmitItemOrder, TopOrders, Transaction } from "@/types/wf-market";
 
 /** 搜索建议项：展示名 → slug */

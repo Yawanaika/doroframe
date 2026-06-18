@@ -1,5 +1,5 @@
 import type { SubmitItemOrder } from "@/types/wf-market";
-import { PER_TRADE_TAGS } from "./constants";
+import { PER_TRADE_TAGS } from "@/features/market/constants";
 
 /** 下单表单草稿 */
 export interface SubmitOrderDraft {

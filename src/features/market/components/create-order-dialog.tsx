@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import {
     Dialog,
@@ -34,16 +33,16 @@ import {
 } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { OrderTypeToggle } from "./order-type-toggle";
+import { OrderTypeToggle } from "@/features/market/components/order-type-toggle";
 import { Spinner } from "@/components/ui/spinner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSettingsStore } from "@/store";
 import {
-    useCreateOrderMutation,
     useMarketItemsQuery,
     useSuggestions,
     type Suggestion,
 } from "../queries";
+import { useOrderActions } from "../order-actions";
 import { draftToSubmitOrder } from "../order-mapper";
 import { itemDisplayName, itemIconUrl } from "../assets";
 import type { OrderTypeCode } from "../constants";
@@ -95,7 +94,7 @@ export function CreateOrderDialog({
 }: Props) {
     const { t } = useTranslation();
     const lang = useSettingsStore((s) => s.lang);
-    const createOrder = useCreateOrderMutation();
+    const { handleSubmit: submitOrder, creating } = useOrderActions();
 
     // 弹窗内独立临时状态：search 为输入框文本，pickedSlug 为已选 slug。
     // 切换物品只动这两者，永不回写外部 setInfo/slug。
@@ -201,29 +200,23 @@ export function CreateOrderDialog({
         setErrors(errs);
         if (Object.values(errs).some(Boolean)) return;
 
-        try {
-            const order = draftToSubmitOrder({
-                itemId: item.id,
-                orderType,
-                visible,
-                platinum: numOrNull(numbers.platinum) ?? undefined,
-                quantity: numOrNull(numbers.quantity) ?? undefined,
-                amberStars: showAmber
-                    ? numOrNull(numbers.amberStars) ?? undefined
-                    : undefined,
-                cyanStars: showCyan
-                    ? numOrNull(numbers.cyanStars) ?? undefined
-                    : undefined,
-                rank: showRank ? numOrNull(numbers.rank) ?? undefined : undefined,
-                subtype: subtype !== "" ? subtype : undefined,
-                tags: item.tags,
-            });
-            await createOrder.mutateAsync(order);
-            toast.success(t("order.submit.success"));
-            clearForm();
-        } catch (e) {
-            toast.error(e instanceof Error ? e.message : String(e));
-        }
+        const order = draftToSubmitOrder({
+            itemId: item.id,
+            orderType,
+            visible,
+            platinum: numOrNull(numbers.platinum) ?? undefined,
+            quantity: numOrNull(numbers.quantity) ?? undefined,
+            amberStars: showAmber
+                ? numOrNull(numbers.amberStars) ?? undefined
+                : undefined,
+            cyanStars: showCyan
+                ? numOrNull(numbers.cyanStars) ?? undefined
+                : undefined,
+            rank: showRank ? numOrNull(numbers.rank) ?? undefined : undefined,
+            subtype: subtype !== "" ? subtype : undefined,
+            tags: item.tags,
+        });
+        if (await submitOrder(order)) clearForm();
     };
 
     const name = item ? itemDisplayName(item, lang) : "";
@@ -438,10 +431,10 @@ export function CreateOrderDialog({
                         <div className="flex justify-end border-t bg-muted/30 p-4">
                             <Button
                                 className="min-w-32"
-                                disabled={!item || createOrder.isPending}
+                                disabled={!item || creating}
                                 onClick={handleSubmit}
                             >
-                                {createOrder.isPending ? (
+                                {creating ? (
                                     <Spinner data-icon="inline-start" />
                                 ) : null}
                                 {t("order.send")}

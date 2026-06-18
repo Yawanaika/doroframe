@@ -1,6 +1,6 @@
 import type { Item, SetInfo } from "@/types/wf-market";
 import { useSettingsStore } from "@/store/settings";
-import { itemDisplayName, itemIconUrl } from "../assets";
+import { itemDisplayName, itemIconUrl } from "@/features/market/assets";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 

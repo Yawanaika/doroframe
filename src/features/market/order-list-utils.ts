@@ -1,7 +1,7 @@
 // 订单列表的纯逻辑：喊话模板 + 默认排序。无 React 依赖，便于单测复用。
 
 import type { ItemOrder } from "@/types/wf-market";
-import { ORDER_TYPES, statusOf, type OrderTypeCode } from "./constants";
+import { ORDER_TYPES, statusOf, type OrderTypeCode } from "@/features/market/constants";
 
 /**
  * 喊话文案：按订单所有者语言切换中英模板。

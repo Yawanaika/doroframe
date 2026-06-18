@@ -12,9 +12,9 @@ import {
 } from "@tanstack/react-table";
 import type { ItemOrder } from "@/types/wf-market";
 import { useSettingsStore } from "@/store/settings";
-import { ORDER_TYPES, type OrderTypeCode } from "../constants";
-import { sortOrders } from "../order-list-utils";
-import { useOrderColumns, useColumnVisibility } from "./order-columns";
+import { ORDER_TYPES, type OrderTypeCode } from "@/features/market/constants";
+import { sortOrders } from "@/features/market/order-list-utils";
+import { useOrderColumns, useColumnVisibility } from "@/features/market/components/order-columns";
 import {
     Table,
     TableBody,

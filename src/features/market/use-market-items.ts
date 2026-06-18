@@ -5,8 +5,8 @@ import {
     useItemOrdersQuery,
     useItemSetQuery,
     type Suggestion,
-} from "./queries";
-import type { OrderTypeCode } from "./constants";
+} from "@/features/market/queries";
+import type { OrderTypeCode } from "@/features/market/constants";
 import { useAuthStore } from "@/store";
 import type { ItemOrder, SetInfo } from "@/types/wf-market";
 

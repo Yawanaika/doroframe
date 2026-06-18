@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import type { OrderTypeCode } from "../constants";
+import type { OrderTypeCode } from "@/features/market/constants";
 
 interface Props {
     value: OrderTypeCode;

@@ -3,9 +3,9 @@ import { CopyIcon } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { TFunction } from "i18next";
 import type { ItemOrder } from "@/types/wf-market";
-import { statusOf } from "../constants";
-import { whisper } from "../order-list-utils";
-import { avatarUrl } from "../assets";
+import { statusOf } from "@/features/market/constants";
+import { whisper } from "@/features/market/order-list-utils";
+import { avatarUrl } from "@/features/market/assets";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
