@@ -14,7 +14,9 @@
   "market.type.buy": "求购",
   "market.action.buy": "买",
   "market.action.sell": "卖",
-  "market.rank": "{{rank}} 级",
+  "market.rank": "等级: {{rank}} / {{maxRank}}",
+  "market.amberStars": "琥珀星: {{amberStars}} / {{maxAmberStars}}",
+  "market.cyanStars": "青蓝星: {{cyanStars}} / {{maxCyanStars}}",
   "market.detail.mastery": "精通段位:",
   "market.detail.ducats": "杜卡德:",
   "market.detail.tax": "交易税:",
@@ -133,5 +135,16 @@
   "market.column.quantity": "数量",
   "market.column.reputation": "声誉",
   "market.column.subtype": "类型",
-  "market.search.no-match": "无匹配物品"
+  "market.search.no-match": "无匹配物品",
+  "market.me.local.zh-hans": "简体中文",
+  "market.me.local.en": "English",
+  "market.me.orders.action.sold": "成交",
+  "market.me.orders.action.sold.hint": "标记成交一件",
+  "market.me.orders.action.edit": "编辑",
+  "market.me.orders.action.add": "+1",
+  "market.me.orders.action.add.hint": "数量加一",
+  "market.me.orders.action.show": "可见",
+  "market.me.orders.action.hide": "隐藏",
+  "market.me.orders.action.delete": "删除",
+  "market.me.orders.action.more": "更多操作"
 }

@@ -110,6 +110,7 @@ export function useCreateOrderMutation(): UseMutationResult<
         mutationFn: (order: SubmitItemOrder) => createOrder(order, token, lang),
         onSuccess: () => {
             void qc.invalidateQueries({ queryKey: ["market", "orders"] });
+            void qc.invalidateQueries({ queryKey: ["market", "user-orders"] });
         },
     });
 }

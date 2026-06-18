@@ -9,6 +9,7 @@ export interface Item {
     setParts?: string[];
     quantityInSet?: number;
     rarity?: string;
+    baseEndo?: number;
     bulkTradable?: number;
     subtypes?: string[];
     maxRank?: number;
@@ -35,6 +36,7 @@ export function itemFromJson(json: any): Item {
         setParts: json?.setParts ?? [],
         quantityInSet: json?.quantityInSet,
         rarity: json?.rarity,
+        baseEndo: json?.baseEndo,
         bulkTradable: json?.bulkTradable,
         subtypes: json?.subtypes ?? [],
         maxRank: json?.maxRank,
@@ -62,6 +64,7 @@ export function itemToJson(item: Item): any {
         setParts: item.setParts,
         quantityInSet: item.quantityInSet,
         rarity: item.rarity,
+        baseEndo: item.baseEndo,
         bulkTradable: item.bulkTradable,
         subtypes: item.subtypes,
         maxRank: item.maxRank,

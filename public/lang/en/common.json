@@ -14,7 +14,9 @@
   "market.type.buy": "WTB",
   "market.action.buy": "Buy",
   "market.action.sell": "Sell",
-  "market.rank": "Rank {{rank}}",
+  "market.rank": "Rank: {{rank}} / {{maxRank}}",
+  "market.amberStars": "AmberStars: {{amberStars}} / {{maxAmberStars}}",
+  "market.cyanStars": "CyanStars: {{cyanStars}} / {{maxCyanStars}}",
   "market.detail.mastery": "Mastery:",
   "market.detail.ducats": "Ducats:",
   "market.detail.tax": "Tax:",
@@ -133,5 +135,16 @@
   "market.column.quantity": "Qty",
   "market.column.reputation": "Reputation",
   "market.column.subtype": "SubType",
-  "market.search.no-match": "No matching items"
+  "market.search.no-match": "No matching items",
+  "market.me.local.zh-hans": "简体中文",
+  "market.me.local.en": "English",
+  "market.me.orders.action.sold": "Sold",
+  "market.me.orders.action.sold.hint": "Mark one unit as sold",
+  "market.me.orders.action.edit": "Edit",
+  "market.me.orders.action.add": "+1",
+  "market.me.orders.action.add.hint": "Add one to quantity",
+  "market.me.orders.action.show": "Make visible",
+  "market.me.orders.action.hide": "Hide",
+  "market.me.orders.action.delete": "Delete",
+  "market.me.orders.action.more": "More actions"
 }

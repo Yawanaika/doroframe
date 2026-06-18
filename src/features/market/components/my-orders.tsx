@@ -1,6 +1,14 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import {CheckIcon, EyeIcon, EyeOffIcon, PackageOpenIcon, SquarePenIcon, Trash2Icon} from "lucide-react";
+import {
+    CheckIcon,
+    EyeIcon,
+    EyeOffIcon,
+    MoreHorizontalIcon,
+    PackageOpenIcon,
+    SquarePenIcon,
+    Trash2Icon,
+} from "lucide-react";
 import { useSettingsStore } from "@/store/settings";
 import { useMarketItemsQuery, useUserOrdersQuery } from "@/features/market/queries";
 import { ToSubmit, useOrderActions} from "@/features/market/order-actions";
@@ -9,8 +17,21 @@ import { itemDisplayName, itemIconUrl } from "@/features/market/assets";
 import type { Item, ItemOrder } from "@/types/wf-market";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import {cn, getSumEndo} from "@/lib/utils";
 import { Button } from "@/components/ui/button.tsx";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 /**
  * 当前登录用户的订单展示。
@@ -165,10 +186,12 @@ function OrderRow({
     const onDelete = () => void handleDelete(order.id);
     const onShow = () => void handleEdit(order.id, ToSubmit(order, "show"));
     const onAdd = () => void handleEdit(order.id, ToSubmit(order, "add"));
+    const busy = closing || deleting || editing;
+
     return (
         <li
             className={cn(
-                "flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/40",
+                "group/row flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/40",
                 dimmed && "opacity-55",
             )}
         >
@@ -197,7 +220,23 @@ function OrderRow({
                 <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
                     {order.rank != null && item?.maxRank ? (
                         <span>
-                            {t("market.rank", { rank: order.rank })}/{item.maxRank}
+                            {t("market.rank", { rank: order.rank ,maxRank: item.maxRank})}
+                        </span>
+                    ) : null}
+                    {order.amberStars != null && item?.maxAmberStars ? (
+                        <span>
+                            {t("market.amberStars", { amberStars: order.amberStars, maxAmberStars: item.maxAmberStars })}
+                        </span>
+                    ) : null}
+                    {order.cyanStars != null && item?.maxCyanStars ? (
+                        <span>
+                            {t("market.cyanStars", { cyanStars: order.cyanStars, maxCyanStars: item.maxCyanStars })}
+                        </span>
+                    ) : null}
+                    {order.amberStars != null || order.cyanStars != null ? (
+                        <span className="flex items-center gap-1 font-mono text-xs">
+                            <img src={"/images/resources/FusionPoints.png"} alt="" className="size-4" />
+                            {getSumEndo(item, order.amberStars, order.cyanStars)}
                         </span>
                     ) : null}
                     {order.subtype ? (
@@ -228,47 +267,79 @@ function OrderRow({
                     ×{order.quantity}
                 </span>
             </div>
-            <div className="flex shrink-0 flex-col items-end gap-0.5">
-                <Button
-                    type="button"
-                    onClick={onClose}
-                    disabled={closing || deleting || editing}
-                >
-                    <CheckIcon data-icon="inline-start" />
-                    已售出
-                </Button>
-                <Button
-                    type="button"
-                    disabled={closing || deleting || editing}
-                >
-                    <SquarePenIcon data-icon="inline-start" />
-                    编辑
-                </Button>
-                <Button
-                    type="button"
-                    onClick={onAdd}
-                    disabled={closing || deleting || editing}
-                >
-                    <SquarePenIcon data-icon="inline-start" />
-                    +1
-                </Button>
-                <Button
-                    type="button"
-                    onClick={onShow}
-                    disabled={closing || deleting || editing}
-                >
-                    {dimmed?<EyeIcon data-icon="inline-start" />:<EyeOffIcon data-icon="inline-start" />}
-                    {dimmed?"展示":"隐藏"}
-                </Button>
-                <Button
-                    type="button"
-                    variant="destructive"
-                    onClick={onDelete}
-                    disabled={closing || deleting || editing}
-                >
-                    <Trash2Icon data-icon="inline-start" />
-                    删除
-                </Button>
+
+            {/* 操作区：主操作「成交」+ 快捷「+1」，其余收进溢出菜单 */}
+            <div className="flex shrink-0 items-center gap-1">
+                <TooltipProvider delayDuration={300}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                type="button"
+                                size="sm"
+                                onClick={onClose}
+                                disabled={busy}
+                            >
+                                <CheckIcon data-icon="inline-start" />
+                                {t("market.me.orders.action.sold")}
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            {t("market.me.orders.action.sold.hint")}
+                        </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                type="button"
+                                size="icon-sm"
+                                variant="outline"
+                                aria-label={t("market.me.orders.action.add.hint")}
+                                onClick={onAdd}
+                                disabled={busy}
+                            >
+                                {t("market.me.orders.action.add")}
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            {t("market.me.orders.action.add.hint")}
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button
+                            type="button"
+                            size="icon-sm"
+                            variant="ghost"
+                            aria-label={t("market.me.orders.action.more")}
+                            disabled={busy}
+                        >
+                            <MoreHorizontalIcon />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-40">
+                        <DropdownMenuItem disabled={busy}>
+                            <SquarePenIcon />
+                            {t("market.me.orders.action.edit")}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onSelect={onShow} disabled={busy}>
+                            {dimmed ? <EyeIcon /> : <EyeOffIcon />}
+                            {dimmed
+                                ? t("market.me.orders.action.show")
+                                : t("market.me.orders.action.hide")}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                            variant="destructive"
+                            onSelect={onDelete}
+                            disabled={busy}
+                        >
+                            <Trash2Icon />
+                            {t("market.me.orders.action.delete")}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </li>
     );

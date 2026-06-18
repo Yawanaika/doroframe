@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import {useTranslation} from "react-i18next";
+import {Item} from "@/types/wf-market";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -54,4 +55,13 @@ export function dayOfYearTo1999Date( i:number) {
   
   // 理论上不会到达这里
   return;
+}
+
+export function getSumEndo(item: Item | undefined, amberStars?: number, cyanStars?: number): number{
+    if(item && item.baseEndo && item.endoMultiplier){
+        let sumEndo =  (item.baseEndo + 100 * (amberStars ?? 0) + 50 * (cyanStars ?? 0))
+            * (1 + item.endoMultiplier * ((amberStars ?? 0) + (cyanStars ?? 0)) / ((item?.maxCyanStars ?? 0 ) + (item?.maxAmberStars ?? 0)))
+        return Math.round(sumEndo);
+    }
+    return 0 ;
 }

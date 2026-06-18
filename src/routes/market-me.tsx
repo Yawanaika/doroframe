@@ -151,7 +151,7 @@ function Profile() {
                             />
                             <Stat
                                 label={t("market.me.region")}
-                                value={(user.region || "—").toUpperCase()}
+                                value={t(`market.me.local.${user.locale}`)}
                                 icon={<GlobeIcon />}
                             />
                             {user.crossplay ? (
