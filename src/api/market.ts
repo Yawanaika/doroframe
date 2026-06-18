@@ -83,6 +83,23 @@ export async function fetchItemSet(
     return setInfoFromJson(raw);
 }
 
+/** `PATCH /v2/orders/group/{id}` —— 批量改某订单组的可见性，需登录态。
+ * `order` 仅含 `{ type, visible }`；返回受影响的订单数 `updated`。 */
+export async function editOrdersGroup(
+    id: string,
+    order: SubmitItemOrder,
+    token: string | null,
+    lang: LangCode,
+): Promise<number> {
+    const raw = await invoke<{ updated?: number }>("edit_market_orders_group", {
+        id,
+        token,
+        order: submitItemOrderToJson(order),
+        language: toMarketLang(lang),
+    });
+    return raw?.updated ?? 0;
+}
+
 /** `POST /v2/order` —— 创建订单，需登录态（token 为 JWT cookie） */
 export async function createOrder(
     order: SubmitItemOrder,

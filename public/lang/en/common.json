@@ -67,6 +67,7 @@
   "order.edit.success": "Order updated",
   "order.close.success": "Order closed",
   "order.delete.success": "Order deleted",
+  "order.group.success": "Updated {{count}} orders",
   "state.title.active-mission": "Void Fissure",
   "state.title.alert": "Alerts",
   "state.title.arby": "Arbitration",
@@ -145,5 +146,7 @@
   "market.me.orders.action.show": "Make visible",
   "market.me.orders.action.hide": "Hide",
   "market.me.orders.action.delete": "Delete",
-  "market.me.orders.action.more": "More actions"
+  "market.me.orders.action.more": "More actions",
+  "market.me.orders.action.showAll": "Show all",
+  "market.me.orders.action.hideAll": "Hide all"
 }

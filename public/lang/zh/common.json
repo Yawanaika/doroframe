@@ -67,6 +67,7 @@
   "order.edit.success": "订单已更新",
   "order.close.success": "订单已成交",
   "order.delete.success": "订单已删除",
+  "order.group.success": "已更新 {{count}} 条订单",
   "state.title.active-mission": "虚空裂缝",
   "state.title.alert": "警报",
   "state.title.arby": "仲裁",
@@ -145,5 +146,7 @@
   "market.me.orders.action.show": "可见",
   "market.me.orders.action.hide": "隐藏",
   "market.me.orders.action.delete": "删除",
-  "market.me.orders.action.more": "更多操作"
+  "market.me.orders.action.more": "更多操作",
+  "market.me.orders.action.showAll": "全部显示",
+  "market.me.orders.action.hideAll": "全部隐藏"
 }

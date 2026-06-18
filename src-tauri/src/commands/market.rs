@@ -186,6 +186,28 @@ pub async fn edit_market_order(
     .await
 }
 
+/// `PATCH /v2/orders/group/{id}` —— 批量改某虚拟订单组的可见性。需登录态：携带 JWT cookie。
+/// `id` 为组 id（当前支持 `all` / `ungrouped`）；`order` 为 `{ visible, type }`，
+/// 按 type（sell/buy）筛选该组订单并统一设置 visible。返回 `{ updated: <数量> }`。
+#[tauri::command]
+pub async fn edit_market_orders_group(
+    state: tauri::State<'_, MarketHttp>,
+    id: String,
+    token: Option<String>,
+    order: Value,
+    language: String,
+) -> Result<Value, String> {
+    request_data(
+        &state.client,
+        reqwest::Method::PATCH,
+        &format!("{V2}/orders/group/{id}"),
+        &language,
+        token.as_deref(),
+        Some(&order),
+    )
+    .await
+}
+
 /// `POST /v2/order` —— 创建订单。需登录态：携带 JWT cookie。
 /// 成功后返回创建的订单数据。
 #[tauri::command]

@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import {
     useCreateOrderMutation,
     useEditOrderMutation,
+    useEditOrdersGroupMutation,
     useCloseOrderMutation,
     useDeleteOrderMutation,
 } from "@/features/market/queries";
@@ -19,6 +20,7 @@ export function useOrderActions() {
     const { t } = useTranslation();
     const createMut = useCreateOrderMutation();
     const editMut = useEditOrderMutation();
+    const groupMut = useEditOrdersGroupMutation();
     const closeMut = useCloseOrderMutation();
     const deleteMut = useDeleteOrderMutation();
 
@@ -43,6 +45,20 @@ export function useOrderActions() {
         try {
             await editMut.mutateAsync({ id, order });
             toast.success(t("order.edit.success"));
+            return true;
+        } catch (e) {
+            fail(e);
+            return false;
+        }
+    };
+
+    const handleGroupVisible = async (
+        id: string,
+        order: SubmitItemOrder,
+    ): Promise<boolean> => {
+        try {
+            const updated = await groupMut.mutateAsync({ id, order });
+            toast.success(t("order.group.success", { count: updated }));
             return true;
         } catch (e) {
             fail(e);
@@ -78,10 +94,12 @@ export function useOrderActions() {
     return {
         handleSubmit,
         handleEdit,
+        handleGroupVisible,
         handleClose,
         handleDelete,
         creating: createMut.isPending,
         editing: editMut.isPending,
+        grouping: groupMut.isPending,
         closing: closeMut.isPending,
         deleting: deleteMut.isPending,
     };
@@ -130,3 +148,15 @@ export const ToSubmit=(order: ItemOrder, auction:OrderAuction):SubmitItemOrder=>
             }
     }
 }
+
+/**
+ * `PATCH /v2/orders/group/{id}` 的请求体构造：按订单类型批量设置可见性。
+ * 与 ToSubmit 同样只挑该端点需要的字段（{ type, visible }）。
+ */
+export const ToGroupSubmit = (
+    type: string,
+    visible: boolean,
+): SubmitItemOrder => ({
+    type,
+    visible,
+});

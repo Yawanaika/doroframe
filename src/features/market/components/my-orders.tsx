@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useSettingsStore } from "@/store/settings";
 import { useMarketItemsQuery, useUserOrdersQuery } from "@/features/market/queries";
-import { ToSubmit, useOrderActions} from "@/features/market/order-actions";
+import { ToSubmit, ToGroupSubmit, useOrderActions} from "@/features/market/order-actions";
 import { ORDER_TYPES, type OrderTypeCode } from "@/features/market/constants";
 import { itemDisplayName, itemIconUrl } from "@/features/market/assets";
 import type { Item, ItemOrder } from "@/types/wf-market";
@@ -103,15 +103,22 @@ function OrderPanel({
     lang: "zh" | "en";
 }) {
     const { t } = useTranslation();
+    const { handleGroupVisible, grouping } = useOrderActions();
     const def = ORDER_TYPES[type];
     const label = lang === "zh" ? def.labelZh : def.labelEn;
 
     const visible = orders.filter((o) => o.visible ?? true).length;
     const hidden = orders.length - visible;
 
+    const hasOrders = !loading && !error && orders.length > 0;
+
+    // 批量改本栏（按 type 区分 sell/buy）可见性，组 id 用默认组 all
+    const setGroupVisible = (next: boolean) =>
+        void handleGroupVisible("all", ToGroupSubmit(type, next));
+
     return (
         <Card className="gap-0 overflow-hidden p-0">
-            {/* 栏头：语义色标签 + 可见/隐藏计数 */}
+            {/* 栏头：语义色标签 + 计数，右侧批量显示/隐藏 */}
             <div className="flex items-center gap-2.5 border-b px-4 py-3">
                 <span
                     className="inline-flex h-6 items-center rounded-md px-2 text-sm font-semibold"
@@ -126,6 +133,28 @@ function OrderPanel({
                     <span className="text-xs text-muted-foreground">
                         {t("market.me.orders.stats", { visible, hidden })}
                     </span>
+                ) : null}
+                {hasOrders ? (
+                    <div className="ml-auto flex items-center gap-1">
+                        <Button
+                            type="button"
+                            size="xs"
+                            disabled={grouping || hidden === 0}
+                            onClick={() => setGroupVisible(true)}
+                        >
+                            <EyeIcon data-icon="inline-start" />
+                            {t("market.me.orders.action.showAll")}
+                        </Button>
+                        <Button
+                            type="button"
+                            size="xs"
+                            disabled={grouping || visible === 0}
+                            onClick={() => setGroupVisible(false)}
+                        >
+                            <EyeOffIcon data-icon="inline-start" />
+                            {t("market.me.orders.action.hideAll")}
+                        </Button>
+                    </div>
                 ) : null}
             </div>
 

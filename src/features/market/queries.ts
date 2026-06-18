@@ -13,6 +13,7 @@ import {
     fetchUserOrders,
     createOrder,
     editOrder,
+    editOrdersGroup,
     fetchItemOrdersTop, closeOrder, deleteOrder,
 } from "@/api/market";
 import { useSettingsStore } from "@/store/settings";
@@ -126,6 +127,25 @@ export function useEditOrderMutation(): UseMutationResult<
     const qc = useQueryClient();
     return useMutation({
         mutationFn: ({ id, order }) => editOrder(id, order, token, lang),
+        onSuccess: () => {
+            void qc.invalidateQueries({ queryKey: ["market", "orders"] });
+            void qc.invalidateQueries({ queryKey: ["market", "user-orders"] });
+        },
+    });
+}
+
+/** 批量改订单组可见性：成功后让物品订单与「我的订单」查询失效以刷新。
+ * 返回受影响的订单数。 */
+export function useEditOrdersGroupMutation(): UseMutationResult<
+    number,
+    Error,
+    { id: string; order: SubmitItemOrder }
+> {
+    const lang = useSettingsStore((s) => s.lang);
+    const token = useAuthStore((s) => s.token);
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, order }) => editOrdersGroup(id, order, token, lang),
         onSuccess: () => {
             void qc.invalidateQueries({ queryKey: ["market", "orders"] });
             void qc.invalidateQueries({ queryKey: ["market", "user-orders"] });
