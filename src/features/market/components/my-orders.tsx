@@ -156,14 +156,15 @@ function OrderRow({
     lang: "zh" | "en";
 }) {
     const { t } = useTranslation();
-    const { handleClose, handleDelete, handleShow, closing, deleting } = useOrderActions();
+    const { handleClose, handleDelete, handleEdit, closing, deleting, editing } = useOrderActions();
     const name = item ? itemDisplayName(item, lang) : (order.itemId ?? "—");
     const iconUrl = item ? itemIconUrl(item, lang, !item.setRoot) : "";
     const dimmed = order.visible === false;
     
     const onClose = () => void handleClose(order.id, ToSubmit(order, "close"));
     const onDelete = () => void handleDelete(order.id);
-    const onShow = () => void handleShow(order.id, ToSubmit(order, "show"));
+    const onShow = () => void handleEdit(order.id, ToSubmit(order, "show"));
+    const onAdd = () => void handleEdit(order.id, ToSubmit(order, "add"));
     return (
         <li
             className={cn(
@@ -231,22 +232,30 @@ function OrderRow({
                 <Button
                     type="button"
                     onClick={onClose}
-                    disabled={closing || deleting}
+                    disabled={closing || deleting || editing}
                 >
                     <CheckIcon data-icon="inline-start" />
                     已售出
                 </Button>
                 <Button
                     type="button"
-                    disabled={closing || deleting}
+                    disabled={closing || deleting || editing}
                 >
                     <SquarePenIcon data-icon="inline-start" />
                     编辑
                 </Button>
                 <Button
                     type="button"
+                    onClick={onAdd}
+                    disabled={closing || deleting || editing}
+                >
+                    <SquarePenIcon data-icon="inline-start" />
+                    +1
+                </Button>
+                <Button
+                    type="button"
                     onClick={onShow}
-                    disabled={closing || deleting}
+                    disabled={closing || deleting || editing}
                 >
                     {dimmed?<EyeIcon data-icon="inline-start" />:<EyeOffIcon data-icon="inline-start" />}
                     {dimmed?"展示":"隐藏"}
@@ -255,7 +264,7 @@ function OrderRow({
                     type="button"
                     variant="destructive"
                     onClick={onDelete}
-                    disabled={closing || deleting}
+                    disabled={closing || deleting || editing}
                 >
                     <Trash2Icon data-icon="inline-start" />
                     删除

@@ -4,7 +4,7 @@ import {
     useCreateOrderMutation,
     useEditOrderMutation,
     useCloseOrderMutation,
-    useDeleteOrderMutation, useShowOrderMutation,
+    useDeleteOrderMutation,
 } from "@/features/market/queries";
 import type {ItemOrder, SubmitItemOrder} from "@/types/wf-market";
 
@@ -19,7 +19,6 @@ export function useOrderActions() {
     const { t } = useTranslation();
     const createMut = useCreateOrderMutation();
     const editMut = useEditOrderMutation();
-    const showMut = useShowOrderMutation();
     const closeMut = useCloseOrderMutation();
     const deleteMut = useDeleteOrderMutation();
 
@@ -38,20 +37,6 @@ export function useOrderActions() {
     };
 
     const handleEdit = async (
-        id: string,
-        order: SubmitItemOrder,
-    ): Promise<boolean> => {
-        try {
-            await editMut.mutateAsync({ id, order });
-            toast.success(t("order.edit.success"));
-            return true;
-        } catch (e) {
-            fail(e);
-            return false;
-        }
-    };
-    
-    const handleShow = async (
         id: string,
         order: SubmitItemOrder,
     ): Promise<boolean> => {
@@ -93,18 +78,16 @@ export function useOrderActions() {
     return {
         handleSubmit,
         handleEdit,
-        handleShow,
         handleClose,
         handleDelete,
         creating: createMut.isPending,
         editing: editMut.isPending,
-        showing: showMut.isPending,
         closing: closeMut.isPending,
         deleting: deleteMut.isPending,
     };
 }
 
-export type OrderAuction = "submit" | "close" | "show" | "edit";
+export type OrderAuction = "submit" | "close" | "show" | "edit" | "add";
 
 export const ToSubmit=(order: ItemOrder, auction:OrderAuction):SubmitItemOrder=>{
     switch (auction){
@@ -130,6 +113,10 @@ export const ToSubmit=(order: ItemOrder, auction:OrderAuction):SubmitItemOrder=>
         case "show":
             return{
                 visible: !order.visible,
+            }
+        case "add":
+            return {
+                quantity: order.quantity + 1,
             }
         case "edit":
             return{
