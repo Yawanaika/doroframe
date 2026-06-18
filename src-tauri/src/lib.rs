@@ -32,9 +32,11 @@ pub fn run() {
             commands::browse::get_bounty_cycle,
             commands::market::get_market_items,
             commands::market::get_market_orders,
+            commands::market::get_orders_top,
             commands::market::get_market_set,
             commands::market::get_user_orders,
             commands::market::create_market_order,
+            commands::market::edit_market_order,
             commands::auth::market_sign_in,
             commands::auth::market_sign_out,
         ])

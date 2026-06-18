@@ -24,6 +24,8 @@ export interface UseMarketItems {
     setOrderOpen: Dispatch<SetStateAction<boolean>>;
     isLoggedIn: boolean;
     orders: UseQueryResult<ItemOrder[]>;
+    // /** 选中物品的 Top5 买卖订单（`{ sell, buy }`） */
+    // topOrders: UseQueryResult<TopOrders>;
     set: UseQueryResult<SetInfo>;
     /** 喊话用物品英文名 */
     itemNameEn: string;

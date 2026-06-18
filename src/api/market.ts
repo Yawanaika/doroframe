@@ -10,6 +10,7 @@ import {
     submitItemOrderToJson,
 } from "@/types/wf-market";
 import type { LangCode } from "@/store/settings";
+import {TopOrders, topOrdersFromJson} from "@/types/wf-market/v2/top-orders.ts";
 
 /**
  * Tauri 入口：市场数据统一经由 Rust 端 `get_market_*` command 拉取
@@ -40,6 +41,19 @@ export async function fetchItemOrders(
         language: toMarketLang(lang),
     });
     return (raw ?? []).map(itemOrderFromJson);
+}
+
+/** `GET /v2/orders/item/{slug}/top` —— 指定物品的 Top5 买卖订单。
+ * 注意：该端点 data 是单个对象 `{ sell, buy }`，不是数组。 */
+export async function fetchItemOrdersTop(
+    slug: string,
+    lang: LangCode,
+): Promise<TopOrders> {
+    const raw = await invoke<unknown>("get_orders_top", {
+        slug,
+        language: toMarketLang(lang),
+    });
+    return topOrdersFromJson(raw ?? { sell: [], buy: [] });
 }
 
 /** `GET /v2/orders/user/{slug}` —— 当前用户的全部订单（带 token 可取回隐藏订单） */
@@ -79,4 +93,21 @@ export async function createOrder(
         order: submitItemOrderToJson(order),
         language: toMarketLang(lang),
     });
+}
+
+/** `PATCH /v2/order/{id}` —— 编辑订单，需登录态（token 为 JWT cookie）。
+ * `order` 仅需带要修改的字段；返回更新后的订单。 */
+export async function editOrder(
+    id: string,
+    order: SubmitItemOrder,
+    token: string | null,
+    lang: LangCode,
+): Promise<ItemOrder> {
+    const raw = await invoke<unknown>("edit_market_order", {
+        id,
+        token,
+        order: submitItemOrderToJson(order),
+        language: toMarketLang(lang),
+    });
+    return itemOrderFromJson(raw);
 }
