@@ -124,10 +124,7 @@ function OrderPanel({
                 </span>
                 {!loading && !error ? (
                     <span className="text-xs text-muted-foreground">
-                        {visible} {t("market.me.orders.visible")}
-                        {hidden > 0 ? (
-                            <> · {hidden} {t("market.me.orders.hidden")}</>
-                        ) : null}
+                        {t("market.me.orders.stats", { visible, hidden })}
                     </span>
                 ) : null}
             </div>
