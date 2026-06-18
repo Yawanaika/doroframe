@@ -1,4 +1,4 @@
-/** 提交订单请求体 —— 对应 doroprime SubmitItemOrder */
+/** 提交订单请求体 */
 export interface SubmitItemOrder {
     id?: string;
     itemId?: string;

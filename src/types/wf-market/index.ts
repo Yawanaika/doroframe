@@ -3,5 +3,6 @@ export * from "./v2/item-order";
 export * from "./v2/submit-item-order";
 export * from "./v2/set-info";
 export * from "./v2/top-orders";
+export * from "./v2/transaction";
 export * from "./i18n";
 export * from "./item";

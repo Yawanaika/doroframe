@@ -13,12 +13,12 @@ import {
     fetchUserOrders,
     createOrder,
     editOrder,
-    fetchItemOrdersTop,
+    fetchItemOrdersTop, closeOrder, deleteOrder,
 } from "@/api/market";
 import { useSettingsStore } from "@/store/settings";
 import { useAuthStore } from "@/store/auth";
 import { itemDisplayName } from "./assets";
-import type { Item, ItemOrder, SetInfo, SubmitItemOrder, TopOrders } from "@/types/wf-market";
+import type { Item, ItemOrder, SetInfo, SubmitItemOrder, TopOrders, Transaction } from "@/types/wf-market";
 
 /** 搜索建议项：展示名 → slug */
 export interface Suggestion {
@@ -125,6 +125,38 @@ export function useEditOrderMutation(): UseMutationResult<
     const qc = useQueryClient();
     return useMutation({
         mutationFn: ({ id, order }) => editOrder(id, order, token, lang),
+        onSuccess: () => {
+            void qc.invalidateQueries({ queryKey: ["market", "orders"] });
+            void qc.invalidateQueries({ queryKey: ["market", "user-orders"] });
+        },
+    });
+}
+
+/** 关闭（成交）订单：成功后让物品订单与「我的订单」查询失效以刷新 */
+export function useCloseOrderMutation(): UseMutationResult<
+    Transaction,
+    Error,
+    { id: string; order: SubmitItemOrder }
+> {
+    const lang = useSettingsStore((s) => s.lang);
+    const token = useAuthStore((s) => s.token);
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, order }) => closeOrder(id, token, order, lang),
+        onSuccess: () => {
+            void qc.invalidateQueries({ queryKey: ["market", "orders"] });
+            void qc.invalidateQueries({ queryKey: ["market", "user-orders"] });
+        },
+    });
+}
+
+/** 删除订单：成功后让物品订单与「我的订单」查询失效以刷新 */
+export function useDeleteOrderMutation(): UseMutationResult<ItemOrder, Error, string> {
+    const lang = useSettingsStore((s) => s.lang);
+    const token = useAuthStore((s) => s.token);
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (id: string) => deleteOrder(id, token, lang),
         onSuccess: () => {
             void qc.invalidateQueries({ queryKey: ["market", "orders"] });
             void qc.invalidateQueries({ queryKey: ["market", "user-orders"] });

@@ -75,6 +75,6 @@ export function itemToJson(item: Item): any {
         vaulted: item.vaulted,
         tradingTax: item.tradingTax,
         tradable: item.tradable,
-        i18n: i18nToJson(item.i18n),
+        i18n: item.i18n? i18nToJson(item.i18n): undefined,
     }
 }

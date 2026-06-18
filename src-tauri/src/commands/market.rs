@@ -205,3 +205,43 @@ pub async fn create_market_order(
     )
     .await
 }
+
+/// `POST /v2/order/{id}/close` —— 关闭（成交）订单。需登录态：携带 JWT cookie。
+/// `order` 通常为 `{ quantity }`，关闭部分数量；返回成交记录。
+#[tauri::command]
+pub async fn close_market_order(
+    state: tauri::State<'_, MarketHttp>,
+    id: String,
+    token: Option<String>,
+    order: Value,
+    language: String,
+) -> Result<Value, String> {
+    request_data(
+        &state.client,
+        reqwest::Method::POST,
+        &format!("{V2}/order/{id}/close"),
+        &language,
+        token.as_deref(),
+        Some(&order),
+    )
+    .await
+}
+
+/// `DELETE /v2/order/{id}` —— 删除订单。需登录态：携带 JWT cookie。无请求体。
+#[tauri::command]
+pub async fn delete_market_order(
+    state: tauri::State<'_, MarketHttp>,
+    id: String,
+    token: Option<String>,
+    language: String,
+) -> Result<Value, String> {
+    request_data(
+        &state.client,
+        reqwest::Method::DELETE,
+        &format!("{V2}/order/{id}"),
+        &language,
+        token.as_deref(),
+        None,
+    )
+    .await
+}

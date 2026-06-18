@@ -11,6 +11,7 @@ import {
 } from "@/types/wf-market";
 import type { LangCode } from "@/store/settings";
 import {TopOrders, topOrdersFromJson} from "@/types/wf-market/v2/top-orders.ts";
+import {Transaction, transactionFromJson} from "@/types/wf-market/v2/transaction.ts";
 
 /**
  * Tauri 入口：市场数据统一经由 Rust 端 `get_market_*` command 拉取
@@ -110,4 +111,32 @@ export async function editOrder(
         language: toMarketLang(lang),
     });
     return itemOrderFromJson(raw);
+}
+
+export async function closeOrder(
+    id: string,
+    token: string | null,
+    order: SubmitItemOrder,
+    lang: LangCode,
+): Promise<Transaction> {
+    const raw = await invoke("close_market_order", {
+        id,
+        token,
+        order: submitItemOrderToJson(order),
+        language: toMarketLang(lang),
+    });
+    return transactionFromJson( raw);
+}
+
+export async function deleteOrder(
+    id: string,
+    token: string | null,
+    lang: LangCode,
+): Promise<ItemOrder> {
+    const raw = await invoke("delete_market_order", {
+        id,
+        token,
+        language: toMarketLang(lang),
+    });
+    return itemOrderFromJson( raw);
 }
