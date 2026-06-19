@@ -5,7 +5,7 @@ import {
     Outlet,
     Link,
     useRouterState,
-    createMemoryHistory,
+    createHashHistory,
 } from "@tanstack/react-router";
 import {
     SidebarInset,
@@ -82,14 +82,12 @@ const routeTree = rootRoute.addChildren([
     notFoundRoute,
 ]);
 
-const initialPath =
-    typeof window !== "undefined" && window.location.hash.startsWith("#/")
-        ? window.location.hash.slice(1)
-        : "/";
-
+// hash history：路由状态写回 window.location.hash（#/market/items?slug=...），
+// 初始位置也直接取自当前 hash。这样刷新、复制地址、Link 点击都能保留 slug 等查询参数，
+// 形成真正的深链接（替代之前只活在内存里的 memory history）。
 export const router = createRouter({
     routeTree,
-    history: createMemoryHistory({ initialEntries: [initialPath] }),
+    history: createHashHistory(),
 });
 
 function RootLayout() {
