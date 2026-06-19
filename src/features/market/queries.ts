@@ -16,11 +16,28 @@ import {
     editOrder,
     editOrdersGroup,
     fetchItemOrdersTop, closeOrder, deleteOrder,
+    fetchRivenWeapons,
+    fetchRivenWeapon,
+    fetchRivenAttributes,
+    fetchLichWeapons,
+    fetchLichWeapon,
+    fetchLichEphemeras,
+    fetchLichQuirks,
+    fetchSisterWeapons,
+    fetchSisterWeapon,
+    fetchSisterEphemeras,
+    fetchSisterQuirks,
 } from "@/api/market";
 import { useSettingsStore } from "@/store/settings";
 import { useAuthStore } from "@/store/auth";
 import { itemDisplayName } from "@/features/market/assets";
 import type { Item, ItemOrder, SetInfo, SubmitItemOrder, TopOrders, Transaction } from "@/types/wf-market";
+import type { Riven, RivenAttribute } from "@/types/wf-market/v2/riven.ts";
+import type {
+    NemesisWeapon,
+    NemesisEphemera,
+    NemesisQuirk,
+} from "@/types/wf-market/v2/nemesis.ts";
 
 /** 搜索建议项：展示名 → slug */
 export interface Suggestion {
@@ -109,6 +126,119 @@ export function useItemSetQuery(slug: string): UseQueryResult<SetInfo> {
         queryFn: () => fetchItemSet(slug, lang),
         enabled: !!slug,
         staleTime: ITEMS_STALE,
+    });
+}
+
+// ===== Riven / Lich / Sister 清单查询 =====
+// 均为 manifest 性质，极少变动：沿用 items 的长缓存。slug 详情按 slug 缓存。
+
+export function useRivenWeaponsQuery(): UseQueryResult<Riven[]> {
+    const lang = useSettingsStore((s) => s.lang);
+    return useQuery({
+        queryKey: ["market", "riven-weapons", lang],
+        queryFn: () => fetchRivenWeapons(lang),
+        staleTime: ITEMS_STALE,
+        gcTime: ITEMS_STALE,
+    });
+}
+
+export function useRivenWeaponQuery(slug: string): UseQueryResult<Riven> {
+    const lang = useSettingsStore((s) => s.lang);
+    return useQuery({
+        queryKey: ["market", "riven-weapon", slug, lang],
+        queryFn: () => fetchRivenWeapon(slug, lang),
+        enabled: !!slug,
+        staleTime: ITEMS_STALE,
+    });
+}
+
+export function useRivenAttributesQuery(): UseQueryResult<RivenAttribute[]> {
+    const lang = useSettingsStore((s) => s.lang);
+    return useQuery({
+        queryKey: ["market", "riven-attributes", lang],
+        queryFn: () => fetchRivenAttributes(lang),
+        staleTime: ITEMS_STALE,
+        gcTime: ITEMS_STALE,
+    });
+}
+
+export function useLichWeaponsQuery(): UseQueryResult<NemesisWeapon[]> {
+    const lang = useSettingsStore((s) => s.lang);
+    return useQuery({
+        queryKey: ["market", "lich-weapons", lang],
+        queryFn: () => fetchLichWeapons(lang),
+        staleTime: ITEMS_STALE,
+        gcTime: ITEMS_STALE,
+    });
+}
+
+export function useLichWeaponQuery(slug: string): UseQueryResult<NemesisWeapon> {
+    const lang = useSettingsStore((s) => s.lang);
+    return useQuery({
+        queryKey: ["market", "lich-weapon", slug, lang],
+        queryFn: () => fetchLichWeapon(slug, lang),
+        enabled: !!slug,
+        staleTime: ITEMS_STALE,
+    });
+}
+
+export function useLichEphemerasQuery(): UseQueryResult<NemesisEphemera[]> {
+    const lang = useSettingsStore((s) => s.lang);
+    return useQuery({
+        queryKey: ["market", "lich-ephemeras", lang],
+        queryFn: () => fetchLichEphemeras(lang),
+        staleTime: ITEMS_STALE,
+        gcTime: ITEMS_STALE,
+    });
+}
+
+export function useLichQuirksQuery(): UseQueryResult<NemesisQuirk[]> {
+    const lang = useSettingsStore((s) => s.lang);
+    return useQuery({
+        queryKey: ["market", "lich-quirks", lang],
+        queryFn: () => fetchLichQuirks(lang),
+        staleTime: ITEMS_STALE,
+        gcTime: ITEMS_STALE,
+    });
+}
+
+export function useSisterWeaponsQuery(): UseQueryResult<NemesisWeapon[]> {
+    const lang = useSettingsStore((s) => s.lang);
+    return useQuery({
+        queryKey: ["market", "sister-weapons", lang],
+        queryFn: () => fetchSisterWeapons(lang),
+        staleTime: ITEMS_STALE,
+        gcTime: ITEMS_STALE,
+    });
+}
+
+export function useSisterWeaponQuery(slug: string): UseQueryResult<NemesisWeapon> {
+    const lang = useSettingsStore((s) => s.lang);
+    return useQuery({
+        queryKey: ["market", "sister-weapon", slug, lang],
+        queryFn: () => fetchSisterWeapon(slug, lang),
+        enabled: !!slug,
+        staleTime: ITEMS_STALE,
+    });
+}
+
+export function useSisterEphemerasQuery(): UseQueryResult<NemesisEphemera[]> {
+    const lang = useSettingsStore((s) => s.lang);
+    return useQuery({
+        queryKey: ["market", "sister-ephemeras", lang],
+        queryFn: () => fetchSisterEphemeras(lang),
+        staleTime: ITEMS_STALE,
+        gcTime: ITEMS_STALE,
+    });
+}
+
+export function useSisterQuirksQuery(): UseQueryResult<NemesisQuirk[]> {
+    const lang = useSettingsStore((s) => s.lang);
+    return useQuery({
+        queryKey: ["market", "sister-quirks", lang],
+        queryFn: () => fetchSisterQuirks(lang),
+        staleTime: ITEMS_STALE,
+        gcTime: ITEMS_STALE,
     });
 }
 

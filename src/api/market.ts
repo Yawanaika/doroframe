@@ -12,6 +12,20 @@ import {
 import type { LangCode } from "@/store/settings";
 import {TopOrders, topOrdersFromJson} from "@/types/wf-market/v2/top-orders.ts";
 import {Transaction, transactionFromJson} from "@/types/wf-market/v2/transaction.ts";
+import {
+    Riven,
+    rivenFromJson,
+    RivenAttribute,
+    rivenAttributeFromJson,
+} from "@/types/wf-market/v2/riven.ts";
+import {
+    NemesisWeapon,
+    nemesisWeaponFromJson,
+    NemesisEphemera,
+    nemesisEphemeraFromJson,
+    NemesisQuirk,
+    nemesisQuirkFromJson,
+} from "@/types/wf-market/v2/nemesis.ts";
 
 /**
  * Tauri 入口：市场数据统一经由 Rust 端 `get_market_*` command 拉取
@@ -90,6 +104,122 @@ export async function fetchItemSet(
         language: toMarketLang(lang),
     });
     return setInfoFromJson(raw);
+}
+
+// ===== Riven / Lich / Sister 清单（🇬🇧 可翻译，manifest 性质，极少变动）=====
+
+/** `GET /v2/riven/weapons` —— 全部可交易紫卡武器 */
+export async function fetchRivenWeapons(lang: LangCode): Promise<Riven[]> {
+    const raw = await invoke<unknown[]>("get_riven_weapons", {
+        language: toMarketLang(lang),
+    });
+    return (raw ?? []).map(rivenFromJson);
+}
+
+/** `GET /v2/riven/weapon/{slug}` —— 单个紫卡武器 */
+export async function fetchRivenWeapon(
+    slug: string,
+    lang: LangCode,
+): Promise<Riven> {
+    const raw = await invoke<unknown>("get_riven_weapon", {
+        slug,
+        language: toMarketLang(lang),
+    });
+    return rivenFromJson(raw);
+}
+
+/** `GET /v2/riven/attributes` —— 全部紫卡词条 */
+export async function fetchRivenAttributes(
+    lang: LangCode,
+): Promise<RivenAttribute[]> {
+    const raw = await invoke<unknown[]>("get_riven_attributes", {
+        language: toMarketLang(lang),
+    });
+    return (raw ?? []).map(rivenAttributeFromJson);
+}
+
+/** `GET /v2/lich/weapons` —— 全部可交易利奇武器 */
+export async function fetchLichWeapons(
+    lang: LangCode,
+): Promise<NemesisWeapon[]> {
+    const raw = await invoke<unknown[]>("get_lich_weapons", {
+        language: toMarketLang(lang),
+    });
+    return (raw ?? []).map(nemesisWeaponFromJson);
+}
+
+/** `GET /v2/lich/weapon/{slug}` —— 单个利奇武器 */
+export async function fetchLichWeapon(
+    slug: string,
+    lang: LangCode,
+): Promise<NemesisWeapon> {
+    const raw = await invoke<unknown>("get_lich_weapon", {
+        slug,
+        language: toMarketLang(lang),
+    });
+    return nemesisWeaponFromJson(raw);
+}
+
+/** `GET /v2/lich/ephemeras` —— 全部可交易利奇魂华 */
+export async function fetchLichEphemeras(
+    lang: LangCode,
+): Promise<NemesisEphemera[]> {
+    const raw = await invoke<unknown[]>("get_lich_ephemeras", {
+        language: toMarketLang(lang),
+    });
+    return (raw ?? []).map(nemesisEphemeraFromJson);
+}
+
+/** `GET /v2/lich/quirks` —— 全部可交易利奇怪癖 */
+export async function fetchLichQuirks(
+    lang: LangCode,
+): Promise<NemesisQuirk[]> {
+    const raw = await invoke<unknown[]>("get_lich_quirks", {
+        language: toMarketLang(lang),
+    });
+    return (raw ?? []).map(nemesisQuirkFromJson);
+}
+
+/** `GET /v2/sister/weapons` —— 全部可交易姐妹武器 */
+export async function fetchSisterWeapons(
+    lang: LangCode,
+): Promise<NemesisWeapon[]> {
+    const raw = await invoke<unknown[]>("get_sister_weapons", {
+        language: toMarketLang(lang),
+    });
+    return (raw ?? []).map(nemesisWeaponFromJson);
+}
+
+/** `GET /v2/sister/weapon/{slug}` —— 单个姐妹武器 */
+export async function fetchSisterWeapon(
+    slug: string,
+    lang: LangCode,
+): Promise<NemesisWeapon> {
+    const raw = await invoke<unknown>("get_sister_weapon", {
+        slug,
+        language: toMarketLang(lang),
+    });
+    return nemesisWeaponFromJson(raw);
+}
+
+/** `GET /v2/sister/ephemeras` —— 全部可交易姐妹魂华 */
+export async function fetchSisterEphemeras(
+    lang: LangCode,
+): Promise<NemesisEphemera[]> {
+    const raw = await invoke<unknown[]>("get_sister_ephemeras", {
+        language: toMarketLang(lang),
+    });
+    return (raw ?? []).map(nemesisEphemeraFromJson);
+}
+
+/** `GET /v2/sister/quirks` —— 全部可交易姐妹怪癖 */
+export async function fetchSisterQuirks(
+    lang: LangCode,
+): Promise<NemesisQuirk[]> {
+    const raw = await invoke<unknown[]>("get_sister_quirks", {
+        language: toMarketLang(lang),
+    });
+    return (raw ?? []).map(nemesisQuirkFromJson);
 }
 
 /** `PATCH /v2/orders/group/{id}` —— 批量改某订单组的可见性，需登录态。

@@ -10,6 +10,7 @@ interface I18nData {
     thumb?: string;
     subIcon?: string;
     description?: string;
+    wikiLink?: string;
 }
 
 export function i18nFromJson(json: any): I18n {
@@ -33,6 +34,7 @@ function i18nDataFromJson(json: any) {
         thumb: json?.thumb,
         subIcon: json?.subIcon,
         description: json?.description,
+        wikiLink: json?.wikiLink,
     }
 }
 
@@ -43,5 +45,6 @@ function i18nDataToJson(i18n: I18nData) {
         thumb: i18n?.thumb,
         subIcon: i18n?.subIcon,
         description: i18n?.description,
+        wikiLink: i18n?.wikiLink,
     }
 }

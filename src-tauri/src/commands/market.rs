@@ -144,6 +144,108 @@ pub async fn get_orders_top(
     fetch_data(&state.client, &format!("{V2}/orders/item/{slug}/top"), &language).await
 }
 
+/// `GET /v2/riven/weapons` —— 全部可交易紫卡（裂罅）武器列表。
+#[tauri::command]
+pub async fn get_riven_weapons(
+    state: tauri::State<'_, MarketHttp>,
+    language: String,
+) -> Result<Value, String> {
+    fetch_data(&state.client, &format!("{V2}/riven/weapons"), &language).await
+}
+
+/// `GET /v2/riven/weapon/{slug}` —— 单个紫卡武器详情。
+#[tauri::command]
+pub async fn get_riven_weapon(
+    state: tauri::State<'_, MarketHttp>,
+    slug: String,
+    language: String,
+) -> Result<Value, String> {
+    fetch_data(&state.client, &format!("{V2}/riven/weapon/{slug}"), &language).await
+}
+
+/// `GET /v2/riven/attributes` —— 全部紫卡词条。
+#[tauri::command]
+pub async fn get_riven_attributes(
+    state: tauri::State<'_, MarketHttp>,
+    language: String,
+) -> Result<Value, String> {
+    fetch_data(&state.client, &format!("{V2}/riven/attributes"), &language).await
+}
+
+/// `GET /v2/lich/weapons` —— 全部可交易赤毒武器列表。
+#[tauri::command]
+pub async fn get_lich_weapons(
+    state: tauri::State<'_, MarketHttp>,
+    language: String,
+) -> Result<Value, String> {
+    fetch_data(&state.client, &format!("{V2}/lich/weapons"), &language).await
+}
+
+/// `GET /v2/lich/weapon/{slug}` —— 单个赤毒武器详情。
+#[tauri::command]
+pub async fn get_lich_weapon(
+    state: tauri::State<'_, MarketHttp>,
+    slug: String,
+    language: String,
+) -> Result<Value, String> {
+    fetch_data(&state.client, &format!("{V2}/lich/weapon/{slug}"), &language).await
+}
+
+/// `GET /v2/lich/ephemeras` —— 全部可交易赤毒幻纹。
+#[tauri::command]
+pub async fn get_lich_ephemeras(
+    state: tauri::State<'_, MarketHttp>,
+    language: String,
+) -> Result<Value, String> {
+    fetch_data(&state.client, &format!("{V2}/lich/ephemeras"), &language).await
+}
+
+/// `GET /v2/lich/quirks` —— 全部可交易赤毒怪癖。
+#[tauri::command]
+pub async fn get_lich_quirks(
+    state: tauri::State<'_, MarketHttp>,
+    language: String,
+) -> Result<Value, String> {
+    fetch_data(&state.client, &format!("{V2}/lich/quirks"), &language).await
+}
+
+/// `GET /v2/sister/weapons` —— 全部可交易姐妹武器列表。
+#[tauri::command]
+pub async fn get_sister_weapons(
+    state: tauri::State<'_, MarketHttp>,
+    language: String,
+) -> Result<Value, String> {
+    fetch_data(&state.client, &format!("{V2}/sister/weapons"), &language).await
+}
+
+/// `GET /v2/sister/weapon/{slug}` —— 单个姐妹武器详情。
+#[tauri::command]
+pub async fn get_sister_weapon(
+    state: tauri::State<'_, MarketHttp>,
+    slug: String,
+    language: String,
+) -> Result<Value, String> {
+    fetch_data(&state.client, &format!("{V2}/sister/weapon/{slug}"), &language).await
+}
+
+/// `GET /v2/sister/ephemeras` —— 全部可交易姐妹幻纹。
+#[tauri::command]
+pub async fn get_sister_ephemeras(
+    state: tauri::State<'_, MarketHttp>,
+    language: String,
+) -> Result<Value, String> {
+    fetch_data(&state.client, &format!("{V2}/sister/ephemeras"), &language).await
+}
+
+/// `GET /v2/sister/quirks` —— 全部可交易姐妹怪癖。
+#[tauri::command]
+pub async fn get_sister_quirks(
+    state: tauri::State<'_, MarketHttp>,
+    language: String,
+) -> Result<Value, String> {
+    fetch_data(&state.client, &format!("{V2}/sister/quirks"), &language).await
+}
+
 /// `GET /v2/item/{slug}/set` —— 物品所属套装信息（主件 + 部件）。
 #[tauri::command]
 pub async fn get_market_set(
