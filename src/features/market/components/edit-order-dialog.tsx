@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Eye, EyeOff } from "lucide-react";
 import {
     Dialog,
     DialogClose,
@@ -23,7 +22,16 @@ import { useOrderActions } from "../order-actions";
 import { itemDisplayName, itemIconUrl } from "../assets";
 import { statusOf } from "../constants";
 import type { Item, ItemOrder, SubmitItemOrder } from "@/types/wf-market";
-import {NumberField} from "@/features/market/components/number-field-props.tsx";
+import {
+    NumberField,
+    VisibilityToggle,
+    numOrNull,
+    digits,
+    numToStr,
+    validatePositive,
+    validateRange,
+    type FieldErrors,
+} from "@/features/market/components/order-form-fields.tsx";
 
 interface Props {
     open: boolean;
@@ -35,25 +43,6 @@ interface Props {
     /** 触发器：作为 DialogTrigger 的子元素渲染 */
     trigger?: React.ReactNode;
 }
-
-interface FieldErrors {
-    platinum?: string;
-    quantity?: string;
-    rank?: string;
-    amberStars?: string;
-    cyanStars?: string;
-}
-
-const numOrNull = (v: string): number | null => {
-    if (v.trim() === "") return null;
-    const n = Number(v);
-    return Number.isFinite(n) ? n : null;
-};
-
-const digits = (v: string): string => v.replace(/\D/g, "");
-
-const numToStr = (v: number | null | undefined): string =>
-    v == null ? "" : String(v);
 
 type NumberKey = "platinum" | "quantity" | "rank" | "amberStars" | "cyanStars";
 
@@ -106,29 +95,15 @@ export function EditOrderDialog({
     const setNumber = (key: NumberKey, raw: string) =>
         setNumbers((prev) => ({ ...prev, [key]: digits(raw) }));
 
-    const validatePositive = (raw: string): string | undefined => {
-        if (raw.trim() === "") return t("order.error.required");
-        const n = numOrNull(raw);
-        return n == null || n <= 0 ? t("order.error.format") : undefined;
-    };
-
-    const validateRange = (raw: string, max: number): string | undefined => {
-        if (raw.trim() === "") return t("order.error.required");
-        const n = numOrNull(raw);
-        return n == null || n < 0 || n > max
-            ? t("order.error.range", { max })
-            : undefined;
-    };
-
     const validate = (): FieldErrors => {
         const next: FieldErrors = {};
-        next.platinum = validatePositive(numbers.platinum);
-        next.quantity = validatePositive(numbers.quantity);
-        if (showRank) next.rank = validateRange(numbers.rank, item!.maxRank!);
+        next.platinum = validatePositive(numbers.platinum, t);
+        next.quantity = validatePositive(numbers.quantity, t);
+        if (showRank) next.rank = validateRange(numbers.rank, item!.maxRank!, t);
         if (showAmber)
-            next.amberStars = validateRange(numbers.amberStars, item!.maxAmberStars!);
+            next.amberStars = validateRange(numbers.amberStars, item!.maxAmberStars!, t);
         if (showCyan)
-            next.cyanStars = validateRange(numbers.cyanStars, item!.maxCyanStars!);
+            next.cyanStars = validateRange(numbers.cyanStars, item!.maxCyanStars!, t);
         return next;
     };
 
@@ -215,26 +190,11 @@ export function EditOrderDialog({
                                 <FieldLabel id="edit-visibility-label">
                                     {t("order.edit.visibility")}
                                 </FieldLabel>
-                                <div className="flex gap-2" aria-labelledby="edit-visibility-label">
-                                    <Button
-                                        type="button"
-                                        size="sm"
-                                        variant={visible ? "default" : "outline"}
-                                        onClick={() => setVisible(true)}
-                                    >
-                                        {t("order.visible")}
-                                        <Eye data-icon="inline-end" />
-                                    </Button>
-                                    <Button
-                                        type="button"
-                                        size="sm"
-                                        variant={!visible ? "default" : "outline"}
-                                        onClick={() => setVisible(false)}
-                                    >
-                                        {t("order.invisible")}
-                                        <EyeOff data-icon="inline-end" />
-                                    </Button>
-                                </div>
+                                <VisibilityToggle
+                                    visible={visible}
+                                    onChange={setVisible}
+                                    aria-labelledby="edit-visibility-label"
+                                />
                             </Field>
 
                             {showRank && (
