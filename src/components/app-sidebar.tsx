@@ -30,9 +30,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t("nav.state"),
         url: "/state",
         icon: <WaypointsIcon />,
-        items: [
-          { title: t("nav.state"), url: "/state" },
-        ],
       },
       {
         title: "Warframe Market",
