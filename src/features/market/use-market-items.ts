@@ -63,24 +63,32 @@ export function useMarketItems(): UseMarketItems {
     const { slug: incomingSlug } = useSearch({ strict: false }) as {
         slug?: string;
     };
-    // 每个传入 slug 只播种一次，之后不干扰用户在搜索框内的手动切换
+    // seededRef: 已处理过的深链 slug；pendingNameRef: 待回填名称的 slug。
     const seededRef = useRef<string>("");
+    const pendingNameRef = useRef<string>("");
     useEffect(() => {
+        // 仅在「传入 slug 变化」这一显式导航时切换物品：切 slug/锚点并立即清空旧名，
+        // 避免搜索框残留上一个物品名（名称稍后由下方 effect 据 suggestions 回填）。
         if (!incomingSlug || incomingSlug === seededRef.current) return;
         seededRef.current = incomingSlug;
+        pendingNameRef.current = incomingSlug;
         setSlug(incomingSlug);
         setSetAnchor(incomingSlug);
+        setText("");
+        setName("");
     }, [incomingSlug]);
 
-    // items 加载后把深链物品名回填到搜索框（仅在用户尚未输入时）
+    // suggestions 就绪后，对「待回填」的深链 slug 回填一次物品名。
+    // 回填后即清除标记，因此用户随后在搜索框内的手动输入不会被覆盖。
     useEffect(() => {
-        if (!incomingSlug || slug !== incomingSlug || text) return;
-        const sug = suggestions.find((s) => s.slug === incomingSlug);
-        if (sug) {
-            setName(sug.name);
-            setText(sug.name);
-        }
-    }, [incomingSlug, slug, text, suggestions]);
+        const want = pendingNameRef.current;
+        if (!want || slug !== want) return;
+        const sug = suggestions.find((s) => s.slug === want);
+        if (!sug) return;
+        pendingNameRef.current = "";
+        setName(sug.name);
+        setText(sug.name);
+    }, [slug, suggestions]);
 
     // 订单按选中物品各自查询；套装信息只在「跨套装」时才换锚点重查
     const orders = useItemOrdersQuery(slug);
