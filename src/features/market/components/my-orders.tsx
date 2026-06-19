@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "@tanstack/react-router";
 import {
@@ -33,6 +33,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { EditOrderDialog } from "@/features/market/components/edit-order-dialog";
 
 /**
  * 当前登录用户的订单展示。
@@ -206,6 +207,7 @@ function OrderRow({
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { handleClose, handleDelete, handleEdit, closing, deleting, editing } = useOrderActions();
+    const [editOpen, setEditOpen] = useState(false);
     const name = item ? itemDisplayName(item, lang) : (order.itemId ?? "—");
     const iconUrl = item ? itemIconUrl(item, lang, !item.setRoot) : "";
     const dimmed = order.visible === false;
@@ -361,7 +363,13 @@ function OrderRow({
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-40">
-                        <DropdownMenuItem disabled={busy}>
+                        <DropdownMenuItem
+                            disabled={busy}
+                            onSelect={(e) => {
+                                e.preventDefault();
+                                setEditOpen(true);
+                            }}
+                        >
                             <SquarePenIcon />
                             {t("market.me.orders.action.edit")}
                         </DropdownMenuItem>
@@ -383,6 +391,13 @@ function OrderRow({
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
+
+            <EditOrderDialog
+                open={editOpen}
+                onOpenChange={setEditOpen}
+                order={order}
+                item={item}
+            />
         </li>
     );
 }

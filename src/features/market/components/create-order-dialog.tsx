@@ -27,12 +27,10 @@ import {
 } from "@/components/ui/select";
 import {
     Field,
-    FieldDescription,
     FieldGroup,
     FieldLabel,
 } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { OrderTypeToggle } from "@/features/market/components/order-type-toggle";
 import { Spinner } from "@/components/ui/spinner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -47,6 +45,7 @@ import { draftToSubmitOrder } from "../order-mapper";
 import { itemDisplayName, itemIconUrl } from "../assets";
 import type { OrderTypeCode } from "../constants";
 import type { Item, SetInfo } from "@/types/wf-market";
+import {NumberField} from "@/features/market/components/number-field-props.tsx";
 
 interface Props {
     open: boolean;
@@ -444,38 +443,5 @@ export function CreateOrderDialog({
                 </div>
             </DialogContent>
         </Dialog>
-    );
-}
-
-interface NumberFieldProps {
-    id: string;
-    label: string;
-    value: string;
-    error?: string;
-    placeholder?: string;
-    onChange: (value: string) => void;
-}
-
-function NumberField({
-    id,
-    label,
-    value,
-    error,
-    placeholder,
-    onChange,
-}: NumberFieldProps) {
-    return (
-        <Field data-invalid={error ? true : undefined}>
-            <FieldLabel htmlFor={id}>{label}</FieldLabel>
-            <Input
-                id={id}
-                inputMode="numeric"
-                placeholder={placeholder}
-                aria-invalid={error ? true : undefined}
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-            />
-            {error ? <FieldDescription>{error}</FieldDescription> : null}
-        </Field>
     );
 }
