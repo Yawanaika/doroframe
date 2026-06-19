@@ -13,6 +13,14 @@ import {
     FieldGroup,
     FieldLabel,
 } from "@/components/ui/field";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -32,6 +40,9 @@ import {
     validateRange,
     type FieldErrors,
 } from "@/features/market/components/order-form-fields.tsx";
+import {Meh, Smile} from "lucide-react";
+import {TFunction} from "i18next";
+import {getSumEndo} from "@/lib/utils.ts";
 
 interface Props {
     open: boolean;
@@ -65,6 +76,7 @@ export function EditOrderDialog({
     const topQ = useTopOrdersQuery(open && item?.slug ? item.slug : "");
 
     const showRank = item?.maxRank != null && item?.maxCharges == null;
+    const showSubtype = (item?.subtypes?.length ?? 0) > 0;
     const showAmber = (item?.maxAmberStars ?? 0) > 0;
     const showCyan = (item?.maxCyanStars ?? 0) > 0;
 
@@ -76,6 +88,7 @@ export function EditOrderDialog({
         amberStars: numToStr(order.amberStars),
         cyanStars: numToStr(order.cyanStars),
     });
+    const [subtype, setSubtype] = useState(order.subtype ?? "");
     const [errors, setErrors] = useState<FieldErrors>({});
 
     // 打开时用当前订单值重置表单（订单或弹窗状态变化均同步）
@@ -89,8 +102,10 @@ export function EditOrderDialog({
             amberStars: numToStr(order.amberStars),
             cyanStars: numToStr(order.cyanStars),
         });
+        // 预填订单原 subtype；缺失时回退该物品首个可选值
+        setSubtype(order.subtype ?? item?.subtypes?.[0] ?? "");
         setErrors({});
-    }, [open, order]);
+    }, [open, order, item]);
 
     const setNumber = (key: NumberKey, raw: string) =>
         setNumbers((prev) => ({ ...prev, [key]: digits(raw) }));
@@ -120,6 +135,7 @@ export function EditOrderDialog({
         if (showRank) submit.rank = numOrNull(numbers.rank) ?? undefined;
         if (showAmber) submit.amberStars = numOrNull(numbers.amberStars) ?? undefined;
         if (showCyan) submit.cyanStars = numOrNull(numbers.cyanStars) ?? undefined;
+        if (showSubtype && subtype !== "") submit.subtype = subtype;
 
         if (await handleEdit(order.id, submit)) onOpenChange(false);
     };
@@ -169,9 +185,9 @@ export function EditOrderDialog({
                                 loading={topQ.isPending}
                                 accent="var(--color-emerald-500, #10b981)"
                                 lang={lang}
-                                maxRank={item?.maxRank}
+                                item={item}
                                 emptyText={t("order.top.empty")}
-                                rankLabel={t("order.field.rank")}
+                                t={t}
                             />
                             <TopOrderList
                                 title={t("order.top.buy")}
@@ -179,9 +195,9 @@ export function EditOrderDialog({
                                 loading={topQ.isPending}
                                 accent="var(--color-violet-500, #8b5cf6)"
                                 lang={lang}
-                                maxRank={item?.maxRank}
+                                item={item}
                                 emptyText={t("order.top.empty")}
-                                rankLabel={t("order.field.rank")}
+                                t={t}
                             />
                         </div>
 
@@ -206,6 +222,28 @@ export function EditOrderDialog({
                                     error={errors.rank}
                                     onChange={(v) => setNumber("rank", v)}
                                 />
+                            )}
+
+                            {showSubtype && (
+                                <Field>
+                                    <FieldLabel id="edit-subtype-label">
+                                        {t("order.field.subtype")}
+                                    </FieldLabel>
+                                    <Select value={subtype} onValueChange={setSubtype}>
+                                        <SelectTrigger aria-labelledby="edit-subtype-label">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                {item!.subtypes!.map((s) => (
+                                                    <SelectItem key={s} value={s}>
+                                                        {t(s, { ns: "subtype", defaultValue: s })}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </Field>
                             )}
 
                             {(showCyan || showAmber) && (
@@ -276,18 +314,18 @@ function TopOrderList({
     loading,
     accent,
     lang,
-    maxRank,
+    item,
     emptyText,
-    rankLabel,
+    t
 }: {
     title: string;
     orders: ItemOrder[];
     loading: boolean;
     accent: string;
     lang: "zh" | "en";
-    maxRank: number | undefined;
+    item: Item | undefined;
     emptyText: string;
-    rankLabel: string;
+    t: TFunction;
 }) {
     const rows = orders.slice(0, 5);
     return (
@@ -318,6 +356,21 @@ function TopOrderList({
                                 <span className="min-w-0 flex-1 truncate text-foreground">
                                     {o.user?.ingameName ?? "—"}
                                 </span>
+                                {o.user?.reputation != null ? (
+                                    <span
+                                        className="flex shrink-0 tabular-nums"
+                                        style={{color:o.user.reputation > 5?
+                                                "var(--color-green-500, #22c55e)"
+                                                :"var(--color-gray-500, #6b7280)"}}
+                                    >
+                                        {o.user.reputation}
+                                        {o.user.reputation > 5 ?(
+                                            <Smile className="size-3"/>
+                                        ):(
+                                            <Meh className="size-3"/>
+                                        )}
+                                    </span>
+                                ) : null}
                                 <span
                                     className="flex shrink-0 items-center gap-1 font-mono font-semibold tabular-nums"
                                     style={{ color: accent }}
@@ -329,16 +382,43 @@ function TopOrderList({
                                         className="size-3"
                                     />
                                 </span>
-                                {o.rank != null && maxRank != null ? (
+                                {o.rank != null && item?.maxRank != null ? (
                                     <span className="shrink-0 tabular-nums">
-                                        {rankLabel} {o.rank}/{maxRank}
+                                         {t("market.rank", { rank: o.rank ,maxRank: item.maxRank})}
                                     </span>
                                 ) : null}
-                                {o.user?.reputation != null ? (
-                                    <span className="shrink-0 tabular-nums">
-                                        {o.user.reputation}
+                                {o.amberStars != null && item?.maxAmberStars ? (
+                                    <span>
+                                        {t("market.amberStars", { amberStars: o.amberStars, maxAmberStars: item.maxAmberStars })}
                                     </span>
                                 ) : null}
+                                {o.cyanStars != null && item?.maxCyanStars ? (
+                                    <span>
+                                        {t("market.cyanStars", { cyanStars: o.cyanStars, maxCyanStars: item.maxCyanStars })}
+                                    </span>
+                                ) : null}
+                                {o.amberStars != null || o.cyanStars != null ? (
+                                    <span className="flex items-center gap-1 font-mono text-xs">
+                                        <img src={"/images/resources/FusionPoints.png"} alt="" className="size-4" />
+                                        {getSumEndo(item, o.amberStars, o.cyanStars)}
+                                    </span>
+                                ) : null}
+                                {o.subtype ? (
+                                    <span className="truncate">
+                                        {t(o.subtype, {
+                                            ns: "subtype",
+                                            defaultValue: o.subtype,
+                                        })}
+                                    </span>
+                                ) : null}
+                                <span className="flex shrink-0 tabular-nums">
+                                    <img
+                                        src="/images/Coupon.png"
+                                        alt="Coupon"
+                                        className="size-3"
+                                    />
+                                    {o.quantity}
+                                </span>
                             </li>
                         );
                     })}
