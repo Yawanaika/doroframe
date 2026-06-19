@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import {
     CheckIcon,
     EyeIcon,
@@ -204,6 +204,7 @@ function OrderRow({
     lang: "zh" | "en";
 }) {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const { handleClose, handleDelete, handleEdit, closing, deleting, editing } = useOrderActions();
     const name = item ? itemDisplayName(item, lang) : (order.itemId ?? "—");
     const iconUrl = item ? itemIconUrl(item, lang, !item.setRoot) : "";
@@ -213,6 +214,10 @@ function OrderRow({
     const onDelete = () => void handleDelete(order.id);
     const onShow = () => void handleEdit(order.id, ToSubmit(order, "show"));
     const onAdd = () => void handleEdit(order.id, ToSubmit(order, "add"));
+    const onOpenItem = () => {
+        if (!item?.slug) return;
+        void navigate({ to: "/market/items", search: { slug: item.slug } });
+    };
     const busy = closing || deleting || editing;
 
     return (
@@ -237,14 +242,14 @@ function OrderRow({
             <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
                     {item?.slug ? (
-                        <Link
-                            to="/market/items"
-                            search={{ slug: item.slug }}
-                            className="truncate rounded-sm text-sm font-medium underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+                        <button
+                            type="button"
+                            onClick={onOpenItem}
+                            className="truncate rounded-sm text-left text-sm font-medium underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
                             title={name}
                         >
                             {name}
-                        </Link>
+                        </button>
                     ) : (
                         <span className="truncate text-sm font-medium" title={name}>
                             {name}
