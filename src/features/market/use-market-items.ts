@@ -1,4 +1,11 @@
-import { useState, type Dispatch, type SetStateAction } from "react";
+import {
+    useEffect,
+    useRef,
+    useState,
+    type Dispatch,
+    type SetStateAction,
+} from "react";
+import { useSearch } from "@tanstack/react-router";
 import type { UseQueryResult } from "@tanstack/react-query";
 import {
     useSuggestions,
@@ -51,6 +58,29 @@ export function useMarketItems(): UseMarketItems {
     const [orderOpen, setOrderOpen] = useState(false);
 
     const isLoggedIn = useAuthStore((s) => s.isLoggedIn());
+
+    // 深链：?slug= 进入时定位到该物品（strict:false 避免与 router 形成循环依赖）
+    const { slug: incomingSlug } = useSearch({ strict: false }) as {
+        slug?: string;
+    };
+    // 每个传入 slug 只播种一次，之后不干扰用户在搜索框内的手动切换
+    const seededRef = useRef<string>("");
+    useEffect(() => {
+        if (!incomingSlug || incomingSlug === seededRef.current) return;
+        seededRef.current = incomingSlug;
+        setSlug(incomingSlug);
+        setSetAnchor(incomingSlug);
+    }, [incomingSlug]);
+
+    // items 加载后把深链物品名回填到搜索框（仅在用户尚未输入时）
+    useEffect(() => {
+        if (!incomingSlug || slug !== incomingSlug || text) return;
+        const sug = suggestions.find((s) => s.slug === incomingSlug);
+        if (sug) {
+            setName(sug.name);
+            setText(sug.name);
+        }
+    }, [incomingSlug, slug, text, suggestions]);
 
     // 订单按选中物品各自查询；套装信息只在「跨套装」时才换锚点重查
     const orders = useItemOrdersQuery(slug);

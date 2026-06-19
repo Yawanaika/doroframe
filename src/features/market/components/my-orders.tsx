@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "@tanstack/react-router";
 import {
     CheckIcon,
     EyeIcon,
@@ -235,9 +236,20 @@ function OrderRow({
             {/* 名称 + 元信息 */}
             <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
-                    <span className="truncate text-sm font-medium" title={name}>
-                        {name}
-                    </span>
+                    {item?.slug ? (
+                        <Link
+                            to="/market/items"
+                            search={{ slug: item.slug }}
+                            className="truncate rounded-sm text-sm font-medium underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+                            title={name}
+                        >
+                            {name}
+                        </Link>
+                    ) : (
+                        <span className="truncate text-sm font-medium" title={name}>
+                            {name}
+                        </span>
+                    )}
                     {dimmed ? (
                         <EyeOffIcon className="size-3 shrink-0 text-muted-foreground" />
                     ) : null}

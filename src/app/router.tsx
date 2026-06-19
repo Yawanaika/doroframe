@@ -49,6 +49,10 @@ const marketItemsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/market/items",
     component: MarketItemsPage,
+    // 支持 ?slug= 深链：从「我的订单」等处点物品名跳转过来时定位到该物品
+    validateSearch: (search: Record<string, unknown>): { slug?: string } => ({
+        slug: typeof search.slug === "string" ? search.slug : undefined,
+    }),
 });
 
 const marketMeRoute = createRoute({
