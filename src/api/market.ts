@@ -44,6 +44,15 @@ export async function fetchItemOrders(
     return (raw ?? []).map(itemOrderFromJson);
 }
 
+/** `GET /v2/orders/recent` —— 最近 4h 内、在线用户的可见订单（最多 500 条，按 createdAt 倒序）。
+ * 无需登录；受 Platform/Crossplay header 影响。订单带 `user`（UserShort）。 */
+export async function fetchRecentOrders(lang: LangCode): Promise<ItemOrder[]> {
+    const raw = await invoke<unknown[]>("get_orders_recent", {
+        language: toMarketLang(lang),
+    });
+    return (raw ?? []).map(itemOrderFromJson);
+}
+
 /** `GET /v2/orders/item/{slug}/top` —— 指定物品的 Top5 买卖订单。
  * 注意：该端点 data 是单个对象 `{ sell, buy }`，不是数组。 */
 export async function fetchItemOrdersTop(

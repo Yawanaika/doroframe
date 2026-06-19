@@ -9,6 +9,7 @@ import {
 import {
     fetchMarketItems,
     fetchItemOrders,
+    fetchRecentOrders,
     fetchItemSet,
     fetchUserOrders,
     createOrder,
@@ -61,6 +62,19 @@ export function useItemOrdersQuery(slug: string): UseQueryResult<ItemOrder[]> {
         queryFn: () => fetchItemOrders(slug, lang),
         enabled: !!slug,
         staleTime: 30_000,
+    });
+}
+
+/** 最近订单流（GET /v2/orders/recent）：服务端 1 分钟缓存，这里取 60s staleTime 呼应。*/
+export function useRecentOrdersQuery(
+    enabled = true,
+): UseQueryResult<ItemOrder[]> {
+    const lang = useSettingsStore((s) => s.lang);
+    return useQuery({
+        queryKey: ["market", "recent-orders", lang],
+        queryFn: () => fetchRecentOrders(lang),
+        enabled,
+        staleTime: 60_000,
     });
 }
 

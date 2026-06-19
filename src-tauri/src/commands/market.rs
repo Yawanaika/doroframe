@@ -124,6 +124,16 @@ pub async fn get_market_orders(
     .await
 }
 
+/// `GET /v2/orders/recent` —— 最近 4 小时内、在线非封禁用户的可见订单（最多 500 条，
+/// 按 createdAt 倒序）。受 Platform/Crossplay header 影响，服务端 1 分钟缓存。无需登录。
+#[tauri::command]
+pub async fn get_orders_recent(
+    state: tauri::State<'_, MarketHttp>,
+    language: String,
+) -> Result<Value, String> {
+    fetch_data(&state.client, &format!("{V2}/orders/recent"), &language).await
+}
+
 /// `GET /v2/orders/item/{slug}/top` —— 指定物品的Top5订单。
 #[tauri::command]
 pub async fn get_orders_top(
