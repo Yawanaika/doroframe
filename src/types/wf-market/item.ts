@@ -38,7 +38,7 @@ export function itemFromJson(json: any): Item {
         quantityInSet: json?.quantityInSet,
         rarity: json?.rarity,
         baseEndo: json?.baseEndo,
-        bulkTradable: json?.bulkTradable,
+        bulkTradable: json?.bulkTradable ?? false,
         subtypes: json?.subtypes ?? [],
         maxRank: json?.maxRank,
         maxCharges: json?.maxCharges,
