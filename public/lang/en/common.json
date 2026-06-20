@@ -38,6 +38,7 @@
   "market.me.about": "About",
   "market.me.lastSeen": "Last seen",
   "market.me.banned": "Banned",
+  "market.me.session.expired": "Your session has expired, please sign in again",
   "market.me.orders.title": "My Orders",
   "market.me.orders.stats": "{{visible}} Visible · {{hidden}} Hidden",
   "market.me.orders.empty.sell": "No sell orders yet",

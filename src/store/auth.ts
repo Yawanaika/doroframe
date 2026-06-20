@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { loadSetting, saveSetting } from "@/lib/tauri/store";
 import { signIn as apiSignIn, signOut as apiSignOut } from "@/api/auth";
+import { parseTokenExpiry } from "@/lib/auth/token";
 import type { User } from "@/types/wf-market";
 
 /**
@@ -19,8 +20,12 @@ const EMPTY: PersistedAuth = { token: null, user: null };
 interface AuthState {
     token: string | null;
     user: User | null;
+    /** token(set-cookie) 的 Expires 解析出的毫秒时间戳；null 表示无过期信息。派生自 token，不单独持久化。 */
+    expiresAt: number | null;
     hydrated: boolean;
     isLoggedIn: () => boolean;
+    /** token 存在但已过 Expires 时间 —— 用于触发“登录过期”提示。 */
+    isExpired: () => boolean;
     hydrate: () => Promise<void>;
     signIn: (email: string, password: string) => Promise<void>;
     signOut: () => Promise<void>;
@@ -33,20 +38,33 @@ async function persist(token: string | null, user: User | null): Promise<void> {
 export const useAuthStore = create<AuthState>((set, get) => ({
     token: null,
     user: null,
+    expiresAt: null,
     hydrated: false,
     isLoggedIn: () => {
-        const { token } = get();
-        return !!token && token.length > 0;
+        const { token, expiresAt } = get();
+        if (!token || token.length === 0) return false;
+        // 已过 Expires 视为未登录，避免用过期 token 渲染已登录界面
+        if (expiresAt != null && Date.now() >= expiresAt) return false;
+        return true;
+    },
+    isExpired: () => {
+        const { token, expiresAt } = get();
+        return !!token && expiresAt != null && Date.now() >= expiresAt;
     },
     hydrate: async () => {
         if (get().hydrated) return;
         const loaded = await loadSetting<PersistedAuth>(STORE_KEY, EMPTY);
-        set({ token: loaded.token, user: loaded.user, hydrated: true });
+        set({
+            token: loaded.token,
+            user: loaded.user,
+            expiresAt: parseTokenExpiry(loaded.token),
+            hydrated: true,
+        });
     },
     signIn: async (email, password) => {
         const deviceId = await deviceName();
         const { token, user } = await apiSignIn(email, password, deviceId);
-        set({ token, user });
+        set({ token, user, expiresAt: parseTokenExpiry(token) });
         await persist(token, user);
     },
     signOut: async () => {
@@ -54,7 +72,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         try {
             await apiSignOut(token);
         } finally {
-            set({ token: null, user: null });
+            set({ token: null, user: null, expiresAt: null });
             await persist(null, null);
         }
     },

@@ -38,6 +38,7 @@
   "market.me.about": "简介",
   "market.me.lastSeen": "最近在线",
   "market.me.banned": "已封禁",
+  "market.me.session.expired": "登录已过期，请重新登录",
   "market.me.orders.title": "我的订单",
   "market.me.orders.stats": "{{visible}} 可见 · {{hidden}} 隐藏",
   "market.me.orders.empty.sell": "暂无出售订单",

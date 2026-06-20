@@ -5,6 +5,7 @@ import {TooltipProvider} from "@/components/ui/tooltip.tsx";
 import {RouterProvider} from "@tanstack/react-router";
 import {router} from "@/app/router.tsx";
 import {Toaster} from "sonner";
+import {SessionExpiryGuard} from "@/features/market/components/session-expiry-guard.tsx";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <QueryClientProvider client={queryClient}>
               <TooltipProvider>
                   <RouterProvider router={router} />
+                  <SessionExpiryGuard />
                   <Toaster richColors position="top-right" />
               </TooltipProvider>
           </QueryClientProvider>
