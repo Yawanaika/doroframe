@@ -10,6 +10,7 @@ export interface Item {
     quantityInSet?: number;
     rarity?: string;
     baseEndo?: number;
+    // 是否可批量交易 默认为1
     bulkTradable?: number;
     subtypes?: string[];
     maxRank?: number;
