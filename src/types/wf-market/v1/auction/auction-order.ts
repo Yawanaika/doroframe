@@ -5,7 +5,7 @@ import { userFromJson } from "@/types/wf-market/v1/user";
 import {
     type AuctionOrderItem,
     auctionOrderItemFromJson,
-} from "./auction-order-item";
+} from "@/types/wf-market";
 
 export interface AuctionOrder {
     id: string;

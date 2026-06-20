@@ -6,7 +6,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { CardEmpty } from "@/components/card-states";
 import { statusOf } from "@/features/market/constants";
 import { useAuctionSearchData } from "@/features/market/use-auction-search-data";
-import { AuctionCard } from "./auction-card";
+import { AuctionCard } from "@/features/market/components/auction/auction-card";
 import type { AuctionOrder } from "@/types/wf-market";
 
 interface Props {

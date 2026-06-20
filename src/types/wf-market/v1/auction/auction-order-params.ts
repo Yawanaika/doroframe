@@ -4,7 +4,7 @@
 import {
     type AuctionOrderItem,
     auctionOrderItemToJson,
-} from "./auction-order-item";
+} from "@/types/wf-market";
 
 export interface AuctionOrderParams {
     visible: boolean;
