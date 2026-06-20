@@ -135,7 +135,7 @@ pub async fn get_orders_recent(
 }
 
 /// `GET /v2/orders/item/{slug}/top` —— 指定物品某变体的 Top5 买卖订单。
-/// 可选 rank/charges/amberStars/cyanStars/subtype 过滤（精确匹配），
+/// 可选 rank/rankLt/charges/amberStars/cyanStars/subtype 过滤，
 /// 使行情参考与正在编辑的订单变体一致；缺省则返回该物品的整体 Top5。
 #[tauri::command]
 pub async fn get_orders_top(
@@ -143,6 +143,7 @@ pub async fn get_orders_top(
     slug: String,
     language: String,
     rank: Option<i64>,
+    rank_lt: Option<i64>,
     charges: Option<i64>,
     amber_stars: Option<i64>,
     cyan_stars: Option<i64>,
@@ -151,6 +152,10 @@ pub async fn get_orders_top(
     let mut params: Vec<(&str, String)> = Vec::new();
     if let Some(v) = rank {
         params.push(("rank", v.to_string()));
+    }
+    // rankLt 优先于 rank：匹配「低于该值」的 rank（未满级订单归为一档）
+    if let Some(v) = rank_lt {
+        params.push(("rankLt", v.to_string()));
     }
     if let Some(v) = charges {
         params.push(("charges", v.to_string()));

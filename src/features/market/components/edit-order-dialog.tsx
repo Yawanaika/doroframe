@@ -127,26 +127,31 @@ export function EditOrderDialog({
 
     // 行情参考按当前编辑中的变体（等级/星数/类型/充能）精确过滤，
     // 使前 5 笔买卖订单与正在改的这条订单可直接对比。
-    const topFilter = useMemo<TopOrdersFilter>(
-        () => ({
-            rank: showRank ? numOrNull(numbers.rank) ?? undefined : undefined,
+    const topFilter = useMemo<TopOrdersFilter>(() => {
+        // 满级（rank === maxRank）按精确 rank 过滤；未满级则用 rankLt=maxRank，
+        // 把所有未满级订单归为一档对比（WFM 行情即如此区分满级/未满级）。
+        const rankVal = showRank ? numOrNull(numbers.rank) : null;
+        const atMaxRank = rankVal != null && rankVal === item?.maxRank;
+        return {
+            rank: atMaxRank ? rankVal : undefined,
+            rankLt: rankVal != null && !atMaxRank ? item?.maxRank ?? undefined : undefined,
             charges: order.charges,
             amberStars: showAmber ? numOrNull(numbers.amberStars) ?? undefined : undefined,
             cyanStars: showCyan ? numOrNull(numbers.cyanStars) ?? undefined : undefined,
             subtype: showSubtype && subtype !== "" ? subtype : undefined,
-        }),
-        [
-            showRank,
-            showAmber,
-            showCyan,
-            showSubtype,
-            numbers.rank,
-            numbers.amberStars,
-            numbers.cyanStars,
-            subtype,
-            order.charges,
-        ],
-    );
+        };
+    }, [
+        showRank,
+        showAmber,
+        showCyan,
+        showSubtype,
+        numbers.rank,
+        numbers.amberStars,
+        numbers.cyanStars,
+        subtype,
+        order.charges,
+        item?.maxRank,
+    ]);
     const topQ = useTopOrdersQuery(
         open && item?.slug ? item.slug : "",
         topFilter,

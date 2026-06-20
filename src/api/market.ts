@@ -70,6 +70,8 @@ export async function fetchRecentOrders(lang: LangCode): Promise<ItemOrder[]> {
 /** `/v2/orders/item/{slug}/top` 的变体过滤参数（精确匹配，缺省即不过滤）。 */
 export interface TopOrdersFilter {
     rank?: number;
+    /** 匹配低于该值的 rank（优先于 rank）：未满级订单归为一档对比。 */
+    rankLt?: number;
     charges?: number;
     amberStars?: number;
     cyanStars?: number;
@@ -88,6 +90,7 @@ export async function fetchItemOrdersTop(
         slug,
         language: toMarketLang(lang),
         rank: filter.rank,
+        rankLt: filter.rankLt,
         charges: filter.charges,
         amberStars: filter.amberStars,
         cyanStars: filter.cyanStars,
