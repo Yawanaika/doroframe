@@ -27,11 +27,24 @@ import {
     fetchSisterWeapon,
     fetchSisterEphemeras,
     fetchSisterQuirks,
+    fetchAuctions,
+    searchAuctions,
+    createAuction,
 } from "@/api/market";
 import { useSettingsStore } from "@/store/settings";
 import { useAuthStore } from "@/store/auth";
 import { itemDisplayName } from "@/features/market/assets";
-import type { Item, ItemOrder, SetInfo, SubmitItemOrder, TopOrders, Transaction } from "@/types/wf-market";
+import type {
+    Item,
+    ItemOrder,
+    SetInfo,
+    SubmitItemOrder,
+    TopOrders,
+    Transaction,
+    AuctionOrder,
+    AuctionSearchParams,
+    AuctionOrderParams,
+} from "@/types/wf-market";
 import type { Riven, RivenAttribute } from "@/types/wf-market/v2/riven.ts";
 import type {
     NemesisWeapon,
@@ -259,6 +272,40 @@ export function useCreateOrderMutation(): UseMutationResult<
         onSuccess: () => {
             void qc.invalidateQueries({ queryKey: ["market", "orders"] });
             void qc.invalidateQueries({ queryKey: ["market", "user-orders"] });
+        },
+    });
+}
+
+// ===== 拍卖（v1）=====
+
+/** 拍卖列表查询：searchParams 为 null 时拉默认大厅并 30s 轮询；非 null 时走搜索且停轮询。
+ * 对齐参考页「自动刷新 vs 搜索结果」两态。 */
+export function useAuctions(
+    searchParams: AuctionSearchParams | null,
+): UseQueryResult<AuctionOrder[]> {
+    const lang = useSettingsStore((s) => s.lang);
+    return useQuery({
+        queryKey: ["market", "auctions", searchParams ?? "all", lang],
+        queryFn: () =>
+            searchParams ? searchAuctions(searchParams, lang) : fetchAuctions(lang),
+        staleTime: 30_000,
+        refetchInterval: searchParams ? false : 30_000,
+    });
+}
+
+/** 创建拍卖：成功后让拍卖列表查询失效以刷新 */
+export function useCreateAuctionMutation(): UseMutationResult<
+    AuctionOrder,
+    Error,
+    AuctionOrderParams
+> {
+    const lang = useSettingsStore((s) => s.lang);
+    const token = useAuthStore((s) => s.token);
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (params: AuctionOrderParams) => createAuction(params, token, lang),
+        onSuccess: () => {
+            void qc.invalidateQueries({ queryKey: ["market", "auctions"] });
         },
     });
 }

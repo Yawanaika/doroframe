@@ -3,6 +3,7 @@ use std::time::{Duration, Instant};
 use serde_json::Value;
 use tokio::sync::Mutex;
 
+const V1: &str = "https://api.warframe.market/v1";
 const V2: &str = "https://api.warframe.market/v2";
 // items 列表极少变动，长缓存；orders/set 实时性强，不缓存。
 const ITEMS_TTL: Duration = Duration::from_secs(6 * 60 * 60);
@@ -29,14 +30,16 @@ impl MarketHttp {
 
 /// 通用请求：支持任意 HTTP 方法，带 Platform/Language header；
 /// `token` 非空时注入 JWT Cookie，`body` 存在时作为 JSON 请求体。
-/// 解 `{ data, error }` 信封后返回 data，业务错误（error 非空）优先于 HTTP 状态码上报。
-async fn request_data(
+/// 按 `envelope` 解信封字段（v2 为 `data`，v1 为 `payload`）后返回其值，
+/// 业务错误（error 非空）优先于 HTTP 状态码上报。
+async fn request_envelope(
     client: &reqwest::Client,
     method: reqwest::Method,
     url: &str,
     language: &str,
     token: Option<&str>,
     body: Option<&Value>,
+    envelope: &str,
 ) -> Result<Value, String> {
     let mut req = client
         .request(method, url)
@@ -69,10 +72,34 @@ async fn request_data(
         return Err(format!("market http {status}: {body}"));
     }
 
-    match body.get_mut("data") {
-        Some(data) => Ok(data.take()),
-        None => Err("market response missing data".to_string()),
+    match body.get_mut(envelope) {
+        Some(value) => Ok(value.take()),
+        None => Err(format!("market response missing {envelope}")),
     }
+}
+
+/// v2 信封请求：解 `{ data, error }` 后返回 data。
+async fn request_data(
+    client: &reqwest::Client,
+    method: reqwest::Method,
+    url: &str,
+    language: &str,
+    token: Option<&str>,
+    body: Option<&Value>,
+) -> Result<Value, String> {
+    request_envelope(client, method, url, language, token, body, "data").await
+}
+
+/// v1 信封请求：解 `{ payload, error }` 后返回 payload（拍卖等 v1 端点用）。
+async fn request_payload(
+    client: &reqwest::Client,
+    method: reqwest::Method,
+    url: &str,
+    language: &str,
+    token: Option<&str>,
+    body: Option<&Value>,
+) -> Result<Value, String> {
+    request_envelope(client, method, url, language, token, body, "payload").await
 }
 
 /// GET 便捷封装（无 token、无请求体）。
@@ -179,6 +206,91 @@ pub async fn get_orders_top(
             .to_string()
     };
     fetch_data(&state.client, &url, &language).await
+}
+
+// ===== 拍卖（v1）=====
+// 拍卖端点全部走 v1，信封为 `{ payload, error }`，故用 request_payload 取值。
+
+/// `GET /v1/auctions` —— 拍卖大厅默认列表（payload.auctions 数组）。
+#[tauri::command]
+pub async fn get_auctions(
+    state: tauri::State<'_, MarketHttp>,
+    language: String,
+) -> Result<Value, String> {
+    let mut payload =
+        request_payload(&state.client, reqwest::Method::GET, &format!("{V1}/auctions"), &language, None, None)
+            .await?;
+    Ok(payload
+        .get_mut("auctions")
+        .map(|v| v.take())
+        .unwrap_or(Value::Array(vec![])))
+}
+
+/// `GET /v1/auctions/search` —— 按条件搜索拍卖（payload.auctions 数组）。
+/// `params` 为搜索条件对象，遍历其非空项拼成 query string。
+#[tauri::command]
+pub async fn search_auctions(
+    state: tauri::State<'_, MarketHttp>,
+    language: String,
+    params: Value,
+) -> Result<Value, String> {
+    let mut query: Vec<(String, String)> = Vec::new();
+    if let Some(obj) = params.as_object() {
+        for (k, v) in obj {
+            if v.is_null() {
+                continue;
+            }
+            // 字符串原样取，其余用 JSON 文本（数字/布尔），跳过空串
+            let s = match v {
+                Value::String(s) => s.clone(),
+                _ => v.to_string(),
+            };
+            if s.is_empty() {
+                continue;
+            }
+            query.push((k.clone(), s));
+        }
+    }
+
+    let base = format!("{V1}/auctions/search");
+    let url = if query.is_empty() {
+        base
+    } else {
+        reqwest::Url::parse_with_params(&base, &query)
+            .map_err(|e| format!("build search url failed: {e}"))?
+            .to_string()
+    };
+
+    let mut payload =
+        request_payload(&state.client, reqwest::Method::GET, &url, &language, None, None).await?;
+    Ok(payload
+        .get_mut("auctions")
+        .map(|v| v.take())
+        .unwrap_or(Value::Array(vec![])))
+}
+
+/// `POST /v1/auctions/create` —— 创建拍卖订单（payload.auction 单对象）。
+/// 需登录态：携带 JWT cookie。`body` 为 AuctionOrderParams JSON。
+#[tauri::command]
+pub async fn create_auction(
+    state: tauri::State<'_, MarketHttp>,
+    token: Option<String>,
+    body: Value,
+    language: String,
+) -> Result<Value, String> {
+    let mut payload = request_payload(
+        &state.client,
+        reqwest::Method::POST,
+        &format!("{V1}/auctions/create"),
+        &language,
+        token.as_deref(),
+        Some(&body),
+    )
+    .await?;
+    Ok(payload
+        .get_mut("auction")
+        .map(|v| v.take())
+        .unwrap_or(payload))
 }
 
 /// `GET /v2/riven/weapons` —— 全部可交易紫卡（裂罅）武器列表。

@@ -23,6 +23,7 @@ import {
 import { HomePage } from "@/routes/home";
 import { StatePage } from "@/routes/state";
 import { MarketItemsPage } from "@/routes/market-items";
+import { MarketAuctionsPage } from "@/routes/market-auctions";
 import { MarketMePage } from "@/routes/market-me";
 import {SettingsPage} from "@/routes/settings.tsx";
 import { NotFoundPage } from "@/routes/not-found";
@@ -55,6 +56,12 @@ const marketItemsRoute = createRoute({
     }),
 });
 
+const marketAuctionsRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/market/auctions",
+    component: MarketAuctionsPage,
+});
+
 const marketMeRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/market/me",
@@ -77,6 +84,7 @@ const routeTree = rootRoute.addChildren([
     indexRoute,
     stateRoute,
     marketItemsRoute,
+    marketAuctionsRoute,
     marketMeRoute,
     settingsRoute,
     notFoundRoute,

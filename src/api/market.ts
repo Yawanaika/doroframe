@@ -26,6 +26,14 @@ import {
     NemesisQuirk,
     nemesisQuirkFromJson,
 } from "@/types/wf-market/v2/nemesis.ts";
+import {
+    type AuctionOrder,
+    auctionOrderFromJson,
+    type AuctionSearchParams,
+    auctionSearchParamsToQuery,
+    type AuctionOrderParams,
+    auctionOrderParamsToJson,
+} from "@/types/wf-market";
 
 /**
  * Tauri 入口：市场数据统一经由 Rust 端 `get_market_*` command 拉取
@@ -239,6 +247,42 @@ export async function fetchSisterQuirks(
         language: toMarketLang(lang),
     });
     return (raw ?? []).map(nemesisQuirkFromJson);
+}
+
+// ===== 拍卖（v1）=====
+
+/** `GET /v1/auctions` —— 拍卖大厅默认列表 */
+export async function fetchAuctions(lang: LangCode): Promise<AuctionOrder[]> {
+    const raw = await invoke<unknown[]>("get_auctions", {
+        language: toMarketLang(lang),
+    });
+    return (raw ?? []).map(auctionOrderFromJson);
+}
+
+/** `GET /v1/auctions/search` —— 按条件搜索拍卖 */
+export async function searchAuctions(
+    params: AuctionSearchParams,
+    lang: LangCode,
+): Promise<AuctionOrder[]> {
+    const raw = await invoke<unknown[]>("search_auctions", {
+        language: toMarketLang(lang),
+        params: auctionSearchParamsToQuery(params),
+    });
+    return (raw ?? []).map(auctionOrderFromJson);
+}
+
+/** `POST /v1/auctions/create` —— 创建拍卖，需登录态（token 为 JWT cookie） */
+export async function createAuction(
+    params: AuctionOrderParams,
+    token: string | null,
+    lang: LangCode,
+): Promise<AuctionOrder> {
+    const raw = await invoke<unknown>("create_auction", {
+        token,
+        body: auctionOrderParamsToJson(params),
+        language: toMarketLang(lang),
+    });
+    return auctionOrderFromJson(raw);
 }
 
 /** `PATCH /v2/orders/group/{id}` —— 批量改某订单组的可见性，需登录态。
