@@ -237,5 +237,6 @@
   "auction.create.error.weapon": "Select a valid weapon",
   "auction.create.error.price": "Enter a price",
   "auction.create.error.attrs": "Enter at least 2 positive attributes",
-  "auction.create.error.modName": "Select a Riven name"
+  "auction.create.error.modName": "Select a Riven name",
+  "auction.preview.mastery": "MR"
 }

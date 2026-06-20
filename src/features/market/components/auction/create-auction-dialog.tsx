@@ -1,7 +1,7 @@
 // 上架拍卖对话框。riven 路径含词条编辑器 + Mod 名生成；lich/sister 路径为元素/幻纹/伤害/怪癖。
 // 价格段随策略切换：direct 仅售价（买断=售价）；auction 为起标 + 买断(∞) + 最低信誉。
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { PlusIcon, XIcon } from "lucide-react";
@@ -38,6 +38,8 @@ import {
 } from "@/features/market/use-auction-search-data";
 import { useCreateAuctionMutation } from "@/features/market/queries";
 import { generateRivenNames } from "@/features/market/auction-riven-name";
+import { assetUrl } from "@/features/market/assets";
+import { RivenCardPreview } from "./riven-card-preview";
 import {
     SEARCH_TYPES,
     CREATE_POLICIES,
@@ -70,6 +72,9 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
     const { t } = useTranslation();
     const data = useAuctionSearchData();
     const createMut = useCreateAuctionMutation();
+    // Combobox(base-ui)弹层默认 portal 到 body，会被 Dialog(radix)的焦点陷阱打断选中。
+    // 用此容器把弹层渲染进 Dialog 内部，规避跨库冲突。
+    const portalContainer = useRef<HTMLDivElement>(null);
 
     const [type, setType] = useState<SearchTypeCode>("riven");
     const [policy, setPolicy] = useState<BuyoutPolicyCode>("direct");
@@ -216,15 +221,54 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
         }
     };
 
+    // 卡面预览：紫卡词条行（含正负号 + 名称）
+    const previewStats = attrRows
+        .filter((r) => r.slug)
+        .map((r) => `${r.positive ? "+" : ""}${r.value} ${data.attrName(r.slug)}`.trim());
+    const weaponDisplayName = data.weaponName(type, weaponSlug);
+    const weaponIconPath = data.weaponIcon(type, weaponSlug);
+
+    const preview =
+        type === "riven" ? (
+            <RivenCardPreview
+                weaponName={weaponDisplayName}
+                modName={modName}
+                polarity={polarity}
+                stats={previewStats}
+                masteryRank={mr}
+                reRolls={reRolls}
+            />
+        ) : (
+            <div className="flex w-[200px] shrink-0 flex-col items-center gap-3 rounded-lg border p-4">
+                {weaponIconPath ? (
+                    <img src={assetUrl(weaponIconPath)} alt="" className="size-28 object-contain" />
+                ) : (
+                    <div className="size-28 rounded-full bg-muted" />
+                )}
+                <div className="text-center font-medium">{weaponDisplayName}</div>
+                {hasEphemera && (
+                    <div className="text-center text-sm text-muted-foreground">
+                        {data.ephemeraName(type, element)}
+                    </div>
+                )}
+            </div>
+        );
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+            <DialogContent
+                ref={portalContainer}
+                className="max-h-[90vh] overflow-y-auto sm:max-w-3xl"
+            >
                 <DialogHeader>
                     <DialogTitle>{t("auction.create.title")}</DialogTitle>
                 </DialogHeader>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex gap-4">
+                    <div className="hidden sm:block">{preview}</div>
+
+                    <div className="flex flex-1 flex-col gap-3">
                     {/* 策略 + 可见度 */}
                     <div className="grid grid-cols-2 gap-3">
                         <Field>
@@ -308,7 +352,7 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
                                     showTrigger={false}
                                     showClear
                                 />
-                                <ComboboxContent>
+                                <ComboboxContent container={portalContainer}>
                                     <ComboboxEmpty>{t("market.search.no-match")}</ComboboxEmpty>
                                     <ComboboxList>
                                         {weaponMatches.map((o) => (
@@ -412,7 +456,7 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
                                         showTrigger={false}
                                         showClear
                                     />
-                                    <ComboboxContent>
+                                    <ComboboxContent container={portalContainer}>
                                         <ComboboxEmpty>
                                             {t("market.search.no-match")}
                                         </ComboboxEmpty>
@@ -490,6 +534,7 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
                         {createMut.isPending && <Spinner data-icon="inline-start" />}
                         {t("auction.create.submit")}
                     </Button>
+                    </div>
                 </div>
             </DialogContent>
         </Dialog>

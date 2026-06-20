@@ -47,6 +47,8 @@ async fn request_envelope(
         .header("Language", language);
     if let Some(token) = token.filter(|t| !t.is_empty()) {
         req = req.header("Cookie", token);
+        // v1接口需要Authorization
+        req = req.header("Authorization", token);
     }
     if let Some(body) = body {
         req = req.header("Content-Type", "application/json").json(body);

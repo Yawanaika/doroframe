@@ -237,5 +237,6 @@
   "auction.create.error.weapon": "请选择有效的武器",
   "auction.create.error.price": "请填写价格",
   "auction.create.error.attrs": "请填写至少 2 条正面词条",
-  "auction.create.error.modName": "请选择裂罅Mod名称"
+  "auction.create.error.modName": "请选择裂罅Mod名称",
+  "auction.preview.mastery": "段位"
 }
