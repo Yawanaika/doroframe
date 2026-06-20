@@ -44,8 +44,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         const { token, expiresAt } = get();
         if (!token || token.length === 0) return false;
         // 已过 Expires 视为未登录，避免用过期 token 渲染已登录界面
-        if (expiresAt != null && Date.now() >= expiresAt) return false;
-        return true;
+        return !(expiresAt != null && Date.now() >= expiresAt);
     },
     isExpired: () => {
         const { token, expiresAt } = get();
