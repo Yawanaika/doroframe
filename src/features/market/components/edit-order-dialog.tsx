@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
     Dialog,
@@ -26,6 +26,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSettingsStore } from "@/store";
 import { useTopOrdersQuery } from "../queries";
+import type { TopOrdersFilter } from "@/api/market";
 import { useOrderActions } from "../order-actions";
 import { itemDisplayName, itemIconUrl } from "../assets";
 import { statusOf } from "../constants";
@@ -81,8 +82,6 @@ export function EditOrderDialog({
     const lang = useSettingsStore((s) => s.lang);
     const { handleEdit, editing } = useOrderActions();
 
-    const topQ = useTopOrdersQuery(open && item?.slug ? item.slug : "");
-
     const showBulk = item?.bulkTradable === true;
     const showRank = item?.maxRank != null && item?.maxCharges == null;
     const showSubtype = (item?.subtypes?.length ?? 0) > 0;
@@ -125,6 +124,33 @@ export function EditOrderDialog({
 
     // 批量交易开启：perTrade 取输入值；否则默认 1
     const bulkOn = showBulk && bulk;
+
+    // 行情参考按当前编辑中的变体（等级/星数/类型/充能）精确过滤，
+    // 使前 5 笔买卖订单与正在改的这条订单可直接对比。
+    const topFilter = useMemo<TopOrdersFilter>(
+        () => ({
+            rank: showRank ? numOrNull(numbers.rank) ?? undefined : undefined,
+            charges: order.charges,
+            amberStars: showAmber ? numOrNull(numbers.amberStars) ?? undefined : undefined,
+            cyanStars: showCyan ? numOrNull(numbers.cyanStars) ?? undefined : undefined,
+            subtype: showSubtype && subtype !== "" ? subtype : undefined,
+        }),
+        [
+            showRank,
+            showAmber,
+            showCyan,
+            showSubtype,
+            numbers.rank,
+            numbers.amberStars,
+            numbers.cyanStars,
+            subtype,
+            order.charges,
+        ],
+    );
+    const topQ = useTopOrdersQuery(
+        open && item?.slug ? item.slug : "",
+        topFilter,
+    );
 
     const setNumber = (key: NumberKey, raw: string) =>
         setNumbers((prev) => ({ ...prev, [key]: digits(raw) }));

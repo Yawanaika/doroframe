@@ -134,14 +134,46 @@ pub async fn get_orders_recent(
     fetch_data(&state.client, &format!("{V2}/orders/recent"), &language).await
 }
 
-/// `GET /v2/orders/item/{slug}/top` —— 指定物品的Top5订单。
+/// `GET /v2/orders/item/{slug}/top` —— 指定物品某变体的 Top5 买卖订单。
+/// 可选 rank/charges/amberStars/cyanStars/subtype 过滤（精确匹配），
+/// 使行情参考与正在编辑的订单变体一致；缺省则返回该物品的整体 Top5。
 #[tauri::command]
 pub async fn get_orders_top(
     state: tauri::State<'_, MarketHttp>,
     slug: String,
     language: String,
-) -> Result<Value, String>{
-    fetch_data(&state.client, &format!("{V2}/orders/item/{slug}/top"), &language).await
+    rank: Option<i64>,
+    charges: Option<i64>,
+    amber_stars: Option<i64>,
+    cyan_stars: Option<i64>,
+    subtype: Option<String>,
+) -> Result<Value, String> {
+    let mut params: Vec<(&str, String)> = Vec::new();
+    if let Some(v) = rank {
+        params.push(("rank", v.to_string()));
+    }
+    if let Some(v) = charges {
+        params.push(("charges", v.to_string()));
+    }
+    if let Some(v) = amber_stars {
+        params.push(("amberStars", v.to_string()));
+    }
+    if let Some(v) = cyan_stars {
+        params.push(("cyanStars", v.to_string()));
+    }
+    if let Some(v) = subtype.filter(|s| !s.is_empty()) {
+        params.push(("subtype", v));
+    }
+
+    let base = format!("{V2}/orders/item/{slug}/top");
+    let url = if params.is_empty() {
+        base
+    } else {
+        reqwest::Url::parse_with_params(&base, &params)
+            .map_err(|e| format!("build top url failed: {e}"))?
+            .to_string()
+    };
+    fetch_data(&state.client, &url, &language).await
 }
 
 /// `GET /v2/riven/weapons` —— 全部可交易紫卡（裂罅）武器列表。

@@ -15,7 +15,7 @@ import {
     createOrder,
     editOrder,
     editOrdersGroup,
-    fetchItemOrdersTop, closeOrder, deleteOrder,
+    fetchItemOrdersTop, type TopOrdersFilter, closeOrder, deleteOrder,
     fetchRivenWeapons,
     fetchRivenWeapon,
     fetchRivenAttributes,
@@ -95,11 +95,14 @@ export function useRecentOrdersQuery(
     });
 }
 
-export function useTopOrdersQuery(slug: string): UseQueryResult<TopOrders> {
+export function useTopOrdersQuery(
+    slug: string,
+    filter: TopOrdersFilter = {},
+): UseQueryResult<TopOrders> {
     const lang = useSettingsStore((s) => s.lang);
     return useQuery({
-        queryKey: ["market", "top-orders", slug, lang],
-        queryFn: () => fetchItemOrdersTop(slug, lang),
+        queryKey: ["market", "top-orders", slug, lang, filter],
+        queryFn: () => fetchItemOrdersTop(slug, lang, filter),
         enabled: !!slug,
         staleTime: 30_000,
     });

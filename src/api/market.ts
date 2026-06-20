@@ -67,15 +67,31 @@ export async function fetchRecentOrders(lang: LangCode): Promise<ItemOrder[]> {
     return (raw ?? []).map(itemOrderFromJson);
 }
 
-/** `GET /v2/orders/item/{slug}/top` —— 指定物品的 Top5 买卖订单。
+/** `/v2/orders/item/{slug}/top` 的变体过滤参数（精确匹配，缺省即不过滤）。 */
+export interface TopOrdersFilter {
+    rank?: number;
+    charges?: number;
+    amberStars?: number;
+    cyanStars?: number;
+    subtype?: string;
+}
+
+/** `GET /v2/orders/item/{slug}/top` —— 指定物品某变体的 Top5 买卖订单。
+ * 可传 rank/charges/amberStars/cyanStars/subtype 过滤，使行情参考与目标订单变体一致。
  * 注意：该端点 data 是单个对象 `{ sell, buy }`，不是数组。 */
 export async function fetchItemOrdersTop(
     slug: string,
     lang: LangCode,
+    filter: TopOrdersFilter = {},
 ): Promise<TopOrders> {
     const raw = await invoke<unknown>("get_orders_top", {
         slug,
         language: toMarketLang(lang),
+        rank: filter.rank,
+        charges: filter.charges,
+        amberStars: filter.amberStars,
+        cyanStars: filter.cyanStars,
+        subtype: filter.subtype,
     });
     return topOrdersFromJson(raw ?? { sell: [], buy: [] });
 }
