@@ -40,9 +40,8 @@ import {
     validateRange,
     type FieldErrors,
 } from "@/features/market/components/order-form-fields.tsx";
-import {Meh, Smile} from "lucide-react";
-import {TFunction} from "i18next";
-import {getSumEndo} from "@/lib/utils.ts";
+import { Meh, Smile } from "lucide-react";
+import { OrderMeta } from "@/features/market/components/order-meta";
 
 interface Props {
     open: boolean;
@@ -187,7 +186,6 @@ export function EditOrderDialog({
                                 lang={lang}
                                 item={item}
                                 emptyText={t("order.top.empty")}
-                                t={t}
                             />
                             <TopOrderList
                                 title={t("order.top.buy")}
@@ -197,7 +195,6 @@ export function EditOrderDialog({
                                 lang={lang}
                                 item={item}
                                 emptyText={t("order.top.empty")}
-                                t={t}
                             />
                         </div>
 
@@ -316,7 +313,6 @@ function TopOrderList({
     lang,
     item,
     emptyText,
-    t
 }: {
     title: string;
     orders: ItemOrder[];
@@ -325,7 +321,6 @@ function TopOrderList({
     lang: "zh" | "en";
     item: Item | undefined;
     emptyText: string;
-    t: TFunction;
 }) {
     const rows = orders.slice(0, 5);
     return (
@@ -382,35 +377,7 @@ function TopOrderList({
                                         className="size-3"
                                     />
                                 </span>
-                                {o.rank != null && item?.maxRank != null ? (
-                                    <span className="shrink-0 tabular-nums">
-                                         {t("market.rank", { rank: o.rank ,maxRank: item.maxRank})}
-                                    </span>
-                                ) : null}
-                                {o.amberStars != null && item?.maxAmberStars ? (
-                                    <span>
-                                        {t("market.amberStars", { amberStars: o.amberStars, maxAmberStars: item.maxAmberStars })}
-                                    </span>
-                                ) : null}
-                                {o.cyanStars != null && item?.maxCyanStars ? (
-                                    <span>
-                                        {t("market.cyanStars", { cyanStars: o.cyanStars, maxCyanStars: item.maxCyanStars })}
-                                    </span>
-                                ) : null}
-                                {o.amberStars != null || o.cyanStars != null ? (
-                                    <span className="flex items-center gap-1 font-mono text-xs">
-                                        <img src={"/images/resources/FusionPoints.png"} alt="" className="size-4" />
-                                        {getSumEndo(item, o.amberStars, o.cyanStars)}
-                                    </span>
-                                ) : null}
-                                {o.subtype ? (
-                                    <span className="truncate">
-                                        {t(o.subtype, {
-                                            ns: "subtype",
-                                            defaultValue: o.subtype,
-                                        })}
-                                    </span>
-                                ) : null}
+                                <OrderMeta order={o} item={item} />
                                 <span className="flex shrink-0 tabular-nums">
                                     <img
                                         src="/images/Coupon.png"

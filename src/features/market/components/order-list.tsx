@@ -10,7 +10,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-import type { ItemOrder } from "@/types/wf-market";
+import type { Item, ItemOrder } from "@/types/wf-market";
 import { useSettingsStore } from "@/store/settings";
 import { ORDER_TYPES, type OrderTypeCode } from "@/features/market/constants";
 import { sortOrders } from "@/features/market/order-list-utils";
@@ -35,6 +35,8 @@ interface Props {
     itemNameZh: string;
     /** 物品英文名（订单方非中文时使用） */
     itemNameEn: string;
+    /** 当前选中物品：计算内融核心(endo)列所需 */
+    item: Item | undefined;
     isLoading: boolean;
     hasQuery: boolean;
 }
@@ -60,6 +62,7 @@ export function OrderList({
     orderType,
     itemNameZh,
     itemNameEn,
+    item,
     isLoading,
     hasQuery,
 }: Props) {
@@ -82,7 +85,7 @@ export function OrderList({
         [t],
     );
 
-    const columns = useOrderColumns({ t, lang, itemNameZh, itemNameEn, copy });
+    const columns = useOrderColumns({ t, lang, itemNameZh, itemNameEn, item, copy });
     const columnVisibility = useColumnVisibility(sorted);
 
     const table = useReactTable({

@@ -2,10 +2,11 @@ import { useMemo } from "react";
 import { CopyIcon } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { TFunction } from "i18next";
-import type { ItemOrder } from "@/types/wf-market";
+import type { Item, ItemOrder } from "@/types/wf-market";
 import { statusOf } from "@/features/market/constants";
 import { whisper } from "@/features/market/order-list-utils";
 import { avatarUrl } from "@/features/market/assets";
+import { getSumEndo } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +22,8 @@ interface UseOrderColumnsArgs {
     itemNameZh: string;
     /** 物品英文名（订单方非中文时用于喊话） */
     itemNameEn: string;
+    /** 当前选中物品：计算内融核心(endo)数量所需的基础参数 */
+    item: Item | undefined;
     /** 复制喊话文案 */
     copy: (text: string) => void;
 }
@@ -31,6 +34,7 @@ export function useOrderColumns({
     lang,
     itemNameZh,
     itemNameEn,
+    item,
     copy,
 }: UseOrderColumnsArgs): ColumnDef<ItemOrder>[] {
     return useMemo<ColumnDef<ItemOrder>[]>(
@@ -104,9 +108,16 @@ export function useOrderColumns({
                 accessorKey: "quantity",
                 header: () => t("market.column.quantity"),
                 cell: ({ row }) => (
-                    <span className="flex items-center gap-1 text-sm">
-                        <img src="/images/Coupon.png" alt="qty" className="size-4" />
-                        {row.original.quantity}
+                    <span className="items-center gap-1 text-sm">
+                        <div className="flex items-center gap-1 text-sm">
+                            <img src="/images/Coupon.png" alt="qty" className="size-4" />
+                            {row.original.quantity}
+                        </div>
+                        {row.original.perTrade !== 1? (
+                            <span className="text-xs text-muted-foreground">
+                                {t("market.perTrade", {perTrade: row.original.perTrade})}
+                            </span>
+                        ):null}
                     </span>
                 ),
             },
@@ -133,6 +144,28 @@ export function useOrderColumns({
                         {row.original.rank}
                     </span>
                 ),
+            },
+            {
+                id: "endo",
+                // 仅含星数的订单才有 endo，无星订单排序时落到 -1
+                accessorFn: (o) =>
+                    o.amberStars != null || o.cyanStars != null
+                        ? getSumEndo(item, o?.amberStars, o?.cyanStars)
+                        : -1,
+                header: () => t("market.column.endo"),
+                cell: ({ row }) => {
+                    const o = row.original;
+                    return o.amberStars != null || o.cyanStars != null ? (
+                        <span className="flex items-center gap-1 font-mono text-sm">
+                            {getSumEndo(item, o?.amberStars, o?.cyanStars)}
+                            <img
+                                src="/images/resources/FusionPoints.png"
+                                alt="endo"
+                                className="size-4"
+                            />
+                        </span>
+                    ) : null;
+                },
             },
             {
                 id: "action",
@@ -162,7 +195,7 @@ export function useOrderColumns({
                 },
             },
         ],
-        [t, lang, itemNameZh, itemNameEn, copy],
+        [t, lang, itemNameZh, itemNameEn, item, copy],
     );
 }
 
@@ -181,6 +214,7 @@ export function useColumnVisibility(rows: ItemOrder[]): Record<string, boolean> 
             reputation: hasValue((o) => o.user?.reputation),
             subtype: hasValue((o) => o.subtype),
             rank: hasValue((o) => o.rank),
+            endo: hasValue((o) => o.amberStars ?? o.cyanStars),
         };
     }, [rows]);
 }

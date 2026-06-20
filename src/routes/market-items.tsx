@@ -27,6 +27,7 @@ export function MarketItemsPage() {
         set,
         itemNameEn,
         itemNameZh,
+        item,
         onSelect,
     } = useMarketItems();
 
@@ -69,6 +70,7 @@ export function MarketItemsPage() {
                         orderType={orderType}
                         itemNameZh={itemNameZh}
                         itemNameEn={itemNameEn}
+                        item={item}
                         isLoading={!!slug && orders.isPending}
                         hasQuery={!!slug}
                     />

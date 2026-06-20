@@ -15,7 +15,7 @@ import {
 } from "@/features/market/queries";
 import type { OrderTypeCode } from "@/features/market/constants";
 import { useAuthStore } from "@/store";
-import type { ItemOrder, SetInfo } from "@/types/wf-market";
+import type { Item, ItemOrder, SetInfo } from "@/types/wf-market";
 
 export interface UseMarketItems {
     suggestions: Suggestion[];
@@ -38,6 +38,8 @@ export interface UseMarketItems {
     itemNameEn: string;
     /** 喊话用物品中文名 */
     itemNameZh: string;
+    /** 当前选中物品（来自套装查询，用于 endo 计算等） */
+    item: Item | undefined;
     /** 选中物品（来自搜索或套装点击） */
     onSelect: (slug: string, name: string) => void;
 }
@@ -122,6 +124,7 @@ export function useMarketItems(): UseMarketItems {
         set,
         itemNameEn,
         itemNameZh,
+        item: selectedItem,
         onSelect,
     };
 }

@@ -18,7 +18,7 @@ import { itemDisplayName, itemIconUrl } from "@/features/market/assets";
 import type { Item, ItemOrder } from "@/types/wf-market";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import {cn, getSumEndo} from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button.tsx";
 import {
     DropdownMenu,
@@ -34,6 +34,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { EditOrderDialog } from "@/features/market/components/edit-order-dialog";
+import { OrderMeta } from "@/features/market/components/order-meta";
 
 /**
  * 当前登录用户的订单展示。
@@ -262,35 +263,7 @@ function OrderRow({
                     ) : null}
                 </div>
                 <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
-                    {order.rank != null && item?.maxRank ? (
-                        <span>
-                            {t("market.rank", { rank: order.rank ,maxRank: item.maxRank})}
-                        </span>
-                    ) : null}
-                    {order.amberStars != null && item?.maxAmberStars ? (
-                        <span>
-                            {t("market.amberStars", { amberStars: order.amberStars, maxAmberStars: item.maxAmberStars })}
-                        </span>
-                    ) : null}
-                    {order.cyanStars != null && item?.maxCyanStars ? (
-                        <span>
-                            {t("market.cyanStars", { cyanStars: order.cyanStars, maxCyanStars: item.maxCyanStars })}
-                        </span>
-                    ) : null}
-                    {order.amberStars != null || order.cyanStars != null ? (
-                        <span className="flex items-center gap-1 font-mono text-xs">
-                            <img src={"/images/resources/FusionPoints.png"} alt="" className="size-4" />
-                            {getSumEndo(item, order.amberStars, order.cyanStars)}
-                        </span>
-                    ) : null}
-                    {order.subtype ? (
-                        <span className="truncate">
-                            {t(order.subtype, {
-                                ns: "subtype",
-                                defaultValue: order.subtype,
-                            })}
-                        </span>
-                    ) : null}
+                    <OrderMeta order={order} item={item} />
                 </div>
             </div>
 
