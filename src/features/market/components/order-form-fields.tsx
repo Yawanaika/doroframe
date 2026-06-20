@@ -4,11 +4,13 @@ import { Eye, EyeOff } from "lucide-react";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 
 /** 下单/改单表单共用的字段级错误信息 */
 export interface FieldErrors {
     platinum?: string;
     quantity?: string;
+    perTrade?: string;
     rank?: string;
     amberStars?: string;
     cyanStars?: string;
@@ -51,6 +53,18 @@ export const validateRange = (
         : undefined;
 };
 
+/** 批量交易：数量必须为批次大小的正整数倍 */
+export const validateMultiple = (
+    quantity: string,
+    perTrade: string,
+    t: TFunction,
+): string | undefined => {
+    const q = numOrNull(quantity);
+    const n = numOrNull(perTrade);
+    if (q == null || n == null || n <= 0) return undefined;
+    return q % n !== 0 ? t("order.error.multiple") : undefined;
+};
+
 interface OrderFormFields {
     id: string;
     label: string;
@@ -82,6 +96,97 @@ export function NumberField({
             />
             {error ? <FieldDescription>{error}</FieldDescription> : null}
         </Field>
+    );
+}
+
+/** 每单位价格：每批价格 / 批次大小，四舍五入保留两位小数；无法计算返回空串 */
+export const unitPrice = (platinum: string, perTrade: string): string => {
+    const p = numOrNull(platinum);
+    const n = numOrNull(perTrade);
+    if (p == null || n == null || n <= 0) return "";
+    return (Math.round((p / n) * 100) / 100).toFixed(2);
+};
+
+/**
+ * 批量交易字段组：每批价格(platinum) = 批次大小(perTrade) × 每单位价格(只读计算值)。
+ * 仅在物品 bulkTradable 且开启批量交易时展示，参考 public/img.png 布局。
+ */
+export function BulkTradeFields({
+    platinum,
+    perTrade,
+    platinumError,
+    perTradeError,
+    onPlatinumChange,
+    onPerTradeChange,
+}: {
+    platinum: string;
+    perTrade: string;
+    platinumError?: string;
+    perTradeError?: string;
+    onPlatinumChange: (v: string) => void;
+    onPerTradeChange: (v: string) => void;
+}) {
+    const { t } = useTranslation();
+    return (
+        <div className="rounded-lg bg-muted/50 p-3">
+            <div className="flex items-end gap-2">
+                <NumberField
+                    id="order-bulk-platinum"
+                    label={t("order.field.bulk-platinum")}
+                    placeholder={t("order.placeholder.platinum")}
+                    value={platinum}
+                    error={platinumError}
+                    onChange={onPlatinumChange}
+                />
+                <span className="pb-2 text-muted-foreground">=</span>
+                <NumberField
+                    id="order-per-trade"
+                    label={t("order.field.per-trade")}
+                    placeholder={t("order.placeholder.per-trade")}
+                    value={perTrade}
+                    error={perTradeError}
+                    onChange={onPerTradeChange}
+                />
+                <span className="pb-2 text-muted-foreground">×</span>
+                <Field>
+                    <FieldLabel htmlFor="order-unit-price">
+                        {t("order.field.unit-price")}
+                    </FieldLabel>
+                    <Input
+                        id="order-unit-price"
+                        readOnly
+                        tabIndex={-1}
+                        className="bg-muted/50 text-muted-foreground"
+                        value={unitPrice(platinum, perTrade)}
+                    />
+                </Field>
+            </div>
+        </div>
+    );
+}
+
+/** 批量交易开关：标签 + Switch，仅 bulkTradable 物品展示 */
+export function BulkTradeToggle({
+    enabled,
+    onChange,
+    "aria-labelledby": ariaLabelledby,
+}: {
+    enabled: boolean;
+    onChange: (enabled: boolean) => void;
+    "aria-labelledby"?: string;
+}) {
+    const { t } = useTranslation();
+    return (
+        <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-foreground" id={ariaLabelledby}>
+                {t("order.field.bulk-trade")}
+            </span>
+            <Switch
+                checked={enabled}
+                onCheckedChange={onChange}
+                aria-labelledby={ariaLabelledby}
+            />
+        </div>
     );
 }
 

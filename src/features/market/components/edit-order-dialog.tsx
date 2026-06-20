@@ -33,11 +33,14 @@ import type { Item, ItemOrder, SubmitItemOrder } from "@/types/wf-market";
 import {
     NumberField,
     VisibilityToggle,
+    BulkTradeToggle,
+    BulkTradeFields,
     numOrNull,
     digits,
     numToStr,
     validatePositive,
     validateRange,
+    validateMultiple,
     type FieldErrors,
 } from "@/features/market/components/order-form-fields.tsx";
 import { Meh, Smile } from "lucide-react";
@@ -54,7 +57,13 @@ interface Props {
     trigger?: React.ReactNode;
 }
 
-type NumberKey = "platinum" | "quantity" | "rank" | "amberStars" | "cyanStars";
+type NumberKey =
+    | "platinum"
+    | "quantity"
+    | "perTrade"
+    | "rank"
+    | "amberStars"
+    | "cyanStars";
 
 /**
  * 编辑已存在订单的弹窗。
@@ -74,15 +83,21 @@ export function EditOrderDialog({
 
     const topQ = useTopOrdersQuery(open && item?.slug ? item.slug : "");
 
+    const showBulk = item?.bulkTradable === true;
     const showRank = item?.maxRank != null && item?.maxCharges == null;
     const showSubtype = (item?.subtypes?.length ?? 0) > 0;
     const showAmber = (item?.maxAmberStars ?? 0) > 0;
     const showCyan = (item?.maxCyanStars ?? 0) > 0;
 
     const [visible, setVisible] = useState(order.visible ?? true);
+    // 批量交易：原订单 perTrade 不为 1（且存在）即视为已开启批量交易
+    const [bulk, setBulk] = useState(
+        order.perTrade != null && order.perTrade !== 1,
+    );
     const [numbers, setNumbers] = useState<Record<NumberKey, string>>({
         platinum: numToStr(order.platinum),
         quantity: numToStr(order.quantity),
+        perTrade: numToStr(order.perTrade),
         rank: numToStr(order.rank),
         amberStars: numToStr(order.amberStars),
         cyanStars: numToStr(order.cyanStars),
@@ -94,9 +109,11 @@ export function EditOrderDialog({
     useEffect(() => {
         if (!open) return;
         setVisible(order.visible ?? true);
+        setBulk(order.perTrade != null && order.perTrade !== 1);
         setNumbers({
             platinum: numToStr(order.platinum),
             quantity: numToStr(order.quantity),
+            perTrade: numToStr(order.perTrade),
             rank: numToStr(order.rank),
             amberStars: numToStr(order.amberStars),
             cyanStars: numToStr(order.cyanStars),
@@ -106,6 +123,9 @@ export function EditOrderDialog({
         setErrors({});
     }, [open, order, item]);
 
+    // 批量交易开启：perTrade 取输入值；否则默认 1
+    const bulkOn = showBulk && bulk;
+
     const setNumber = (key: NumberKey, raw: string) =>
         setNumbers((prev) => ({ ...prev, [key]: digits(raw) }));
 
@@ -113,6 +133,12 @@ export function EditOrderDialog({
         const next: FieldErrors = {};
         next.platinum = validatePositive(numbers.platinum, t);
         next.quantity = validatePositive(numbers.quantity, t);
+        if (bulkOn) {
+            next.perTrade = validatePositive(numbers.perTrade, t);
+            // 数量须为批次大小的整数倍（正整数校验通过后再判断倍数）
+            if (!next.quantity)
+                next.quantity = validateMultiple(numbers.quantity, numbers.perTrade, t);
+        }
         if (showRank) next.rank = validateRange(numbers.rank, item!.maxRank!, t);
         if (showAmber)
             next.amberStars = validateRange(numbers.amberStars, item!.maxAmberStars!, t);
@@ -131,6 +157,11 @@ export function EditOrderDialog({
             quantity: numOrNull(numbers.quantity)!,
             visible,
         };
+        // bulkTradable 物品：开启批量取输入值，关闭批量固定 1
+        if (showBulk)
+            submit.perTrade = bulkOn
+                ? numOrNull(numbers.perTrade) ?? undefined
+                : 1;
         if (showRank) submit.rank = numOrNull(numbers.rank) ?? undefined;
         if (showAmber) submit.amberStars = numOrNull(numbers.amberStars) ?? undefined;
         if (showCyan) submit.cyanStars = numOrNull(numbers.cyanStars) ?? undefined;
@@ -268,24 +299,53 @@ export function EditOrderDialog({
                                 </div>
                             )}
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <NumberField
-                                    id="edit-platinum"
-                                    label={t("order.field.platinum")}
-                                    placeholder={t("order.placeholder.platinum")}
-                                    value={numbers.platinum}
-                                    error={errors.platinum}
-                                    onChange={(v) => setNumber("platinum", v)}
+                            {showBulk && (
+                                <BulkTradeToggle
+                                    enabled={bulk}
+                                    onChange={setBulk}
+                                    aria-labelledby="edit-bulk-label"
                                 />
-                                <NumberField
-                                    id="edit-quantity"
-                                    label={t("order.field.quantity")}
-                                    placeholder={t("order.placeholder.quantity")}
-                                    value={numbers.quantity}
-                                    error={errors.quantity}
-                                    onChange={(v) => setNumber("quantity", v)}
-                                />
-                            </div>
+                            )}
+
+                            {bulkOn ? (
+                                <>
+                                    <BulkTradeFields
+                                        platinum={numbers.platinum}
+                                        perTrade={numbers.perTrade}
+                                        platinumError={errors.platinum}
+                                        perTradeError={errors.perTrade}
+                                        onPlatinumChange={(v) => setNumber("platinum", v)}
+                                        onPerTradeChange={(v) => setNumber("perTrade", v)}
+                                    />
+                                    <NumberField
+                                        id="edit-quantity"
+                                        label={t("order.field.quantity")}
+                                        placeholder={t("order.placeholder.quantity")}
+                                        value={numbers.quantity}
+                                        error={errors.quantity}
+                                        onChange={(v) => setNumber("quantity", v)}
+                                    />
+                                </>
+                            ) : (
+                                <div className="grid grid-cols-2 gap-4">
+                                    <NumberField
+                                        id="edit-platinum"
+                                        label={t("order.field.platinum")}
+                                        placeholder={t("order.placeholder.platinum")}
+                                        value={numbers.platinum}
+                                        error={errors.platinum}
+                                        onChange={(v) => setNumber("platinum", v)}
+                                    />
+                                    <NumberField
+                                        id="edit-quantity"
+                                        label={t("order.field.quantity")}
+                                        placeholder={t("order.placeholder.quantity")}
+                                        value={numbers.quantity}
+                                        error={errors.quantity}
+                                        onChange={(v) => setNumber("quantity", v)}
+                                    />
+                                </div>
+                            )}
                         </FieldGroup>
 
                         <div className="flex justify-end border-t bg-muted/30 p-4">

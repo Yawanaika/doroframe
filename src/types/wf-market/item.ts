@@ -11,7 +11,7 @@ export interface Item {
     rarity?: string;
     baseEndo?: number;
     // 是否可批量交易 默认为1
-    bulkTradable?: number;
+    bulkTradable?: boolean;
     subtypes?: string[];
     maxRank?: number;
     maxCharges?: number;

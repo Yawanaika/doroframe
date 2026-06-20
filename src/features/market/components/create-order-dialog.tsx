@@ -33,10 +33,13 @@ import { Button } from "@/components/ui/button";
 import {
     NumberField,
     VisibilityToggle,
+    BulkTradeToggle,
+    BulkTradeFields,
     numOrNull,
     digits,
     validatePositive,
     validateRange,
+    validateMultiple,
     type FieldErrors,
 } from "@/features/market/components/order-form-fields.tsx";
 import { OrderTypeToggle } from "@/features/market/components/order-type-toggle";
@@ -68,6 +71,7 @@ interface Props {
 const EMPTY_NUMBERS = {
     platinum: "",
     quantity: "",
+    perTrade: "",
     rank: "",
     amberStars: "",
     cyanStars: "",
@@ -135,9 +139,11 @@ export function CreateOrderDialog({
         ...EMPTY_NUMBERS,
     });
     const [subtype, setSubtype] = useState("");
+    const [bulk, setBulk] = useState(false);
     const [errors, setErrors] = useState<FieldErrors>({});
 
     const hasSubtypes = !!item?.subtypes && item.subtypes.length > 0;
+    const showBulk = item?.bulkTradable === true;
     const showRank = item?.maxRank != null && item?.maxCharges == null;
     const showAmber = (item?.maxAmberStars ?? 0) > 0;
     const showCyan = (item?.maxCyanStars ?? 0) > 0;
@@ -150,16 +156,26 @@ export function CreateOrderDialog({
         setErrors({});
     };
 
-    // 物品切换时重置表单
+    // 物品切换时重置表单（批量交易默认为否）
     useEffect(() => {
         clearForm();
+        setBulk(false);
         setSubtype(hasSubtypes ? item!.subtypes![0] : "");
     }, [item, hasSubtypes]);
+
+    // 批量交易开启：perTrade 取输入值；否则（含 bulkTradable 关闭批量）默认 1
+    const bulkOn = showBulk && bulk;
 
     const validate = (): FieldErrors => {
         const next: FieldErrors = {};
         next.platinum = validatePositive(numbers.platinum, t);
         next.quantity = validatePositive(numbers.quantity, t);
+        if (bulkOn) {
+            next.perTrade = validatePositive(numbers.perTrade, t);
+            // 数量须为批次大小的整数倍（正整数校验通过后再判断倍数）
+            if (!next.quantity)
+                next.quantity = validateMultiple(numbers.quantity, numbers.perTrade, t);
+        }
         if (showRank) next.rank = validateRange(numbers.rank, item!.maxRank!, t);
         if (showAmber)
             next.amberStars = validateRange(numbers.amberStars, item!.maxAmberStars!, t);
@@ -188,12 +204,51 @@ export function CreateOrderDialog({
                 : undefined,
             rank: showRank ? numOrNull(numbers.rank) ?? undefined : undefined,
             subtype: subtype !== "" ? subtype : undefined,
+            // bulkTradable 物品：开启批量取输入值，关闭批量固定 1；非 bulk 物品交由 tag 规则
+            perTrade: showBulk
+                ? bulkOn
+                    ? numOrNull(numbers.perTrade) ?? undefined
+                    : 1
+                : undefined,
             tags: item.tags,
         });
         if (await submitOrder(order)) clearForm();
     };
 
     const name = item ? itemDisplayName(item, lang) : "";
+
+    const subtypeField = hasSubtypes ? (
+        <Field>
+            <FieldLabel id="order-subtype-label">
+                {t("order.field.subtype")}
+            </FieldLabel>
+            <Select value={subtype} onValueChange={setSubtype}>
+                <SelectTrigger aria-labelledby="order-subtype-label">
+                    <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        {item!.subtypes!.map((s) => (
+                            <SelectItem key={s} value={s}>
+                                {t(s, { ns: "subtype", defaultValue: s })}
+                            </SelectItem>
+                        ))}
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+        </Field>
+    ) : null;
+
+    const quantityField = (
+        <NumberField
+            id="order-quantity"
+            label={t("order.field.quantity")}
+            placeholder={t("order.placeholder.quantity")}
+            value={numbers.quantity}
+            error={errors.quantity}
+            onChange={(v) => setNumber("quantity", v)}
+        />
+    );
 
     // Combobox(base-ui)弹层默认 portal 到 body，会被 Dialog(radix)的焦点陷阱打断选中。
     // 改用此容器，把弹层渲染进 Dialog 内部，规避跨库冲突。
@@ -304,51 +359,55 @@ export function CreateOrderDialog({
                                 </Combobox>
                             </Field>
 
-                            <div
-                                className={
-                                    hasSubtypes
-                                        ? "grid grid-cols-3 gap-4"
-                                        : "grid grid-cols-2 gap-4"
-                                }
-                            >
-                                <NumberField
-                                    id="order-platinum"
-                                    label={t("order.field.platinum")}
-                                    placeholder={t("order.placeholder.platinum")}
-                                    value={numbers.platinum}
-                                    error={errors.platinum}
-                                    onChange={(v) => setNumber("platinum", v)}
+                            {showBulk && (
+                                <BulkTradeToggle
+                                    enabled={bulk}
+                                    onChange={setBulk}
+                                    aria-labelledby="order-bulk-label"
                                 />
-                                <NumberField
-                                    id="order-quantity"
-                                    label={t("order.field.quantity")}
-                                    placeholder={t("order.placeholder.quantity")}
-                                    value={numbers.quantity}
-                                    error={errors.quantity}
-                                    onChange={(v) => setNumber("quantity", v)}
-                                />
-                                {hasSubtypes && (
-                                    <Field>
-                                        <FieldLabel id="order-subtype-label">
-                                            {t("order.field.subtype")}
-                                        </FieldLabel>
-                                        <Select value={subtype} onValueChange={setSubtype}>
-                                            <SelectTrigger aria-labelledby="order-subtype-label">
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    {item!.subtypes!.map((s) => (
-                                                        <SelectItem key={s} value={s}>
-                                                            {t(s, { ns: "subtype", defaultValue: s })}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
-                                    </Field>
-                                )}
-                            </div>
+                            )}
+
+                            {bulkOn ? (
+                                <>
+                                    <BulkTradeFields
+                                        platinum={numbers.platinum}
+                                        perTrade={numbers.perTrade}
+                                        platinumError={errors.platinum}
+                                        perTradeError={errors.perTrade}
+                                        onPlatinumChange={(v) => setNumber("platinum", v)}
+                                        onPerTradeChange={(v) => setNumber("perTrade", v)}
+                                    />
+                                    <div
+                                        className={
+                                            hasSubtypes
+                                                ? "grid grid-cols-2 gap-4"
+                                                : "grid grid-cols-1 gap-4"
+                                        }
+                                    >
+                                        {quantityField}
+                                        {subtypeField}
+                                    </div>
+                                </>
+                            ) : (
+                                <div
+                                    className={
+                                        hasSubtypes
+                                            ? "grid grid-cols-3 gap-4"
+                                            : "grid grid-cols-2 gap-4"
+                                    }
+                                >
+                                    <NumberField
+                                        id="order-platinum"
+                                        label={t("order.field.platinum")}
+                                        placeholder={t("order.placeholder.platinum")}
+                                        value={numbers.platinum}
+                                        error={errors.platinum}
+                                        onChange={(v) => setNumber("platinum", v)}
+                                    />
+                                    {quantityField}
+                                    {subtypeField}
+                                </div>
+                            )}
 
                             {(showCyan || showAmber) && (
                                 <div className="grid grid-cols-2 gap-4">
