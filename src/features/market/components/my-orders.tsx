@@ -297,11 +297,11 @@ function OrderRow({
                                 disabled={busy}
                             >
                                 <CheckIcon data-icon="inline-start" />
-                                {t("market.me.orders.action.sold")}
+                                {`${t("market.me.orders.action.sold")} ${order.perTrade !==1?`(${order.perTrade})`:""}`}
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                            {t("market.me.orders.action.sold.hint")}
+                            {t("market.me.orders.action.sold.hint", {perTrade: order.perTrade})}
                         </TooltipContent>
                     </Tooltip>
                     <Tooltip>
@@ -314,11 +314,11 @@ function OrderRow({
                                 onClick={onAdd}
                                 disabled={busy}
                             >
-                                {t("market.me.orders.action.add")}
+                                {t("market.me.orders.action.add", {perTrade: order.perTrade})}
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                            {t("market.me.orders.action.add.hint")}
+                            {t("market.me.orders.action.add.hint", {perTrade: order.perTrade})}
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>

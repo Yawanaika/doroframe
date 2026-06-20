@@ -17,6 +17,11 @@ export function OrderMeta({
     const { t } = useTranslation();
     return (
         <>
+            {order.perTrade != null && order.perTrade !== 1 ? (
+                <span>
+                    {t("market.perTrade", { perTrade: order.perTrade })}
+                </span>
+            ) : null}
             {order.rank != null && item?.maxRank ? (
                 <span>
                     {t("market.rank", { rank: order.rank, maxRank: item.maxRank })}

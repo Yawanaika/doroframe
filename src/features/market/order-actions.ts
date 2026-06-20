@@ -133,7 +133,12 @@ export const ToSubmit=(order: ItemOrder, auction:OrderAuction):SubmitItemOrder=>
                 visible: !order.visible,
             }
         case "add":
-            return {
+            if (order.perTrade!= null){
+                return {
+                    quantity: order.quantity + order.perTrade,
+                }
+            }
+            return{
                 quantity: order.quantity + 1,
             }
         case "edit":

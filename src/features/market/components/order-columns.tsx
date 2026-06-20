@@ -108,17 +108,17 @@ export function useOrderColumns({
                 accessorKey: "quantity",
                 header: () => t("market.column.quantity"),
                 cell: ({ row }) => (
-                    <span className="items-center gap-1 text-sm">
-                        <div className="flex items-center gap-1 text-sm">
+                    <div className="items-center gap-1 text-sm">
+                        <span className="flex items-center gap-1 text-sm">
                             <img src="/images/Coupon.png" alt="qty" className="size-4" />
                             {row.original.quantity}
-                        </div>
-                        {row.original.perTrade !== 1? (
+                        </span>
+                        {row.original.perTrade != null && row.original.perTrade !== 1? (
                             <span className="text-xs text-muted-foreground">
                                 {t("market.perTrade", {perTrade: row.original.perTrade})}
                             </span>
                         ):null}
-                    </span>
+                    </div>
                 ),
             },
             {
