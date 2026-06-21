@@ -16,6 +16,7 @@ import {
 import { MultiSelect } from "@/components/ui/multi-select";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { WeaponCombobox } from "./weapon-combobox";
+import { PolaritySelect } from "./polarity-select";
 import {
     useAuctionSearchData,
     type Option,
@@ -24,7 +25,6 @@ import {
     SEARCH_TYPES,
     BUYOUT_POLICIES,
     WEAPON_ELEMENTS,
-    POLARITIES,
     SORT_OPTIONS,
     NEGATIVE_CUSTOM,
     type SearchTypeCode,
@@ -269,21 +269,10 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
                 {type === "riven" ? (
                     <Field>
                         <FieldLabel>{t("auction.field.polarity")}</FieldLabel>
-                        <Select
+                        <PolaritySelect
                             value={polarity}
                             onValueChange={(v) => setPolarity(v as PolarityCode)}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {POLARITIES.map((p) => (
-                                    <SelectItem key={p} value={p}>
-                                        {t(`auction.polarity.${p}`)}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        />
                     </Field>
                 ) : (
                     <div />

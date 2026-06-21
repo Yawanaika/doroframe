@@ -618,7 +618,18 @@ function RivenSection({
                         </SelectTrigger>
                         <SelectContent>
                             {CREATE_POLARITIES.map((p) => (
-                                <SelectItem key={p} value={p}>
+                                <SelectItem key={p} value={p} className="flex">
+                                    <div
+                                        className="size-4 bg-primary"
+                                        style={{
+                                            maskImage: `url(/images/polarity/POLARITY_${p}.png)`,
+                                            WebkitMaskImage: `url(/images/polarity/POLARITY_${p}.png)`,
+                                            maskSize: "contain",
+                                            WebkitMaskSize: "contain",
+                                            maskRepeat: "no-repeat",
+                                            WebkitMaskRepeat: "no-repeat",
+                                        }}
+                                    />
                                     {t(`auction.polarity.${p}`)}
                                 </SelectItem>
                             ))}
