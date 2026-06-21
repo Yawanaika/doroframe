@@ -22,10 +22,18 @@ export interface Option {
     value: string;
 }
 
+/** 武器分组（按 rivenType）：key 为 rivenType（""=无分组，如 lich/sister），items 为该组武器选项 */
+export interface WeaponGroup {
+    key: string;
+    items: Option[];
+}
+
 export interface AuctionSearchData {
     loading: boolean;
     /** 指定大类的武器选项（label=本地化名, value=slug） */
     weaponOptions: (type: SearchTypeCode) => Option[];
+    /** 指定大类的武器分组选项：riven 按 rivenType 分多组；lich/sister 为单个空组 */
+    weaponGroups: (type: SearchTypeCode) => WeaponGroup[];
     /** 武器 slug → 本地化名（卡片渲染用） */
     weaponName: (type: SearchTypeCode, slug: string) => string;
     /** 武器 slug → 图标相对路径（卡片渲染用，可能为空） */
@@ -64,16 +72,31 @@ export function useAuctionSearchData(): AuctionSearchData {
 
     // 武器：slug→名 与 名→slug 选项，按大类
     const weaponMaps = useMemo(() => {
-        const build = (list: { slug: string; i18n: any }[] | undefined) => {
+        const build = (
+            list: { slug: string; i18n: any; rivenType?: string }[] | undefined,
+        ) => {
             const options: Option[] = [];
             const bySlug = new Map<string, { name: string; icon: string }>();
+            // 按 rivenType 聚合（lich/sister 无该字段，统一落入 "" 组）
+            const groupMap = new Map<string, Option[]>();
             for (const w of list ?? []) {
-                const data = pickI18n(w.i18n, lang);
-                options.push({ label: data.name, value: w.slug });
-                bySlug.set(w.slug, { name: data.name, icon: data.icon ?? "" });
+                const info = pickI18n(w.i18n, lang);
+                const opt: Option = { label: info.name, value: w.slug };
+                options.push(opt);
+                bySlug.set(w.slug, { name: info.name, icon: info.icon ?? "" });
+                const gk = w.rivenType ?? "";
+                const arr = groupMap.get(gk);
+                if (arr) arr.push(opt);
+                else groupMap.set(gk, [opt]);
             }
             options.sort((a, b) => a.label.localeCompare(b.label));
-            return { options, bySlug };
+            const groups: WeaponGroup[] = [...groupMap.entries()]
+                .map(([key, items]) => ({
+                    key,
+                    items: items.sort((a, b) => a.label.localeCompare(b.label)),
+                }))
+                .sort((a, b) => a.key.localeCompare(b.key));
+            return { options, bySlug, groups };
         };
         return {
             riven: build(rivenWeapons.data),
@@ -135,6 +158,7 @@ export function useAuctionSearchData(): AuctionSearchData {
     return {
         loading,
         weaponOptions: (type) => weaponMaps[type].options,
+        weaponGroups: (type) => weaponMaps[type].groups,
         weaponName: (type, slug) => weaponMaps[type].bySlug.get(slug)?.name ?? slug,
         weaponIcon: (type, slug) => weaponMaps[type].bySlug.get(slug)?.icon ?? "",
         positiveOptions: attrData.positive,
