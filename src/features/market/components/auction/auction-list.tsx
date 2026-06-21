@@ -2,8 +2,7 @@
 
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Spinner } from "@/components/ui/spinner";
-import { CardEmpty } from "@/components/card-states";
+import {CardEmpty, CardSkeleton} from "@/components/card-states";
 import { statusOf } from "@/features/market/constants";
 import { useAuctionSearchData } from "@/features/market/use-auction-search-data";
 import { AuctionCard } from "@/features/market/components/auction/auction-card";
@@ -29,11 +28,7 @@ export function AuctionList({ auctions, isLoading, isSearching }: Props) {
     );
 
     if (isLoading && auctions.length === 0) {
-        return (
-            <div className="flex h-40 items-center justify-center">
-                <Spinner />
-            </div>
-        );
+        return <CardSkeleton rows={5} />;
     }
 
     if (sorted.length === 0) {

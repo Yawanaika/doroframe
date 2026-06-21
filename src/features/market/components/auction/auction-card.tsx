@@ -49,7 +49,7 @@ export function AuctionCard({ ao, data }: Props) {
         type === "riven" ? `${weaponName} ${ao.item.name ?? ""}`.trim() : weaponName;
 
     const copy = useCallback(async () => {
-        const isZh = lang === "zh";
+        const isZh = ao.owner.locale === "zh-hans";
         const price =
             ao.isDirectSell || ao.buyoutPrice != null
                 ? ao.buyoutPrice ?? ao.startingPrice
