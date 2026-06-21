@@ -69,7 +69,7 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
     const [buyoutPolicy, setBuyoutPolicy] = useState<BuyoutPolicyCode>("all");
     const [sortBy, setSortBy] = useState<string>(SORT_OPTIONS.riven[0]);
 
-    // 武器按 rivenType 分组（riven 多组，lich/sister 单个空组）。
+    // 武器按 group 分组（riven 多组，lich/sister 单个空组）。
     // 过滤后逐组累计截断至 WEAPON_LIMIT，丢弃空组；组名在组件层经 i18n 本地化。
     const weaponGroups = data.weaponGroups(type);
     const weaponMatches = useMemo(() => {
@@ -85,10 +85,10 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
             const items = matched.slice(0, WEAPON_LIMIT - count);
             count += items.length;
             // value 既作 React key 又作组标签；空 key（lich/sister）不显示标签。
-            // 缺翻译的新 rivenType 回退原始值，避免显示 i18n key 路径。
+            // 缺翻译的新 group 回退原始值，避免显示 i18n key 路径。
             out.push({
                 value: g.key
-                    ? t(`auction.rivenType.${g.key}`, { defaultValue: g.key })
+                    ? t(`auction.group.${g.key}`, { defaultValue: g.key })
                     : "",
                 items,
             });

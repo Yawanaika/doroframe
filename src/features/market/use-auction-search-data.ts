@@ -22,7 +22,7 @@ export interface Option {
     value: string;
 }
 
-/** 武器分组（按 rivenType）：key 为 rivenType（""=无分组，如 lich/sister），items 为该组武器选项 */
+/** 武器分组（按 group）：key 为 group（""=无分组，如 lich/sister），items 为该组武器选项 */
 export interface WeaponGroup {
     key: string;
     items: Option[];
@@ -32,7 +32,7 @@ export interface AuctionSearchData {
     loading: boolean;
     /** 指定大类的武器选项（label=本地化名, value=slug） */
     weaponOptions: (type: SearchTypeCode) => Option[];
-    /** 指定大类的武器分组选项：riven 按 rivenType 分多组；lich/sister 为单个空组 */
+    /** 指定大类的武器分组选项：riven 按 group 分多组；lich/sister 为单个空组 */
     weaponGroups: (type: SearchTypeCode) => WeaponGroup[];
     /** 武器 slug → 本地化名（卡片渲染用） */
     weaponName: (type: SearchTypeCode, slug: string) => string;
@@ -73,18 +73,18 @@ export function useAuctionSearchData(): AuctionSearchData {
     // 武器：slug→名 与 名→slug 选项，按大类
     const weaponMaps = useMemo(() => {
         const build = (
-            list: { slug: string; i18n: any; rivenType?: string }[] | undefined,
+            list: { slug: string; i18n: any; group?: string }[] | undefined,
         ) => {
             const options: Option[] = [];
             const bySlug = new Map<string, { name: string; icon: string }>();
-            // 按 rivenType 聚合（lich/sister 无该字段，统一落入 "" 组）
+            // 按 group 聚合（lich/sister 无该字段，统一落入 "" 组）
             const groupMap = new Map<string, Option[]>();
             for (const w of list ?? []) {
                 const info = pickI18n(w.i18n, lang);
                 const opt: Option = { label: info.name, value: w.slug };
                 options.push(opt);
                 bySlug.set(w.slug, { name: info.name, icon: info.icon ?? "" });
-                const gk = w.rivenType ?? "";
+                const gk = w.group ?? "";
                 const arr = groupMap.get(gk);
                 if (arr) arr.push(opt);
                 else groupMap.set(gk, [opt]);
