@@ -13,19 +13,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import {
-    Combobox,
-    ComboboxCollection,
-    ComboboxContent,
-    ComboboxEmpty,
-    ComboboxGroup,
-    ComboboxInput,
-    ComboboxItem,
-    ComboboxLabel,
-    ComboboxList,
-} from "@/components/ui/combobox";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { Field, FieldLabel } from "@/components/ui/field";
+import { WeaponCombobox } from "./weapon-combobox";
 import {
     useAuctionSearchData,
     type Option,
@@ -49,9 +39,6 @@ interface Props {
     onReset: () => void;
 }
 
-/** 武器下拉一次最多渲染的条目数（跨分组累计），避免一次性渲染数百项 */
-const WEAPON_LIMIT = 50;
-
 export function AuctionSearchBar({ onSearch, onReset }: Props) {
     const { t } = useTranslation();
     const data = useAuctionSearchData();
@@ -68,33 +55,6 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
     const [polarity, setPolarity] = useState<PolarityCode>("any");
     const [buyoutPolicy, setBuyoutPolicy] = useState<BuyoutPolicyCode>("all");
     const [sortBy, setSortBy] = useState<string>(SORT_OPTIONS.riven[0]);
-
-    // 武器按 group 分组（riven 多组，lich/sister 单个空组）。
-    // 过滤后逐组累计截断至 WEAPON_LIMIT，丢弃空组；组名在组件层经 i18n 本地化。
-    const weaponGroups = data.weaponGroups(type);
-    const weaponMatches = useMemo(() => {
-        const q = weaponInput.trim().toLowerCase();
-        const out: { value: string; items: Option[] }[] = [];
-        let count = 0;
-        for (const g of weaponGroups) {
-            if (count >= WEAPON_LIMIT) break;
-            const matched = q
-                ? g.items.filter((o) => o.label.toLowerCase().includes(q))
-                : g.items;
-            if (matched.length === 0) continue;
-            const items = matched.slice(0, WEAPON_LIMIT - count);
-            count += items.length;
-            // value 既作 React key 又作组标签；空 key（lich/sister）不显示标签。
-            // 缺翻译的新 group 回退原始值，避免显示 i18n key 路径。
-            out.push({
-                value: g.key
-                    ? t(`auction.group.${g.key}`, { defaultValue: g.key })
-                    : "",
-                items,
-            });
-        }
-        return out;
-    }, [weaponInput, weaponGroups, t]);
 
     const negativeOptions: Option[] = useMemo(
         () => [
@@ -185,9 +145,8 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
                 </Field>
                 <Field>
                     <FieldLabel>{t("auction.field.weapon")}</FieldLabel>
-                    <Combobox<Option>
-                        items={weaponMatches}
-                        filter={null}
+                    <WeaponCombobox
+                        groups={data.weaponGroups(type)}
                         inputValue={weaponInput}
                         onInputValueChange={(v) => {
                             setWeaponInput(v);
@@ -199,38 +158,7 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
                                 setWeaponInput(o.label);
                             }
                         }}
-                        itemToStringLabel={(o) => o.label}
-                        autoHighlight
-                    >
-                        <ComboboxInput
-                            className="w-full"
-                            placeholder={t("auction.field.weapon")}
-                            showTrigger={false}
-                            showClear
-                        />
-                        <ComboboxContent>
-                            <ComboboxEmpty>{t("market.search.no-match")}</ComboboxEmpty>
-                            <ComboboxList>
-                                {weaponMatches.map((group) => (
-                                    <ComboboxGroup
-                                        key={group.value || "ungrouped"}
-                                        items={group.items}
-                                    >
-                                        {group.value ? (
-                                            <ComboboxLabel>{group.value}</ComboboxLabel>
-                                        ) : null}
-                                        <ComboboxCollection>
-                                            {(o: Option) => (
-                                                <ComboboxItem key={o.value} value={o}>
-                                                    {o.label}
-                                                </ComboboxItem>
-                                            )}
-                                        </ComboboxCollection>
-                                    </ComboboxGroup>
-                                ))}
-                            </ComboboxList>
-                        </ComboboxContent>
-                    </Combobox>
+                    />
                 </Field>
             </div>
 

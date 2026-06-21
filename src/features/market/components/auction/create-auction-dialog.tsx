@@ -40,6 +40,7 @@ import { useCreateAuctionMutation } from "@/features/market/queries";
 import { generateRivenNames } from "@/features/market/auction-riven-name";
 import { assetUrl } from "@/features/market/assets";
 import { RivenCardPreview } from "./riven-card-preview";
+import { WeaponCombobox } from "./weapon-combobox";
 import {
     SEARCH_TYPES,
     CREATE_POLICIES,
@@ -105,15 +106,6 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
     const [buyoutPrice, setBuyoutPrice] = useState("");
     const [minimalReputation, setMinimalReputation] = useState("0");
     const [note, setNote] = useState("");
-
-    const weaponOptions = data.weaponOptions(type);
-    const weaponMatches = useMemo(() => {
-        const q = weaponInput.trim().toLowerCase();
-        const base = q
-            ? weaponOptions.filter((o) => o.label.toLowerCase().includes(q))
-            : weaponOptions;
-        return base.slice(0, 20);
-    }, [weaponInput, weaponOptions]);
 
     const quirkOptions = data.quirkOptions(type);
     const quirkMatches = useMemo(() => {
@@ -329,9 +321,8 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
                         </Field>
                         <Field>
                             <FieldLabel>{t("auction.field.weapon")}</FieldLabel>
-                            <Combobox<Option>
-                                items={weaponMatches}
-                                filter={null}
+                            <WeaponCombobox
+                                groups={data.weaponGroups(type)}
                                 inputValue={weaponInput}
                                 onInputValueChange={(v) => {
                                     setWeaponInput(v);
@@ -343,26 +334,8 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
                                         setWeaponInput(o.label);
                                     }
                                 }}
-                                itemToStringLabel={(o) => o.label}
-                                autoHighlight
-                            >
-                                <ComboboxInput
-                                    className="w-full"
-                                    placeholder={t("auction.field.weapon")}
-                                    showTrigger={false}
-                                    showClear
-                                />
-                                <ComboboxContent container={portalContainer}>
-                                    <ComboboxEmpty>{t("market.search.no-match")}</ComboboxEmpty>
-                                    <ComboboxList>
-                                        {weaponMatches.map((o) => (
-                                            <ComboboxItem key={o.value} value={o}>
-                                                {o.label}
-                                            </ComboboxItem>
-                                        ))}
-                                    </ComboboxList>
-                                </ComboboxContent>
-                            </Combobox>
+                                container={portalContainer}
+                            />
                         </Field>
                     </div>
 
