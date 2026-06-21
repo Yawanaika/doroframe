@@ -12,7 +12,7 @@ import { useSettingsStore } from "@/store/settings";
 import { assetUrl, avatarUrl } from "@/features/market/assets";
 import { statusOf } from "@/features/market/constants";
 import type { AuctionSearchData } from "@/features/market/use-auction-search-data";
-import type { SearchTypeCode } from "@/features/market/auction-constants";
+import {elementImg, SearchTypeCode} from "@/features/market/auction-constants";
 import type { AuctionOrder, Attribute } from "@/types/wf-market";
 
 interface Props {
@@ -74,7 +74,7 @@ export function AuctionCard({ ao, data }: Props) {
             <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2">
                     {icon ? (
-                        <img src={assetUrl(icon)} alt="" className="size-9 shrink-0" />
+                        <img src={assetUrl(icon)} alt="" className="h-9 w-12 shrink-0" />
                     ) : (
                         <div className="size-9 shrink-0 rounded bg-muted" />
                     )}
@@ -105,7 +105,7 @@ export function AuctionCard({ ao, data }: Props) {
                         {lang === "zh" ? status.labelZh : status.labelEn}
                     </Badge>
                 </div>
-                <Button size="sm" variant="outline" onClick={copy}>
+                <Button size="sm" onClick={copy}>
                     <CopyIcon className="size-3.5" />
                     {t("auction.card.whisper")}
                 </Button>
@@ -181,6 +181,7 @@ function WeaponInfo({
 }) {
     const { t } = useTranslation();
     const item = ao.item;
+    const elementSrc = elementImg(item.element);
     const ephemera =
         item.havingEphemera && item.element
             ? data.ephemeraName(type, item.element)
@@ -194,9 +195,12 @@ function WeaponInfo({
                 {ephemera && <span className="font-semibold">{ephemera}</span>}
             </div>
             <div className="flex items-center gap-3 text-muted-foreground">
-                <span>
-                    {t("auction.card.element")}: {item.element ?? "-"}
-                </span>
+                {elementSrc ? (
+                    <span className="flex items-center gap-1">
+                        {t("auction.card.element")}:
+                        <img src={elementSrc} alt={item.element} className="size-4" />
+                    </span>
+                ) : null}
                 <span>
                     {t("auction.card.quirk")}:{" "}
                     {item.quirk ? data.quirkName(type, item.quirk) : "-"}

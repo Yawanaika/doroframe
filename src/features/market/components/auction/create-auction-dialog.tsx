@@ -239,7 +239,7 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
                 reRolls={reRolls}
             />
         ) : (
-            <div className="flex w-[200px] shrink-0 flex-col items-center gap-3 rounded-lg border p-4">
+            <div className="flex w-50 shrink-0 flex-col items-center gap-3 rounded-lg border p-4">
                 {weaponIconPath ? (
                     <img src={assetUrl(weaponIconPath)} alt="" className="size-28 object-contain" />
                 ) : (

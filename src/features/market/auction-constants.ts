@@ -23,6 +23,25 @@ export const WEAPON_ELEMENTS = [
     "toxin",
 ] as const;
 export type WeaponElementCode = (typeof WEAPON_ELEMENTS)[number];
+// key 受 WeaponElementCode（去掉 all）约束：漏写/写错元素会在编译期报错。
+const ElementImgMap: Record<Exclude<WeaponElementCode, "all">, string> = {
+    cold: "/images/elemental/DT_FREEZE.png",
+    electricity: "/images/elemental/DT_ELECTRICITY.png",
+    heat: "/images/elemental/DT_FIRE.png",
+    impact: "/images/elemental/DT_IMPACT.png",
+    magnetic: "/images/elemental/DT_MAGNETIC.png",
+    radiation: "/images/elemental/DT_RADIATION.png",
+    toxin: "/images/elemental/DT_POISON.png",
+};
+
+/**
+ * 按元素 code 取图标路径。element 来自后端，类型为宽泛的 string，
+ * 未知/缺失元素返回 undefined，调用方据此决定是否渲染（避免破图）。
+ */
+export function elementImg(element: string | undefined): string | undefined {
+    if (!element) return undefined;
+    return (ElementImgMap as Record<string, string>)[element];
+}
 /** 创建拍卖的元素选项（去掉 all） */
 export const CREATE_ELEMENTS = WEAPON_ELEMENTS.filter((e) => e !== "all");
 
