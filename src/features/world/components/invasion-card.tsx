@@ -3,7 +3,7 @@ import type { Invasion } from "@/types/wf-state";
 import { CardEmpty, CardError, CardSkeleton } from "@/components/card-states";
 import { useInvasionsQuery } from "@/features/world/queries";
 import { resolveNode } from "@/lib/wpep/nodes";
-import {itemName, Regions, tr} from "@/lib/wpep";
+import { Regions, rewardName, tr} from "@/lib/wpep";
 import { cn } from "@/lib/utils";
 import {EventCard} from "@/components/event-card.tsx";
 import { Progress } from "@/components/ui/progress";
@@ -85,7 +85,6 @@ const InvasionSubCard = memo(function InvasionSubCard({ invasion }: { invasion: 
 
     const attacker = invasion.attackerReward?.countedItems?.[0];
     const defender = invasion.defenderReward?.countedItems?.[0];
-
     return (
         <EventCard title={node.nameZh} className="mt-2">
             <div className="flex flex-col gap-2">
@@ -93,12 +92,12 @@ const InvasionSubCard = memo(function InvasionSubCard({ invasion }: { invasion: 
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>
                         {attacker
-                            ? `${itemName(attacker.itemType) || attacker.itemType} x ${attacker.itemCount}`
+                            ? `${rewardName(attacker.itemType) || attacker.itemType} x ${attacker.itemCount}`
                             : ""}
                     </span>
                     <span>
                         {defender
-                            ? `${defender.itemCount} x ${itemName(defender.itemType) || defender.itemType}`
+                            ? `${defender.itemCount} x ${rewardName(defender.itemType) || defender.itemType}`
                             : ""}
                     </span>
                 </div>
