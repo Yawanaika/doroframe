@@ -39,8 +39,9 @@ import {
 import { useCreateAuctionMutation } from "@/features/market/queries";
 import { generateRivenNames } from "@/features/market/auction-riven-name";
 import { assetUrl } from "@/features/market/assets";
-import { RivenCardPreview } from "./riven-card-preview";
-import { WeaponCombobox } from "./weapon-combobox";
+import { RivenCardPreview } from "@/features/market/components/auction/riven-card-preview.tsx";
+import { WeaponCombobox } from "@/features/market/components/auction/weapon-combobox";
+import { PolaritySelect } from "@/features/market/components/auction/polarity-select";
 import {
     SEARCH_TYPES,
     CREATE_POLICIES,
@@ -612,29 +613,11 @@ function RivenSection({
             <div className="grid grid-cols-[1fr_2fr] gap-3">
                 <Field>
                     <FieldLabel>{t("auction.field.polarity")}</FieldLabel>
-                    <Select value={polarity} onValueChange={setPolarity}>
-                        <SelectTrigger className="w-full">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {CREATE_POLARITIES.map((p) => (
-                                <SelectItem key={p} value={p} className="flex">
-                                    <div
-                                        className="size-4 bg-primary"
-                                        style={{
-                                            maskImage: `url(/images/polarity/POLARITY_${p}.png)`,
-                                            WebkitMaskImage: `url(/images/polarity/POLARITY_${p}.png)`,
-                                            maskSize: "contain",
-                                            WebkitMaskSize: "contain",
-                                            maskRepeat: "no-repeat",
-                                            WebkitMaskRepeat: "no-repeat",
-                                        }}
-                                    />
-                                    {t(`auction.polarity.${p}`)}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    <PolaritySelect
+                        value={polarity}
+                        onValueChange={setPolarity}
+                        options={CREATE_POLARITIES}
+                    />
                 </Field>
                 <Field>
                     <FieldLabel>{t("auction.field.modName")}</FieldLabel>

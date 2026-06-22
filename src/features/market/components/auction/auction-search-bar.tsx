@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/select";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { Field, FieldLabel } from "@/components/ui/field";
-import { WeaponCombobox } from "./weapon-combobox";
-import { PolaritySelect } from "./polarity-select";
+import { WeaponCombobox } from "@/features/market/components/auction/weapon-combobox";
+import { PolaritySelect } from "@/features/market/components/auction/polarity-select";
 import {
     useAuctionSearchData,
     type Option,
