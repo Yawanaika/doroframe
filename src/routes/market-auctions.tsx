@@ -22,11 +22,11 @@ export function MarketAuctionsPage() {
 
     return (
         <div className="flex h-full flex-col gap-3">
-            <Card className="p-4">
+            <Card className="shrink-0 p-4">
                 <AuctionSearchBar onSearch={onSearch} onReset={onReset} />
             </Card>
 
-            <div className="flex-1 overflow-auto">
+            <div className="min-h-0 flex-1 overflow-auto">
                 {auctions.isError ? (
                     <CardError message={String(auctions.error)} />
                 ) : (

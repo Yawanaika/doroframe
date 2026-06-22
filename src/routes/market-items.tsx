@@ -33,7 +33,7 @@ export function MarketItemsPage() {
 
     return (
         <div className="flex h-full flex-col gap-3">
-            <Card className="p-4">
+            <Card className="shrink-0 p-4">
                 <div className="flex gap-4">
                     {slug && (
                         <div className="shrink-0">
@@ -61,7 +61,7 @@ export function MarketItemsPage() {
                 </div>
             </Card>
 
-            <div className="flex-1 overflow-auto">
+            <div className="min-h-0 flex-1">
                 {orders.isError ? (
                     <CardError message={String(orders.error)} />
                 ) : (
