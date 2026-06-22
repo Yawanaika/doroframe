@@ -21,7 +21,9 @@ const EXC_NORMAL = "EXC_NORMAL";
 function choiceMeta(category: string, name: string) {
     if (category === EXC_NORMAL) {
         return {
-            icon: trImage(WARFRAME_ICON.replace("{}", name)),
+            icon: trImage(WARFRAME_ICON.replace("{}", name)
+                .replace("Baruuk","Pacifist")
+                .replace("Hildryn","IronFrame")),
             title: tr(name) || name,
             accent: "text-purple-300",
         };
