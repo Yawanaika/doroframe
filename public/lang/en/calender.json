@@ -69,7 +69,7 @@
     "desc": "+20% Melee Critical Chance (x2 for Heavy Attacks)",
     "ally": "Arthur"
   },
-  "name": {
+  "/Lotus/Upgrades/Calendar/ElectricalDamageOnBulletJump": {
     "name": "Dynamo Jump",
     "desc": "On landing from a bullet jump gain 50% Electricity Damage for 5s.",
     "ally": "Amir"

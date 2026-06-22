@@ -69,7 +69,7 @@
     "desc": "增加20%近战暴击几率（重击时x2）。",
     "ally": "Arthur"
   },
-  "name": {
+  "/Lotus/Upgrades/Calendar/ElectricalDamageOnBulletJump": {
     "name": "电能飞跃",
     "desc": "旋身飞跃落地时增加50%电击伤害，持续5秒。",
     "ally": "Amir"
@@ -115,8 +115,8 @@
     "ally": "Arthur"
   },
   "/Lotus/Upgrades/Calendar/EnergyWavesOnCombo": {
-    "name": "Combo Wave",
-    "desc": "Upon gaining 7x combo multiplier all melee attacks fire off waves of energy",
+    "name": "波动连段",
+    "desc": "达到7倍连击倍率后，所有近战攻击都会发射能量波。",
     "ally": "Arthur"
   },
   "name": {
