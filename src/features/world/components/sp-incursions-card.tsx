@@ -27,7 +27,7 @@ const SpIncursionRow = memo(function SpIncursionRow({
     return (
         <EventCard
             title={`${node.missionTypeZh} (${minEnemyLevel} - ${maxEnemyLevel})`}
-            subtitle={`${node.nameZh}· ${node.systemNameZh}`}
+            subtitle={`${node.nameZh} · ${node.systemNameZh}`}
             prefixImg={"/images/resources/SteelEssence.png"}
             prefixTip="钢铁精华"
             endImg={node.factionCode ? `/images/camp/${node.factionCode}.png` : undefined}

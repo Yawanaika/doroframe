@@ -16,7 +16,7 @@ const VoidStormRow = memo(function VoidStormRow({ storm }: { storm: VoidStorm })
     return (
         <EventCard
             title={`${node.missionTypeZh} (${node.minEnemyLevel + 10} - ${node.maxEnemyLevel + 10})`}
-            subtitle={`${node.nameZh}· ${node.systemNameZh}`}
+            subtitle={`${node.nameZh} · ${node.systemNameZh}`}
             prefixImg={`/images/void/${storm.activeMissionTier}.png`}
             badge={storm.hard ? t("event.hard") : t("event.normal")}
             countdown={formatCountdown(sec)}
