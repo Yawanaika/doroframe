@@ -202,6 +202,7 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
                             value={positive}
                             onChange={setPositive}
                             max={3}
+                            exclude={new Set(negative)}
                             placeholder={t("auction.field.positive")}
                         />
                     </Field>
@@ -212,6 +213,7 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
                             value={negative}
                             onChange={setNegative}
                             max={1}
+                            exclude={new Set(positive)}
                             placeholder={t("auction.field.negative")}
                         />
                     </Field>

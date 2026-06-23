@@ -592,6 +592,13 @@ function RivenSection({
                 <FieldLabel>{t("auction.field.attributes")}</FieldLabel>
                 {attrRows.map((row, i) => {
                     const groups = row.positive ? positiveGroups : negativeGroups;
+                    // 其它行已选的词条（正负不限），本行不可再选
+                    const exclude = new Set(
+                        attrRows
+                            .filter((_, idx) => idx !== i)
+                            .map((r) => r.slug)
+                            .filter(Boolean),
+                    );
                     return (
                         <div key={i} className="flex items-center gap-2">
                             <Button
@@ -607,6 +614,7 @@ function RivenSection({
                                     groups={groups}
                                     value={row.slug}
                                     onValueChange={(v) => setRow(i, { slug: v })}
+                                    exclude={exclude}
                                     container={portalContainer}
                                 />
                             </div>

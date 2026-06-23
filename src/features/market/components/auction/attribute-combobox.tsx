@@ -34,22 +34,29 @@ function useGroupLabel() {
         key ? t(`auction.attrGroup.${key}`, { defaultValue: key }) : "";
 }
 
-/** 按输入文本过滤分组，丢弃空组；组标签经 i18n 本地化 */
-function useFilteredGroups(groups: WeaponGroup[], query: string) {
+/** 按输入文本过滤分组，丢弃空组；组标签经 i18n 本地化。exclude 中的 slug 不出现（已在他处选中） */
+function useFilteredGroups(
+    groups: WeaponGroup[],
+    query: string,
+    exclude?: Set<string>,
+) {
     const groupLabel = useGroupLabel();
     return useMemo(() => {
         const q = query.trim().toLowerCase();
         const out: { value: string; items: Option[] }[] = [];
         for (const g of groups) {
-            const matched = q
-                ? g.items.filter((o) => o.label.toLowerCase().includes(q))
+            const avail = exclude
+                ? g.items.filter((o) => !exclude.has(o.value))
                 : g.items;
+            const matched = q
+                ? avail.filter((o) => o.label.toLowerCase().includes(q))
+                : avail;
             if (matched.length === 0) continue;
             out.push({ value: groupLabel(g.key), items: matched });
         }
         return out;
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [groups, query]);
+    }, [groups, query, exclude]);
 }
 
 function renderGroups(matches: { value: string; items: Option[] }[]) {
@@ -73,6 +80,8 @@ interface SingleProps {
     /** 选中词条 slug（空串=未选） */
     value: string;
     onValueChange: (slug: string) => void;
+    /** 已在他处选中的 slug（正/负不限），不出现在选项中；本行自身的 value 不受影响 */
+    exclude?: Set<string>;
     container?: Container;
     placeholder?: string;
 }
@@ -82,6 +91,7 @@ export function AttributeCombobox({
     groups,
     value,
     onValueChange,
+    exclude,
     container,
     placeholder,
 }: SingleProps) {
@@ -98,7 +108,15 @@ export function AttributeCombobox({
     // 外部 value 变化（如切武器后剔除、切正负号清空）时同步输入框
     useEffect(() => setInputValue(selectedLabel), [selectedLabel]);
 
-    const matches = useFilteredGroups(groups, inputValue);
+    // 排除集去掉本行自身已选值，避免把当前选项也隐藏
+    const excludeOthers = useMemo(() => {
+        if (!exclude || !exclude.has(value)) return exclude;
+        const s = new Set(exclude);
+        s.delete(value);
+        return s;
+    }, [exclude, value]);
+
+    const matches = useFilteredGroups(groups, inputValue, excludeOthers);
 
     return (
         <Combobox<Option>
@@ -135,6 +153,8 @@ interface MultiProps {
     onChange: (slugs: string[]) => void;
     /** 最多可选数量；达到后未选项不可再选 */
     max?: number;
+    /** 已在他处（另一极性）选中的 slug，不出现在选项中；本组自身已选项不受影响 */
+    exclude?: Set<string>;
     container?: Container;
     placeholder?: string;
 }
@@ -145,12 +165,21 @@ export function AttributeMultiCombobox({
     value,
     onChange,
     max,
+    exclude,
     container,
     placeholder,
 }: MultiProps) {
     const { t } = useTranslation();
     const anchor = useComboboxAnchor();
     const [inputValue, setInputValue] = useState("");
+
+    // 排除集去掉本组已选值，避免把已选 chip 对应选项也隐藏
+    const excludeOthers = useMemo(() => {
+        if (!exclude) return undefined;
+        const s = new Set(exclude);
+        for (const v of value) s.delete(v);
+        return s;
+    }, [exclude, value]);
 
     // slug → 展示名（含自定义组），用于 chips 回填
     const labelOf = useMemo(() => {
@@ -166,7 +195,7 @@ export function AttributeMultiCombobox({
     );
 
     const atMax = max != null && value.length >= max;
-    const matches = useFilteredGroups(groups, inputValue);
+    const matches = useFilteredGroups(groups, inputValue, excludeOthers);
 
     return (
         <Combobox<Option, true>
