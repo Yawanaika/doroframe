@@ -134,12 +134,38 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
         }
     }, [modNameOptions, modName]);
 
+    // 所选武器的 rivenType，用于按武器筛选正/负词条（未选武器则不筛选）
+    const weaponType = weaponSlug
+        ? data.weaponRivenType("riven", weaponSlug)
+        : undefined;
+    const positiveOptions = useMemo(
+        () => data.positiveOptionsFor(weaponType),
+        [data, weaponType],
+    );
+    const negativeOptions = useMemo(
+        () => data.negativeOptionsFor(weaponType),
+        [data, weaponType],
+    );
+
     const resetType = (next: SearchTypeCode) => {
         setType(next);
         setWeaponSlug("");
         setWeaponInput("");
         setQuirkSlug("");
         setQuirkInput("");
+    };
+
+    // 换武器后清空对新武器不适用的已选词条 slug
+    const onWeaponChange = (slug: string) => {
+        const rt = data.weaponRivenType("riven", slug);
+        const posValid = new Set(data.positiveOptionsFor(rt).map((x) => x.value));
+        const negValid = new Set(data.negativeOptionsFor(rt).map((x) => x.value));
+        setAttrRows((rows) =>
+            rows.map((r) => {
+                const valid = r.positive ? posValid : negValid;
+                return r.slug && !valid.has(r.slug) ? { ...r, slug: "" } : r;
+            }),
+        );
     };
 
     const setRow = (i: number, patch: Partial<AttrRow>) =>
@@ -333,6 +359,7 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
                                     if (o) {
                                         setWeaponSlug(o.value);
                                         setWeaponInput(o.label);
+                                        onWeaponChange(o.value);
                                     }
                                 }}
                                 container={portalContainer}
@@ -343,8 +370,8 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
                     {type === "riven" ? (
                         <RivenSection
                             attrRows={attrRows}
-                            positiveOptions={data.positiveOptions}
-                            negativeOptions={data.negativeOptions}
+                            positiveOptions={positiveOptions}
+                            negativeOptions={negativeOptions}
                             setRow={setRow}
                             addRow={addRow}
                             removeRow={removeRow}

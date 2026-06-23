@@ -56,15 +56,25 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
     const [buyoutPolicy, setBuyoutPolicy] = useState<BuyoutPolicyCode>("all");
     const [sortBy, setSortBy] = useState<string>(SORT_OPTIONS.riven[0]);
 
+    // 所选武器的 rivenType，用于按武器筛选正/负词条（未选武器则不筛选）
+    const weaponType = weaponSlug
+        ? data.weaponRivenType("riven", weaponSlug)
+        : undefined;
+
+    const positiveOptions = useMemo(
+        () => data.positiveOptionsFor(weaponType),
+        [data, weaponType],
+    );
+
     const negativeOptions: Option[] = useMemo(
         () => [
             ...NEGATIVE_CUSTOM.map((c) => ({
                 label: t(`auction.negative.${c}`),
                 value: c,
             })),
-            ...data.negativeOptions,
+            ...data.negativeOptionsFor(weaponType),
         ],
-        [data.negativeOptions, t],
+        [data, weaponType, t],
     );
 
     const onTypeChange = (next: SearchTypeCode) => {
@@ -156,6 +166,22 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
                             if (o) {
                                 setWeaponSlug(o.value);
                                 setWeaponInput(o.label);
+                                // 换武器后剔除对新武器不适用的已选词条
+                                const rt = data.weaponRivenType("riven", o.value);
+                                const posValid = new Set(
+                                    data.positiveOptionsFor(rt).map((x) => x.value),
+                                );
+                                const negValid = new Set(
+                                    data.negativeOptionsFor(rt).map((x) => x.value),
+                                );
+                                setPositive((prev) => prev.filter((v) => posValid.has(v)));
+                                setNegative((prev) =>
+                                    prev.filter(
+                                        (v) =>
+                                            negValid.has(v) ||
+                                            (NEGATIVE_CUSTOM as readonly string[]).includes(v),
+                                    ),
+                                );
                             }
                         }}
                     />
@@ -168,7 +194,7 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
                     <Field>
                         <FieldLabel>{t("auction.field.positive")}</FieldLabel>
                         <MultiSelect
-                            options={data.positiveOptions}
+                            options={positiveOptions}
                             value={positive}
                             onChange={setPositive}
                             max={3}
