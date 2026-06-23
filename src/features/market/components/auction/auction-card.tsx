@@ -119,18 +119,23 @@ function AuctionPrice({ ao }: { ao: AuctionOrder }) {
     // 一口价直售（买断=起拍）：单行
     if (ao.buyoutPrice != null && ao.buyoutPrice === ao.startingPrice) {
         return (
-            <div className="text-right text-sm">
+            <div className="flex text-right text-sm">
                 {t("auction.card.fixed")}: <b>{ao.buyoutPrice}</b>
+                <img src={"/images/resources/Platinum.png"} alt="Platinum" className="size-4"/>
             </div>
         );
     }
     return (
         <div className="space-y-0.5 text-right text-sm">
-            <div>
+            <div className="flex">
                 {t("auction.card.starting")}: <b>{ao.startingPrice}</b>
+                <img src={"/images/resources/Platinum.png"} alt="Platinum" className="size-4"/>
             </div>
-            <div>
+            <div className="flex">
                 {t("auction.card.buyout")}: <b>{ao.buyoutPrice ?? "∞"}</b>
+                {ao.buyoutPrice?(
+                    <img src={"/images/resources/Platinum.png"} alt="Platinum" className="size-4"/>
+                ):null}
             </div>
             <div className="text-muted-foreground">
                 {ao.topBid != null
