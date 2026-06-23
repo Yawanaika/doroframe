@@ -28,21 +28,40 @@ export interface WeaponGroup {
     items: Option[];
 }
 
+/** 带筛选/分组元信息的词条选项 */
+type AttrOption = Option & { exclusiveTo: string[]; group: string };
+
 /**
- * 按所选武器类型筛选词条选项：词条 `exclusiveTo` 列出其专属的 rivenType。
- * 该字段为空 = 通用词条（default），对所有武器展示；非空则仅对命中的 rivenType 展示。
- * 未选武器（rivenType 为空）时不过滤，展示全部。
+ * 按所选武器类型筛选词条：词条 `exclusiveTo` 列出其专属的 rivenType。
+ * 该字段为空 = 通用词条，对所有武器展示；非空则仅对命中的 rivenType 展示。
+ * 未选武器（rivenType 为空）时不过滤，返回全量。
  */
-function filterByWeapon(
-    opts: (Option & { exclusiveTo: string[] })[],
-    rivenType?: string,
-): Option[] {
-    const kept = rivenType
+function keepForWeapon(opts: AttrOption[], rivenType?: string): AttrOption[] {
+    return rivenType
         ? opts.filter(
               (o) => o.exclusiveTo.length === 0 || o.exclusiveTo.includes(rivenType),
           )
         : opts;
-    return kept.map(({ label, value }) => ({ label, value }));
+}
+
+/** 筛选后按 `group` 分组；default 组置顶，其余按 key 字母序 */
+function groupByAttrGroup(opts: AttrOption[], rivenType?: string): WeaponGroup[] {
+    const map = new Map<string, Option[]>();
+    for (const o of keepForWeapon(opts, rivenType)) {
+        const arr = map.get(o.group);
+        const item: Option = { label: o.label, value: o.value };
+        if (arr) arr.push(item);
+        else map.set(o.group, [item]);
+    }
+    return [...map.entries()]
+        .map(([key, items]) => ({ key, items }))
+        .sort((a, b) =>
+            a.key === "default"
+                ? -1
+                : b.key === "default"
+                  ? 1
+                  : a.key.localeCompare(b.key),
+        );
 }
 
 export interface AuctionSearchData {
@@ -61,6 +80,10 @@ export interface AuctionSearchData {
     positiveOptionsFor: (rivenType?: string) => Option[];
     /** 按武器 rivenType 筛选的负面词条选项（不含 none/has 自定义项，那两项由组件加）；rivenType 为空时返回全量 */
     negativeOptionsFor: (rivenType?: string) => Option[];
+    /** 正面词条按 `group` 分组（先按武器筛选），用于分组 Combobox */
+    positiveGroupsFor: (rivenType?: string) => WeaponGroup[];
+    /** 负面词条按 `group` 分组（先按武器筛选），用于分组 Combobox */
+    negativeGroupsFor: (rivenType?: string) => WeaponGroup[];
     /** 词条 slug → 本地化名（卡片渲染用） */
     attrName: (slug: string) => string;
     /** lich/sister：元素码 → 幻纹本地化名（卡片渲染用） */
@@ -133,20 +156,20 @@ export function useAuctionSearchData(): AuctionSearchData {
         };
     }, [rivenWeapons.data, lichWeapons.data, sisterWeapons.data, lang]);
 
-    // 紫卡词条：正面/负面选项（带 exclusiveTo 供按武器筛选）+ slug→名
+    // 紫卡词条：正面/负面选项（带 exclusiveTo/group 供按武器筛选与分组）+ slug→名
     const attrData = useMemo(() => {
-        type RichOption = Option & { exclusiveTo: string[] };
-        const positive: RichOption[] = [];
-        const negative: RichOption[] = [];
+        const positive: AttrOption[] = [];
+        const negative: AttrOption[] = [];
         const bySlug = new Map<string, string>();
         for (const a of rivenAttrs.data ?? []) {
             const name = pickI18n(a.i18n, lang).name;
             bySlug.set(a.slug, name);
             const exclusiveTo = a.exclusiveTo ?? [];
+            const group = a.group || "default";
             if (!a.negativeOnly)
-                positive.push({ label: name, value: a.slug, exclusiveTo });
+                positive.push({ label: name, value: a.slug, exclusiveTo, group });
             if (!a.positiveOnly)
-                negative.push({ label: name, value: a.slug, exclusiveTo });
+                negative.push({ label: name, value: a.slug, exclusiveTo, group });
         }
         positive.sort((a, b) => a.label.localeCompare(b.label));
         negative.sort((a, b) => a.label.localeCompare(b.label));
@@ -196,9 +219,19 @@ export function useAuctionSearchData(): AuctionSearchData {
         weaponRivenType: (type, slug) =>
             weaponMaps[type].bySlug.get(slug)?.rivenType,
         positiveOptionsFor: (rivenType) =>
-            filterByWeapon(attrData.positive, rivenType),
+            keepForWeapon(attrData.positive, rivenType).map(({ label, value }) => ({
+                label,
+                value,
+            })),
         negativeOptionsFor: (rivenType) =>
-            filterByWeapon(attrData.negative, rivenType),
+            keepForWeapon(attrData.negative, rivenType).map(({ label, value }) => ({
+                label,
+                value,
+            })),
+        positiveGroupsFor: (rivenType) =>
+            groupByAttrGroup(attrData.positive, rivenType),
+        negativeGroupsFor: (rivenType) =>
+            groupByAttrGroup(attrData.negative, rivenType),
         attrName: (slug) => attrData.bySlug.get(slug) ?? slug,
         ephemeraName: (type, elementCode) =>
             type === "riven"

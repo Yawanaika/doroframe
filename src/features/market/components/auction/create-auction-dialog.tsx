@@ -35,12 +35,14 @@ import { Spinner } from "@/components/ui/spinner";
 import {
     useAuctionSearchData,
     type Option,
+    type WeaponGroup,
 } from "@/features/market/use-auction-search-data";
 import { useCreateAuctionMutation } from "@/features/market/queries";
 import { generateRivenNames } from "@/features/market/auction-riven-name";
 import { assetUrl } from "@/features/market/assets";
 import { RivenCardPreview } from "@/features/market/components/auction/riven-card-preview.tsx";
 import { WeaponCombobox } from "@/features/market/components/auction/weapon-combobox";
+import { AttributeCombobox } from "@/features/market/components/auction/attribute-combobox";
 import { PolaritySelect } from "@/features/market/components/auction/polarity-select";
 import {
     SEARCH_TYPES,
@@ -138,12 +140,12 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
     const weaponType = weaponSlug
         ? data.weaponRivenType("riven", weaponSlug)
         : undefined;
-    const positiveOptions = useMemo(
-        () => data.positiveOptionsFor(weaponType),
+    const positiveGroups = useMemo(
+        () => data.positiveGroupsFor(weaponType),
         [data, weaponType],
     );
-    const negativeOptions = useMemo(
-        () => data.negativeOptionsFor(weaponType),
+    const negativeGroups = useMemo(
+        () => data.negativeGroupsFor(weaponType),
         [data, weaponType],
     );
 
@@ -370,8 +372,9 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
                     {type === "riven" ? (
                         <RivenSection
                             attrRows={attrRows}
-                            positiveOptions={positiveOptions}
-                            negativeOptions={negativeOptions}
+                            positiveGroups={positiveGroups}
+                            negativeGroups={negativeGroups}
+                            portalContainer={portalContainer}
                             setRow={setRow}
                             addRow={addRow}
                             removeRow={removeRow}
@@ -544,8 +547,9 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
 
 function RivenSection({
     attrRows,
-    positiveOptions,
-    negativeOptions,
+    positiveGroups,
+    negativeGroups,
+    portalContainer,
     setRow,
     addRow,
     removeRow,
@@ -562,8 +566,9 @@ function RivenSection({
     setReRolls,
 }: {
     attrRows: AttrRow[];
-    positiveOptions: Option[];
-    negativeOptions: Option[];
+    positiveGroups: WeaponGroup[];
+    negativeGroups: WeaponGroup[];
+    portalContainer: React.ComponentProps<typeof AttributeCombobox>["container"];
     setRow: (i: number, patch: Partial<AttrRow>) => void;
     addRow: () => void;
     removeRow: (i: number) => void;
@@ -586,7 +591,7 @@ function RivenSection({
             <div className="flex flex-col gap-2">
                 <FieldLabel>{t("auction.field.attributes")}</FieldLabel>
                 {attrRows.map((row, i) => {
-                    const opts = row.positive ? positiveOptions : negativeOptions;
+                    const groups = row.positive ? positiveGroups : negativeGroups;
                     return (
                         <div key={i} className="flex items-center gap-2">
                             <Button
@@ -597,21 +602,14 @@ function RivenSection({
                             >
                                 {row.positive ? "+" : "−"}
                             </Button>
-                            <Select
-                                value={row.slug}
-                                onValueChange={(v) => setRow(i, { slug: v })}
-                            >
-                                <SelectTrigger className="flex-1">
-                                    <SelectValue placeholder={t("auction.field.attribute")} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {opts.map((o) => (
-                                        <SelectItem key={o.value} value={o.value}>
-                                            {o.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <div className="flex-1">
+                                <AttributeCombobox
+                                    groups={groups}
+                                    value={row.slug}
+                                    onValueChange={(v) => setRow(i, { slug: v })}
+                                    container={portalContainer}
+                                />
+                            </div>
                             <Input
                                 className="w-24"
                                 inputMode="decimal"

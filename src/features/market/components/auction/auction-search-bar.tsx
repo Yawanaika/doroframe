@@ -13,13 +13,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { MultiSelect } from "@/components/ui/multi-select";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { WeaponCombobox } from "@/features/market/components/auction/weapon-combobox";
+import { AttributeMultiCombobox } from "@/features/market/components/auction/attribute-combobox";
 import { PolaritySelect } from "@/features/market/components/auction/polarity-select";
 import {
     useAuctionSearchData,
-    type Option,
+    type WeaponGroup,
 } from "@/features/market/use-auction-search-data";
 import {
     SEARCH_TYPES,
@@ -61,18 +61,22 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
         ? data.weaponRivenType("riven", weaponSlug)
         : undefined;
 
-    const positiveOptions = useMemo(
-        () => data.positiveOptionsFor(weaponType),
+    const positiveGroups = useMemo(
+        () => data.positiveGroupsFor(weaponType),
         [data, weaponType],
     );
 
-    const negativeOptions: Option[] = useMemo(
+    // 负面词条：自定义组（none/has，无标签）置顶，其后接按 group 分组的词条
+    const negativeGroups: WeaponGroup[] = useMemo(
         () => [
-            ...NEGATIVE_CUSTOM.map((c) => ({
-                label: t(`auction.negative.${c}`),
-                value: c,
-            })),
-            ...data.negativeOptionsFor(weaponType),
+            {
+                key: "",
+                items: NEGATIVE_CUSTOM.map((c) => ({
+                    label: t(`auction.negative.${c}`),
+                    value: c,
+                })),
+            },
+            ...data.negativeGroupsFor(weaponType),
         ],
         [data, weaponType, t],
     );
@@ -193,8 +197,8 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
                 <div className="grid grid-cols-[7fr_3fr] gap-3">
                     <Field>
                         <FieldLabel>{t("auction.field.positive")}</FieldLabel>
-                        <MultiSelect
-                            options={positiveOptions}
+                        <AttributeMultiCombobox
+                            groups={positiveGroups}
                             value={positive}
                             onChange={setPositive}
                             max={3}
@@ -203,8 +207,8 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
                     </Field>
                     <Field>
                         <FieldLabel>{t("auction.field.negative")}</FieldLabel>
-                        <MultiSelect
-                            options={negativeOptions}
+                        <AttributeMultiCombobox
+                            groups={negativeGroups}
                             value={negative}
                             onChange={setNegative}
                             max={1}

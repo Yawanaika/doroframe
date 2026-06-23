@@ -200,6 +200,8 @@
   "auction.group.zaw": "Zaw",
   "auction.group.kitgun": "Kitgun",
   "auction.group.sentinel": "Sentinel",
+  "auction.attrGroup.default": "General",
+  "auction.attrGroup.melee": "Melee",
   "auction.policy.all": "All",
   "auction.policy.direct": "Direct",
   "auction.policy.auction": "Auction",

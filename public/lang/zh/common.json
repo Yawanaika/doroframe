@@ -200,6 +200,8 @@
   "auction.group.zaw": "Zaw",
   "auction.group.kitgun": "组合枪",
   "auction.group.sentinel": "守护武器",
+  "auction.attrGroup.default": "通用",
+  "auction.attrGroup.melee": "近战",
   "auction.policy.all": "全部",
   "auction.policy.direct": "售卖",
   "auction.policy.auction": "拍卖",
