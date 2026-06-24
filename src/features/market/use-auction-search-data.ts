@@ -31,6 +31,12 @@ export interface WeaponGroup {
 /** 带筛选/分组元信息的词条选项 */
 type AttrOption = Option & { exclusiveTo: string[]; group: string };
 
+/** 词条单位/符号元信息：unit 为 percent/multiply；positiveIsNegative 标记正负号反向的词条（如后坐力） */
+export interface AttrMeta {
+    unit?: string;
+    positiveIsNegative?: boolean;
+}
+
 /**
  * 按所选武器类型筛选词条：词条 `exclusiveTo` 列出其专属的 rivenType。
  * 该字段为空 = 通用词条，对所有武器展示；非空则仅对命中的 rivenType 展示。
@@ -86,6 +92,8 @@ export interface AuctionSearchData {
     negativeGroupsFor: (rivenType?: string) => WeaponGroup[];
     /** 词条 slug → 本地化名（卡片渲染用） */
     attrName: (slug: string) => string;
+    /** 词条 slug → 元信息（unit: percent/multiply；positiveIsNegative: 如后坐力，正负号反向） */
+    attrMeta: (slug: string) => AttrMeta | undefined;
     /** lich/sister：元素码 → 幻纹本地化名（卡片渲染用） */
     ephemeraName: (type: SearchTypeCode, elementCode: string) => string;
     /** lich/sister 怪癖选项（label=名, value=slug） */
@@ -161,9 +169,14 @@ export function useAuctionSearchData(): AuctionSearchData {
         const positive: AttrOption[] = [];
         const negative: AttrOption[] = [];
         const bySlug = new Map<string, string>();
+        const metaBySlug = new Map<string, AttrMeta>();
         for (const a of rivenAttrs.data ?? []) {
             const name = pickI18n(a.i18n, lang).name;
             bySlug.set(a.slug, name);
+            metaBySlug.set(a.slug, {
+                unit: a.unit,
+                positiveIsNegative: a.positiveIsNegative,
+            });
             const exclusiveTo = a.exclusiveTo ?? [];
             const group = a.group || "default";
             if (!a.negativeOnly)
@@ -173,7 +186,7 @@ export function useAuctionSearchData(): AuctionSearchData {
         }
         positive.sort((a, b) => a.label.localeCompare(b.label));
         negative.sort((a, b) => a.label.localeCompare(b.label));
-        return { positive, negative, bySlug };
+        return { positive, negative, bySlug, metaBySlug };
     }, [rivenAttrs.data, lang]);
 
     // 幻纹：元素码 → 名，按大类
@@ -233,6 +246,7 @@ export function useAuctionSearchData(): AuctionSearchData {
         negativeGroupsFor: (rivenType) =>
             groupByAttrGroup(attrData.negative, rivenType),
         attrName: (slug) => attrData.bySlug.get(slug) ?? slug,
+        attrMeta: (slug) => attrData.metaBySlug.get(slug),
         ephemeraName: (type, elementCode) =>
             type === "riven"
                 ? ""

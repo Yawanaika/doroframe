@@ -28,6 +28,11 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Field, FieldLabel } from "@/components/ui/field";
+import {
+    InputGroup,
+    InputGroupAddon,
+    InputGroupInput,
+} from "@/components/ui/input-group";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -36,6 +41,7 @@ import {
     useAuctionSearchData,
     type Option,
     type WeaponGroup,
+    type AttrMeta,
 } from "@/features/market/use-auction-search-data";
 import { useCreateAuctionMutation } from "@/features/market/queries";
 import { generateRivenNames } from "@/features/market/auction-riven-name";
@@ -60,16 +66,41 @@ interface Props {
     trigger?: React.ReactNode;
 }
 
-interface AttrRow {
-    positive: boolean;
+interface AttrInput {
     slug: string;
     value: string;
 }
+
+const MAX_POSITIVE = 3;
+const MIN_POSITIVE = 2;
 
 const num = (v: string): number | undefined => {
     if (v.trim() === "") return undefined;
     const n = Number(v);
     return Number.isFinite(n) ? n : undefined;
+};
+
+/** 词条单位对应的数值后缀符号：百分比 % / 乘法 × */
+const unitSymbol = (unit?: string): string =>
+    unit === "percent" ? "%" : unit === "multiply" ? "×" : "";
+
+/**
+ * 卡面词条文本：`符号 数值[单位] 名称`。
+ * - multiply：一律为乘法，无正负号，形如 `×2.5 名称`。
+ * - 其余：正面 +/负面 −；positiveIsNegative（如后坐力）时正负号反向；percent 追加 %。
+ */
+const formatStat = (
+    value: string,
+    name: string,
+    positiveSection: boolean,
+    meta?: { unit?: string; positiveIsNegative?: boolean },
+): string => {
+    const v = value.trim() === "" ? "0" : value.trim();
+    if (meta?.unit === "multiply") return `×${v} ${name}`.trim();
+    const positive = meta?.positiveIsNegative ? !positiveSection : positiveSection;
+    const sign = positive ? "+" : "−";
+    const pct = meta?.unit === "percent" ? "%" : "";
+    return `${sign}${v}${pct} ${name}`.trim();
 };
 
 export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
@@ -86,11 +117,12 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
     const [weaponSlug, setWeaponSlug] = useState("");
     const [weaponInput, setWeaponInput] = useState("");
 
-    // riven
-    const [attrRows, setAttrRows] = useState<AttrRow[]>([
-        { positive: true, slug: "", value: "" },
-        { positive: true, slug: "", value: "" },
+    // riven：正面词条（2~3 条）与负面词条（至多 1 条）分开维护
+    const [positives, setPositives] = useState<AttrInput[]>([
+        { slug: "", value: "" },
+        { slug: "", value: "" },
     ]);
+    const [negative, setNegative] = useState<AttrInput>({ slug: "", value: "" });
     const [polarity, setPolarity] = useState<string>(CREATE_POLARITIES[0]);
     const [modName, setModName] = useState("");
     const [mr, setMr] = useState("8");
@@ -119,13 +151,25 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
         return base.slice(0, 20);
     }, [quirkInput, quirkOptions]);
 
-    // 由当前词条行生成所有可能的 Mod 名
-    const modNameOptions = useMemo(() => {
-        const attrs: Attribute[] = attrRows
+    // 正面 + 负面合并为 API 词条列表（仅取已选 slug）
+    const allAttrs = useMemo<Attribute[]>(() => {
+        const out: Attribute[] = positives
             .filter((r) => r.slug)
-            .map((r) => ({ urlName: r.slug, value: num(r.value) ?? 0, positive: r.positive }));
-        return generateRivenNames(attrs);
-    }, [attrRows]);
+            .map((r) => ({ urlName: r.slug, value: num(r.value) ?? 0, positive: true }));
+        if (negative.slug)
+            out.push({
+                urlName: negative.slug,
+                value: num(negative.value) ?? 0,
+                positive: false,
+            });
+        return out;
+    }, [positives, negative]);
+
+    // 由当前词条生成所有可能的 Mod 名（仅正面词条参与）
+    const modNameOptions = useMemo(
+        () => generateRivenNames(allAttrs),
+        [allAttrs],
+    );
 
     // Mod 名选项变化时，确保选中值有效
     useEffect(() => {
@@ -162,28 +206,31 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
         const rt = data.weaponRivenType("riven", slug);
         const posValid = new Set(data.positiveOptionsFor(rt).map((x) => x.value));
         const negValid = new Set(data.negativeOptionsFor(rt).map((x) => x.value));
-        setAttrRows((rows) =>
-            rows.map((r) => {
-                const valid = r.positive ? posValid : negValid;
-                return r.slug && !valid.has(r.slug) ? { ...r, slug: "" } : r;
-            }),
+        setPositives((rows) =>
+            rows.map((r) => (r.slug && !posValid.has(r.slug) ? { ...r, slug: "" } : r)),
+        );
+        setNegative((r) =>
+            r.slug && !negValid.has(r.slug) ? { ...r, slug: "" } : r,
         );
     };
 
-    const setRow = (i: number, patch: Partial<AttrRow>) =>
-        setAttrRows((rows) => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
-
-    const addRow = () =>
-        setAttrRows((rows) => [...rows, { positive: true, slug: "", value: "" }]);
-    const removeRow = (i: number) =>
-        setAttrRows((rows) => rows.filter((_, idx) => idx !== i));
+    const setPos = (i: number, patch: Partial<AttrInput>) =>
+        setPositives((rows) => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
+    const addPos = () =>
+        setPositives((rows) =>
+            rows.length >= MAX_POSITIVE ? rows : [...rows, { slug: "", value: "" }],
+        );
+    const removePos = (i: number) =>
+        setPositives((rows) =>
+            rows.length <= MIN_POSITIVE ? rows : rows.filter((_, idx) => idx !== i),
+        );
 
     const validate = (): string | null => {
         if (!weaponSlug) return t("auction.create.error.weapon");
         if (!startingPrice) return t("auction.create.error.price");
         if (type === "riven") {
-            const positives = attrRows.filter((r) => r.positive && r.slug);
-            if (positives.length < 2) return t("auction.create.error.attrs");
+            if (positives.filter((r) => r.slug).length < MIN_POSITIVE)
+                return t("auction.create.error.attrs");
             if (!modName) return t("auction.create.error.modName");
         }
         return null;
@@ -208,13 +255,7 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
                           masteryLevel: num(mr),
                           modRank: num(modRank),
                           reRolls: num(reRolls),
-                          attributes: attrRows
-                              .filter((r) => r.slug)
-                              .map((r) => ({
-                                  urlName: r.slug,
-                                  value: num(r.value) ?? 0,
-                                  positive: r.positive,
-                              })),
+                          attributes: allAttrs,
                       }
                     : {
                           type,
@@ -242,10 +283,24 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
         }
     };
 
-    // 卡面预览：紫卡词条行（含正负号 + 名称）
-    const previewStats = attrRows
-        .filter((r) => r.slug)
-        .map((r) => `${r.positive ? "+" : ""}${r.value} ${data.attrName(r.slug)}`.trim());
+    // 卡面预览：紫卡词条行（含正负号 / 单位 + 名称）
+    const previewStats = [
+        ...positives
+            .filter((r) => r.slug)
+            .map((r) =>
+                formatStat(r.value, data.attrName(r.slug), true, data.attrMeta(r.slug)),
+            ),
+        ...(negative.slug
+            ? [
+                  formatStat(
+                      negative.value,
+                      data.attrName(negative.slug),
+                      false,
+                      data.attrMeta(negative.slug),
+                  ),
+              ]
+            : []),
+    ];
     const weaponDisplayName = data.weaponName(type, weaponSlug);
     const weaponIconPath = data.weaponIcon(type, weaponSlug);
 
@@ -371,13 +426,16 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
 
                     {type === "riven" ? (
                         <RivenSection
-                            attrRows={attrRows}
+                            positives={positives}
+                            negative={negative}
                             positiveGroups={positiveGroups}
                             negativeGroups={negativeGroups}
                             portalContainer={portalContainer}
-                            setRow={setRow}
-                            addRow={addRow}
-                            removeRow={removeRow}
+                            attrMeta={data.attrMeta}
+                            setPos={setPos}
+                            addPos={addPos}
+                            removePos={removePos}
+                            setNegative={setNegative}
                             polarity={polarity}
                             setPolarity={setPolarity}
                             modName={modName}
@@ -545,14 +603,45 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
     );
 }
 
+/** 词条数值输入：右侧附加单位符号（% / ×）；未选词条时禁用 */
+function AttrValueInput({
+    value,
+    onChange,
+    symbol,
+    disabled,
+}: {
+    value: string;
+    onChange: (v: string) => void;
+    symbol: string;
+    disabled?: boolean;
+}) {
+    return (
+        <InputGroup>
+            <InputGroupInput
+                inputMode="decimal"
+                placeholder="0.00"
+                value={value}
+                disabled={disabled}
+                onChange={(e) => onChange(e.target.value)}
+            />
+            {symbol && (
+                <InputGroupAddon align="inline-end">{symbol}</InputGroupAddon>
+            )}
+        </InputGroup>
+    );
+}
+
 function RivenSection({
-    attrRows,
+    positives,
+    negative,
     positiveGroups,
     negativeGroups,
     portalContainer,
-    setRow,
-    addRow,
-    removeRow,
+    attrMeta,
+    setPos,
+    addPos,
+    removePos,
+    setNegative,
     polarity,
     setPolarity,
     modName,
@@ -565,13 +654,16 @@ function RivenSection({
     reRolls,
     setReRolls,
 }: {
-    attrRows: AttrRow[];
+    positives: AttrInput[];
+    negative: AttrInput;
     positiveGroups: WeaponGroup[];
     negativeGroups: WeaponGroup[];
     portalContainer: React.ComponentProps<typeof AttributeCombobox>["container"];
-    setRow: (i: number, patch: Partial<AttrRow>) => void;
-    addRow: () => void;
-    removeRow: (i: number) => void;
+    attrMeta: (slug: string) => AttrMeta | undefined;
+    setPos: (i: number, patch: Partial<AttrInput>) => void;
+    addPos: () => void;
+    removePos: (i: number) => void;
+    setNegative: React.Dispatch<React.SetStateAction<AttrInput>>;
     polarity: string;
     setPolarity: (v: string) => void;
     modName: string;
@@ -585,61 +677,104 @@ function RivenSection({
     setReRolls: (v: string) => void;
 }) {
     const { t } = useTranslation();
+    // 已选 slug（正负不限），同一词条不可重复选择
+    const positiveSlugs = positives.map((r) => r.slug).filter(Boolean);
     return (
-        <div className="flex flex-col gap-3">
-            {/* 词条编辑器 */}
+        <div className="flex flex-col gap-4">
+            {/* 正面词条 */}
             <div className="flex flex-col gap-2">
-                <FieldLabel>{t("auction.field.attributes")}</FieldLabel>
-                {attrRows.map((row, i) => {
-                    const groups = row.positive ? positiveGroups : negativeGroups;
-                    // 其它行已选的词条（正负不限），本行不可再选
+                <div className="grid grid-cols-[1fr_7rem_2rem] items-center gap-2">
+                    <FieldLabel className="text-emerald-600 dark:text-emerald-500">
+                        {t("auction.field.positive")}
+                    </FieldLabel>
+                    <FieldLabel className="text-emerald-600 dark:text-emerald-500">
+                        {t("auction.field.value")}
+                    </FieldLabel>
+                    <span />
+                </div>
+                {positives.map((row, i) => {
+                    // 排除其它正面行 + 负面已选
                     const exclude = new Set(
-                        attrRows
-                            .filter((_, idx) => idx !== i)
-                            .map((r) => r.slug)
-                            .filter(Boolean),
+                        [
+                            ...positives.filter((_, idx) => idx !== i).map((r) => r.slug),
+                            negative.slug,
+                        ].filter(Boolean),
                     );
+                    const removable = positives.length > MIN_POSITIVE;
                     return (
-                        <div key={i} className="flex items-center gap-2">
-                            <Button
-                                type="button"
-                                size="sm"
-                                variant={row.positive ? "default" : "outline"}
-                                onClick={() => setRow(i, { positive: !row.positive, slug: "" })}
-                            >
-                                {row.positive ? "+" : "−"}
-                            </Button>
-                            <div className="flex-1">
-                                <AttributeCombobox
-                                    groups={groups}
-                                    value={row.slug}
-                                    onValueChange={(v) => setRow(i, { slug: v })}
-                                    exclude={exclude}
-                                    container={portalContainer}
-                                />
-                            </div>
-                            <Input
-                                className="w-24"
-                                inputMode="decimal"
-                                placeholder={t("auction.field.value")}
-                                value={row.value}
-                                onChange={(e) => setRow(i, { value: e.target.value })}
+                        <div
+                            key={i}
+                            className="grid grid-cols-[1fr_7rem_2rem] items-center gap-2"
+                        >
+                            <AttributeCombobox
+                                groups={positiveGroups}
+                                value={row.slug}
+                                onValueChange={(v) => setPos(i, { slug: v })}
+                                exclude={exclude}
+                                container={portalContainer}
                             />
-                            <Button
-                                type="button"
-                                size="icon"
-                                variant="ghost"
-                                onClick={() => removeRow(i)}
-                            >
-                                <XIcon className="size-4" />
-                            </Button>
+                            <AttrValueInput
+                                value={row.value}
+                                onChange={(v) => setPos(i, { value: v })}
+                                symbol={unitSymbol(attrMeta(row.slug)?.unit)}
+                            />
+                            {removable ? (
+                                <Button
+                                    type="button"
+                                    size="icon"
+                                    variant="ghost"
+                                    onClick={() => removePos(i)}
+                                >
+                                    <XIcon className="size-4" />
+                                </Button>
+                            ) : (
+                                <span />
+                            )}
                         </div>
                     );
                 })}
-                <Button type="button" size="sm" variant="outline" onClick={addRow}>
-                    <PlusIcon className="size-4" />
-                    {t("auction.field.addAttr")}
-                </Button>
+                {positives.length < MAX_POSITIVE && (
+                    <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        className="w-fit"
+                        onClick={addPos}
+                    >
+                        <PlusIcon className="size-4" />
+                        {t("auction.field.addAttr")}
+                    </Button>
+                )}
+            </div>
+
+            {/* 负面词条 */}
+            <div className="flex flex-col gap-2">
+                <div className="grid grid-cols-[1fr_7rem_2rem] items-center gap-2">
+                    <FieldLabel className="text-destructive">
+                        {t("auction.field.negative")}
+                    </FieldLabel>
+                    <FieldLabel className="text-destructive">
+                        {t("auction.field.value")}
+                    </FieldLabel>
+                    <span />
+                </div>
+                <div className="grid grid-cols-[1fr_7rem_2rem] items-center gap-2">
+                    <AttributeCombobox
+                        groups={negativeGroups}
+                        value={negative.slug}
+                        onValueChange={(v) => setNegative((r) => ({ ...r, slug: v }))}
+                        exclude={new Set(positiveSlugs)}
+                        container={portalContainer}
+                        placeholder={t("auction.negative.none")}
+                    />
+                    <AttrValueInput
+                        value={negative.value}
+                        onChange={(v) => setNegative((r) => ({ ...r, value: v }))}
+                        symbol={unitSymbol(attrMeta(negative.slug)?.unit)}
+                        disabled={!negative.slug}
+                    />
+                    <span />
+                </div>
             </div>
 
             {/* 极性 + Mod 名 */}
