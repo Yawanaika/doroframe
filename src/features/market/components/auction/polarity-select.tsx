@@ -31,6 +31,7 @@ export function PolarityIcon({ polarity }: { polarity: string| undefined }) {
                 maskSize: "contain",
                 WebkitMaskSize: "contain",
                 maskRepeat: "no-repeat",
+                WebkitMaskRepeat: "no-repeat",
             }}
         />
     )

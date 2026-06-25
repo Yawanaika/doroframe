@@ -95,7 +95,6 @@ export function AuctionCard({ ao, data }: Props) {
                         <PolarityIcon polarity={ao.item.polarity} />
                     </div>
                 </div>
-                
             ) : (
                 <WeaponInfo ao={ao} data={data} type={type} />
             )}

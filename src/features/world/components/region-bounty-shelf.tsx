@@ -318,10 +318,14 @@ function BountyJobTile({ job }: { job: BountyJob }) {
     const ally = job.ally ? t(job.ally) : "";
     const raw = (detail?.raw as { requiredCount?: number } | undefined);
     const node = resolveNode(job.node);
+    // 节点名/任务类型可能解析不到，仅拼接有值的片段，避免出现孤立的「 · 」
+    const subtitle = [node.nameZh, node.missionTypeZh]
+        .filter(Boolean)
+        .join(" · ");
     return (
         <EventCard
             title={detail?.name || tr(job.challenge)}
-            subtitle={`${node.nameZh} · ${node.missionTypeZh}`}
+            subtitle={subtitle || undefined}
             prefixImg={detail?.icon}
         >
             <span className="text-xs text-muted-foreground">

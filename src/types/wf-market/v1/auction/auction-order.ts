@@ -1,4 +1,7 @@
-// 拍卖订单（v1）。owner 为完整 user 对象（本轮只读 REST，不处理 WS 的 string id 形态）。
+// 拍卖订单（v1）。
+// owner 在拍卖列表中返回为完整 user 对象，在个人拍卖订单列表中返回为字符串 User.id。
+// 在个人拍卖页中，无需展示订单所有者信息。
+// 所以当owner为字符串时，默认解析为一个所有字段为 undefined 的User对象。
 
 import type { User } from "@/types/wf-market/v1/user";
 import { userFromJson } from "@/types/wf-market/v1/user";
