@@ -1,7 +1,7 @@
 // 拍卖订单（v1）。
 // owner 在拍卖列表中返回为完整 user 对象，在个人拍卖订单列表中返回为字符串 User.id。
-// 在个人拍卖页中，无需展示订单所有者信息。
-// 所以当owner为字符串时，默认解析为一个所有字段为 undefined 的User对象。
+// 当 owner 为字符串时解析为仅含 id 的 User（其余字段 undefined）——保留 id 以便
+// 判定订单归属（如出价区 owner.id !== 我），同时 ingameName 缺失自然隐藏卖家信息。
 
 import type { User } from "@/types/wf-market/v1/user";
 import { userFromJson } from "@/types/wf-market/v1/user";
@@ -36,6 +36,11 @@ export interface AuctionOrder {
     item: AuctionOrderItem;
 }
 
+/** owner 可能是完整对象或字符串 User.id；字符串时仅保留 id。 */
+function ownerFromJson(owner: any): User {
+    return typeof owner === "string" ? ({ id: owner } as User) : userFromJson(owner);
+}
+
 export function auctionOrderFromJson(json: any): AuctionOrder {
     return {
         id: json.id,
@@ -56,7 +61,7 @@ export function auctionOrderFromJson(json: any): AuctionOrder {
         crossplay: json?.crossplay ?? false,
         winner: json?.winner ?? undefined,
         private: json?.private ?? false,
-        owner: userFromJson(json.owner),
+        owner: ownerFromJson(json.owner),
         item: auctionOrderItemFromJson(json.item),
     };
 }

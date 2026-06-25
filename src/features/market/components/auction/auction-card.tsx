@@ -1,4 +1,4 @@
-// 拍卖卡片（只读展示 + 复制喊话）。不含右上角图标操作组与竞拍/改价操作（本轮范围外）。
+// 拍卖卡片。
 
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
