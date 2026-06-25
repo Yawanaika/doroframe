@@ -28,6 +28,7 @@ export interface AuctionOrder {
     crossplay: boolean;
     winner?: string;
     private: boolean;
+    /** 订单所有者 在获取个人拍卖订单接口中，返回的是User.id*/
     owner: User;
     item: AuctionOrderItem;
 }

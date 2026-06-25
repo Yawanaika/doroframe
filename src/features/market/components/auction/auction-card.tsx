@@ -67,7 +67,6 @@ export function AuctionCard({ ao, data }: Props) {
     }, [ao, displayName, lang, t]);
 
     const status = statusOf(ao.owner.status);
-
     return (
         <Card className="gap-2 p-3">
             {/* 头部：图标 + 名称 + 价格 */}
@@ -85,31 +84,53 @@ export function AuctionCard({ ao, data }: Props) {
 
             {/* 属性 / 武器信息 */}
             {type === "riven" ? (
-                <RivenAttrs attrs={ao.item.attributes ?? []} data={data} />
+                <div>
+                    <RivenAttrs attrs={ao.item.attributes ?? []} data={data} />
+                    <div className="flex text-xs text-muted-foreground gap-2">
+                        <span>{t("auction.field.mastery")}: {ao.item.masteryLevel}</span>
+                        <span>{t("auction.field.modRank")}: {ao.item.modRank}</span>
+                        <span>{t("auction.field.reRolls")}: {ao.item.reRolls}</span>
+                        <span>{t("auction.field.polarity")}: </span>
+                        <div
+                            className="size-4 bg-primary"
+                            style={{
+                                maskImage: `url(/images/polarity/POLARITY_${ao.item.polarity}.png)`,
+                                WebkitMaskImage: `url(/images/polarity/POLARITY_${ao.item.polarity}.png)`,
+                                maskSize: "contain",
+                                WebkitMaskSize: "contain",
+                                maskRepeat: "no-repeat",
+                                WebkitMaskRepeat: "no-repeat",
+                            }}
+                        />
+                    </div>
+                </div>
+                
             ) : (
                 <WeaponInfo ao={ao} data={data} type={type} />
             )}
 
             {/* 卖家 + 复制喊话 */}
-            <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                    <Avatar className="size-7">
-                        <AvatarImage src={avatarUrl(ao.owner.avatar)} alt="" />
-                        <AvatarFallback>{ao.owner.ingameName?.[0] ?? "?"}</AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm">{ao.owner.ingameName}</span>
-                    <Badge
-                        variant="outline"
-                        style={{ borderColor: status.color, color: status.color }}
-                    >
-                        {lang === "zh" ? status.labelZh : status.labelEn}
-                    </Badge>
+            {ao.owner.ingameName !== undefined ?(
+                <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                        <Avatar className="size-7">
+                            <AvatarImage src={avatarUrl(ao.owner.avatar)} alt="" />
+                            <AvatarFallback>{ao.owner.ingameName?.[0] ?? "?"}</AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm">{ao.owner.ingameName}</span>
+                        <Badge
+                            variant="outline"
+                            style={{ borderColor: status.color, color: status.color }}
+                        >
+                            {lang === "zh" ? status.labelZh : status.labelEn}
+                        </Badge>
+                    </div>
+                    <Button size="sm" onClick={copy}>
+                        <CopyIcon className="size-3.5" />
+                        {t("auction.card.whisper")}
+                    </Button>
                 </div>
-                <Button size="sm" onClick={copy}>
-                    <CopyIcon className="size-3.5" />
-                    {t("auction.card.whisper")}
-                </Button>
-            </div>
+            ):null}
         </Card>
     );
 }
