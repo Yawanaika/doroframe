@@ -253,5 +253,13 @@
   "auction.create.error.price": "Enter a price",
   "auction.create.error.attrs": "Enter at least 2 positive attributes",
   "auction.create.error.modName": "Select a Riven name",
-  "auction.preview.mastery": "MR"
+  "auction.preview.mastery": "MR",
+  "auction.bid.place": "Bid",
+  "auction.bid.raise": "Raise",
+  "auction.bid.cancel": "Cancel bid",
+  "auction.bid.mine": "My bid",
+  "auction.bid.success": "Bid placed",
+  "auction.bid.canceled": "Bid canceled",
+  "auction.bid.failed": "Action failed",
+  "auction.bid.notFound": "No bid of yours found"
 }

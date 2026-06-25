@@ -33,9 +33,19 @@ import {
     fetchUserAuctions,
     fetchMyAuctionParticipant,
 } from "@/api/market";
+import { invoke } from "@tauri-apps/api/core";
 import { useSettingsStore } from "@/store/settings";
 import { useAuthStore } from "@/store/auth";
 import { itemDisplayName } from "@/features/market/assets";
+import { auctionOrderFromJson } from "@/types/wf-market/v1/auction/auction-order";
+import { applyAuctionSnapshot } from "@/features/market/ws/live";
+import {
+    ensureMyBid,
+    genBidId,
+    myBidOf,
+    setMyBid,
+    clearMyBid,
+} from "@/features/market/ws/bids";
 import type {
     Item,
     ItemOrder,
@@ -318,6 +328,70 @@ export function useMyAuctionParticipantQuery(): UseQueryResult<AuctionOrder[]> {
         queryFn: () => fetchMyAuctionParticipant(token, lang),
         enabled: !!token,
         staleTime: 30_000,
+    });
+}
+
+// ===== 出价 / 撤价（WS RPC，阶段二）=====
+
+/** 出价/加价：解析或复用我的 bid_id，发 WS RPC，应答快照合并进缓存。
+ * 失败抛 Error(code)，调用方按 code 提示。 */
+export function usePlaceBid(): UseMutationResult<
+    void,
+    Error,
+    { auctionId: string; value: number }
+> {
+    const lang = useSettingsStore((s) => s.lang);
+    const token = useAuthStore((s) => s.token);
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: async ({ auctionId, value }) => {
+            const myId = useAuthStore.getState().user?.id;
+            if (!myId) throw new Error("no-user");
+            // 已有出价则复用其 bid_id（=编辑），否则生成新 id（=新建）
+            const existing = await ensureMyBid(auctionId, myId, token, lang);
+            const bidId = existing ?? genBidId();
+            const resp = await invoke<any>("ws_bid_set", {
+                auctionId,
+                bidId,
+                value,
+            });
+            const auction = resp?.payload?.auction;
+            if (auction) applyAuctionSnapshot(auctionOrderFromJson(auction));
+            setMyBid(auctionId, {
+                bidId: resp?.payload?.bid?.id ?? bidId,
+                value: resp?.payload?.bid?.value ?? value,
+            });
+        },
+        // 新参与的单可能不在 participant 缓存（merge 跳过）→ 失效以便切 tab 可见
+        onSuccess: () =>
+            void qc.invalidateQueries({
+                queryKey: ["market", "auction-participant"],
+            }),
+    });
+}
+
+/** 撤价：用我的 bid_id 发 REMOVE，应答快照合并进缓存。 */
+export function useCancelBid(): UseMutationResult<void, Error, { auctionId: string }> {
+    const lang = useSettingsStore((s) => s.lang);
+    const token = useAuthStore((s) => s.token);
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: async ({ auctionId }) => {
+            const myId = useAuthStore.getState().user?.id;
+            if (!myId) throw new Error("no-user");
+            const bidId =
+                myBidOf(auctionId)?.bidId ??
+                (await ensureMyBid(auctionId, myId, token, lang));
+            if (!bidId) throw new Error("not-found");
+            const resp = await invoke<any>("ws_bid_remove", { auctionId, bidId });
+            const auction = resp?.payload?.auction;
+            if (auction) applyAuctionSnapshot(auctionOrderFromJson(auction));
+            clearMyBid(auctionId);
+        },
+        onSuccess: () =>
+            void qc.invalidateQueries({
+                queryKey: ["market", "auction-participant"],
+            }),
     });
 }
 

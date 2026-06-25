@@ -342,6 +342,30 @@ pub async fn get_my_auction_participant(
         .unwrap_or(Value::Array(vec![])))
 }
 
+/// `GET /v1/auctions/entry/{slug}/bids?include=auction` —— 指定拍卖单的出价列表
+/// （payload.bids 数组）。携带 JWT cookie；用于解析「我的出价」bid_id 以加价/撤价。
+#[tauri::command]
+pub async fn get_auction_bids(
+    state: tauri::State<'_, MarketHttp>,
+    slug: String,
+    token: Option<String>,
+    language: String,
+) -> Result<Value, String> {
+    let mut payload = request_payload(
+        &state.client,
+        reqwest::Method::GET,
+        &format!("{V1}/auctions/entry/{slug}/bids?include=auction"),
+        &language,
+        token.as_deref(),
+        None,
+    )
+    .await?;
+    Ok(payload
+        .get_mut("bids")
+        .map(|v| v.take())
+        .unwrap_or(Value::Array(vec![])))
+}
+
 /// `GET /v2/riven/weapons` —— 全部可交易紫卡（裂罅）武器列表。
 #[tauri::command]
 pub async fn get_riven_weapons(

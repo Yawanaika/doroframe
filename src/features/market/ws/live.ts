@@ -1,4 +1,4 @@
-// WS 事件桥接（阶段一只读）：监听 Rust 推送的拍卖快照，合并进 React Query 缓存；
+// WS 事件桥接：监听 Rust 推送的拍卖快照，合并进 React Query 缓存；
 // 并按引用计数向 Rust 订阅/退订 auctionId。不含出价。
 
 import { listen } from "@tauri-apps/api/event";
@@ -35,7 +35,11 @@ function onEvent(evt: WsEvent): void {
     if (!evt?.type?.endsWith(":SUCCESS")) return;
     const raw = typeof evt.payload === "object" ? evt.payload?.auction : undefined;
     if (!raw) return;
-    const updated = auctionOrderFromJson(raw);
+    applyAuctionSnapshot(auctionOrderFromJson(raw));
+}
+
+/** 把一份拍卖快照合并进所有相关缓存（WS 广播与出价应答共用）。 */
+export function applyAuctionSnapshot(updated: AuctionOrder): void {
     for (const queryKey of QUERY_KEYS) {
         queryClient.setQueriesData<AuctionOrder[]>({ queryKey }, (old) =>
             mergeAuction(old, updated),

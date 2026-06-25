@@ -1,16 +1,20 @@
 // 拍卖卡片（只读展示 + 复制喊话）。不含右上角图标操作组与竞拍/改价操作（本轮范围外）。
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { CopyIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSettingsStore } from "@/store/settings";
+import { useAuthStore } from "@/store/auth";
 import { assetUrl, avatarUrl } from "@/features/market/assets";
 import { statusOf } from "@/features/market/constants";
+import { usePlaceBid, useCancelBid } from "@/features/market/queries";
+import { myBidOf } from "@/features/market/ws/bids";
 import type { AuctionSearchData } from "@/features/market/use-auction-search-data";
 import {elementImg, SearchTypeCode} from "@/features/market/auction-constants";
 import type { AuctionOrder, Attribute } from "@/types/wf-market";
@@ -121,8 +125,90 @@ export function AuctionCard({ ao, data }: Props) {
                     </Button>
                 </div>
             ):null}
+
+            <BidControls ao={ao} />
         </Card>
     );
+}
+
+/** 出价/加价/撤价。仅对他人的、未关闭的竞拍单（登录后）显示。 */
+function BidControls({ ao }: { ao: AuctionOrder }) {
+    const { t } = useTranslation();
+    const isLoggedIn = useAuthStore((s) => s.isLoggedIn());
+    const myId = useAuthStore((s) => s.user?.id);
+    const placeBid = usePlaceBid();
+    const cancelBid = useCancelBid();
+    const mine = myBidOf(ao.id);
+    const [value, setValue] = useState<string>(
+        String((ao.topBid ?? ao.startingPrice) + 1),
+    );
+
+    // 一口价直售、已关闭、未登录、自己的单都不出价
+    if (!isLoggedIn || ao.closed || ao.isDirectSell || ao.owner.id === myId) {
+        return null;
+    }
+
+    const busy = placeBid.isPending || cancelBid.isPending;
+
+    const onPlace = () => {
+        const v = Math.floor(Number(value));
+        if (!Number.isFinite(v) || v <= 0) return;
+        placeBid.mutate(
+            { auctionId: ao.id, value: v },
+            {
+                onSuccess: () => toast.success(t("auction.bid.success")),
+                onError: (e) => toast.error(bidError(e, t)),
+            },
+        );
+    };
+    const onCancel = () =>
+        cancelBid.mutate(
+            { auctionId: ao.id },
+            {
+                onSuccess: () => toast.success(t("auction.bid.canceled")),
+                onError: (e) => toast.error(bidError(e, t)),
+            },
+        );
+
+    return (
+        <div className="flex items-center gap-2 border-t pt-2">
+            <Input
+                type="number"
+                min={1}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                disabled={busy}
+                className="h-8 w-24"
+                aria-label={t("auction.bid.place")}
+            />
+            <Button size="sm" onClick={onPlace} disabled={busy}>
+                {mine ? t("auction.bid.raise") : t("auction.bid.place")}
+            </Button>
+            {mine ? (
+                <>
+                    <span className="text-xs text-muted-foreground">
+                        {t("auction.bid.mine")}: {mine.value}
+                    </span>
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={onCancel}
+                        disabled={busy}
+                    >
+                        {t("auction.bid.cancel")}
+                    </Button>
+                </>
+            ) : null}
+        </div>
+    );
+}
+
+/** mutation 错误 → 文案。invoke 失败 reject 的是字符串（服务端原因），直接透传。 */
+function bidError(e: unknown, t: (k: string) => string): string {
+    const msg = e instanceof Error ? e.message : String(e);
+    if (msg === "not-found") return t("auction.bid.notFound");
+    if (msg === "no-user") return t("auction.bid.failed");
+    return msg || t("auction.bid.failed");
 }
 
 function AuctionPrice({ ao }: { ao: AuctionOrder }) {

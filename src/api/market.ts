@@ -311,6 +311,34 @@ export async function fetchMyAuctionParticipant(
     return (raw ?? []).map(auctionOrderFromJson);
 }
 
+/** 某拍卖单上我能识别的出价（仅取后续加价/撤价所需字段） */
+export interface AuctionBidLite {
+    id: string;
+    value: number;
+    userId?: string;
+    updated: string;
+}
+
+/** `GET /v1/auctions/entry/{id}/bids` —— 拍卖单出价列表，用于解析「我的出价」bid_id。
+ * 内联解析所需字段（不建完整模型）；user 在 REST 为对象、取 id。 */
+export async function fetchAuctionBids(
+    auctionId: string,
+    token: string | null,
+    lang: LangCode,
+): Promise<AuctionBidLite[]> {
+    const raw = await invoke<any[]>("get_auction_bids", {
+        slug: auctionId,
+        token,
+        language: toMarketLang(lang),
+    });
+    return (raw ?? []).map((b) => ({
+        id: b.id,
+        value: b.value,
+        userId: typeof b.user === "string" ? b.user : b.user?.id,
+        updated: b.updated,
+    }));
+}
+
 /** `PATCH /v2/orders/group/{id}` —— 批量改某订单组的可见性，需登录态。
  * `order` 仅含 `{ type, visible }`；返回受影响的订单数 `updated`。 */
 export async function editOrdersGroup(
