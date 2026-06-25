@@ -212,19 +212,19 @@ function AuctionPrice({ ao }: { ao: AuctionOrder }) {
     // 仅当我参与了该拍卖（内存有我的出价）才展示
     const mine = myBidOf(ao.id);
     const myBid = mine ? (
-        <div className="flex justify-end text-primary">
+        <span className="flex justify-end text-primary">
             {t("auction.bid.mine")}: <b>{mine.value}</b>
             <img src={"/images/resources/Platinum.png"} alt="Platinum" className="size-4" />
-        </div>
+        </span>
     ) : null;
     // 一口价直售（买断=起拍）：单行
     if (ao.buyoutPrice != null && ao.buyoutPrice === ao.startingPrice) {
         return (
             <div className="text-right text-sm">
-                <div className="flex justify-end">
+                <span className="flex justify-end">
                     {t("auction.card.fixed")}: <b>{ao.buyoutPrice}</b>
                     <img src={"/images/resources/Platinum.png"} alt="Platinum" className="size-4"/>
-                </div>
+                </span>
                 {myBid}
             </div>
         );
@@ -232,29 +232,29 @@ function AuctionPrice({ ao }: { ao: AuctionOrder }) {
     return (
         <div className="flex gap-2 space-y-0.5 text-right text-sm">
             <div>
-                <div className="flex">
+                <span className="flex">
                     {t("auction.card.starting")}: <b>{ao.startingPrice}</b>
                     <img src={"/images/resources/Platinum.png"} alt="Platinum" className="size-4"/>
-                </div>
-                <div className="flex">
+                </span>
+                <span className="flex">
                     {t("auction.card.buyout")}: <b>{ao.buyoutPrice ?? "∞"}</b>
                     {ao.buyoutPrice?(
                         <img src={"/images/resources/Platinum.png"} alt="Platinum" className="size-4"/>
                     ):null}
-                </div>
+                </span>
             </div>
             <div>
                 {ao.topBid != null
                     ? (
                         <div className="flex">
-                            <div className="text-muted-foreground">
+                            <span className="text-muted-foreground">
                                 {t("auction.card.topBid")}: {ao.topBid}
-                            </div>
+                            </span>
                             <img src={"/images/resources/Platinum.png"} alt="Platinum" className="size-4"/>
                         </div>
                     ) : (
                         <div className="text-muted-foreground">
-                            t("auction.card.noBid")
+                            {t("auction.card.noBid")}
                         </div>
                     )}
                 <div>
