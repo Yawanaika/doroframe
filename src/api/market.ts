@@ -285,6 +285,32 @@ export async function createAuction(
     return auctionOrderFromJson(raw);
 }
 
+/** `GET /v1/profile/{slug}/auctions` —— 指定用户上架的拍卖；带 token 可取回自己的不可见拍卖 */
+export async function fetchUserAuctions(
+    slug: string,
+    token: string | null,
+    lang: LangCode,
+): Promise<AuctionOrder[]> {
+    const raw = await invoke<unknown[]>("get_user_auctions", {
+        slug,
+        token,
+        language: toMarketLang(lang),
+    });
+    return (raw ?? []).map(auctionOrderFromJson);
+}
+
+/** `GET /v1/profile/auctions/participant` —— 当前登录用户参与出价的拍卖，需登录态 */
+export async function fetchMyAuctionParticipant(
+    token: string | null,
+    lang: LangCode,
+): Promise<AuctionOrder[]> {
+    const raw = await invoke<unknown[]>("get_my_auction_participant", {
+        token,
+        language: toMarketLang(lang),
+    });
+    return (raw ?? []).map(auctionOrderFromJson);
+}
+
 /** `PATCH /v2/orders/group/{id}` —— 批量改某订单组的可见性，需登录态。
  * `order` 仅含 `{ type, visible }`；返回受影响的订单数 `updated`。 */
 export async function editOrdersGroup(

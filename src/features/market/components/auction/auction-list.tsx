@@ -12,9 +12,11 @@ interface Props {
     auctions: AuctionOrder[];
     isLoading: boolean;
     isSearching: boolean;
+    /** 自定义空态文案；传入时覆盖默认的 auction.empty.* */
+    emptyText?: string;
 }
 
-export function AuctionList({ auctions, isLoading, isSearching }: Props) {
+export function AuctionList({ auctions, isLoading, isSearching, emptyText }: Props) {
     const { t } = useTranslation();
     const data = useAuctionSearchData();
 
@@ -35,9 +37,10 @@ export function AuctionList({ auctions, isLoading, isSearching }: Props) {
         return (
             <CardEmpty
                 text={
-                    isSearching
+                    emptyText ??
+                    (isSearching
                         ? t("auction.empty.no-match")
-                        : t("auction.empty.no-data")
+                        : t("auction.empty.no-data"))
                 }
             />
         );

@@ -30,6 +30,8 @@ import {
     fetchAuctions,
     searchAuctions,
     createAuction,
+    fetchUserAuctions,
+    fetchMyAuctionParticipant,
 } from "@/api/market";
 import { useSettingsStore } from "@/store/settings";
 import { useAuthStore } from "@/store/auth";
@@ -290,6 +292,32 @@ export function useAuctions(
             searchParams ? searchAuctions(searchParams, lang) : fetchAuctions(lang),
         staleTime: 30_000,
         refetchInterval: searchParams ? false : 30_000,
+    });
+}
+
+/** 我的拍卖（owner 视角）：依赖 slug + token，30s 实时性。对齐 useUserOrdersQuery。 */
+export function useUserAuctionsQuery(
+    slug: string | undefined,
+): UseQueryResult<AuctionOrder[]> {
+    const lang = useSettingsStore((s) => s.lang);
+    const token = useAuthStore((s) => s.token);
+    return useQuery({
+        queryKey: ["market", "user-auctions", slug, lang],
+        queryFn: () => fetchUserAuctions(slug!, token, lang),
+        enabled: !!slug && !!token,
+        staleTime: 30_000,
+    });
+}
+
+/** 我参与的竞拍（participant 视角）：依赖 token，30s 实时性。 */
+export function useMyAuctionParticipantQuery(): UseQueryResult<AuctionOrder[]> {
+    const lang = useSettingsStore((s) => s.lang);
+    const token = useAuthStore((s) => s.token);
+    return useQuery({
+        queryKey: ["market", "auction-participant", lang],
+        queryFn: () => fetchMyAuctionParticipant(token, lang),
+        enabled: !!token,
+        staleTime: 30_000,
     });
 }
 

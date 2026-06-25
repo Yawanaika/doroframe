@@ -15,6 +15,9 @@ import { useSettingsStore } from "@/store/settings";
 import { avatarUrl, assetUrl } from "@/features/market/assets";
 import { statusOf } from "@/features/market/constants";
 import { MyOrders } from "@/features/market/components/my-orders";
+import { MyAuctions } from "@/features/market/components/auction/my-auctions";
+import { MyAuctionParticipant } from "@/features/market/components/auction/my-auction-participant";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     Card,
     CardContent,
@@ -180,8 +183,29 @@ function Profile() {
                 </CardContent>
             </Card>
 
-            {/* 订单展示：出售 / 求购 双栏 */}
-            <MyOrders slug={user.slug} />
+            {/* 订单 / 拍卖 / 竞拍 三标签 */}
+            <Tabs defaultValue="orders">
+                <TabsList>
+                    <TabsTrigger value="orders">
+                        {t("market.me.tabs.orders")}
+                    </TabsTrigger>
+                    <TabsTrigger value="auctions">
+                        {t("market.me.tabs.auctions")}
+                    </TabsTrigger>
+                    <TabsTrigger value="bids">
+                        {t("market.me.tabs.bids")}
+                    </TabsTrigger>
+                </TabsList>
+                <TabsContent value="orders">
+                    <MyOrders slug={user.slug} />
+                </TabsContent>
+                <TabsContent value="auctions">
+                    <MyAuctions slug={user.slug} />
+                </TabsContent>
+                <TabsContent value="bids">
+                    <MyAuctionParticipant />
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }

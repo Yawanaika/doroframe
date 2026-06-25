@@ -49,6 +49,8 @@ pub fn run() {
             commands::market::get_auctions,
             commands::market::search_auctions,
             commands::market::create_auction,
+            commands::market::get_user_auctions,
+            commands::market::get_my_auction_participant,
             commands::market::get_user_orders,
             commands::market::create_market_order,
             commands::market::edit_market_order,

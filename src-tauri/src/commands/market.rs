@@ -295,6 +295,53 @@ pub async fn create_auction(
         .unwrap_or(payload))
 }
 
+/// `GET /v1/profile/{slug}/auctions` —— 指定用户上架的拍卖（payload.auctions 数组）。
+/// 携带 JWT cookie 时可取回自己不可见的拍卖；本应用用于「我的拍卖」。
+#[tauri::command]
+pub async fn get_user_auctions(
+    state: tauri::State<'_, MarketHttp>,
+    slug: String,
+    token: Option<String>,
+    language: String,
+) -> Result<Value, String> {
+    let mut payload = request_payload(
+        &state.client,
+        reqwest::Method::GET,
+        &format!("{V1}/profile/{slug}/auctions"),
+        &language,
+        token.as_deref(),
+        None,
+    )
+    .await?;
+    Ok(payload
+        .get_mut("auctions")
+        .map(|v| v.take())
+        .unwrap_or(Value::Array(vec![])))
+}
+
+/// `GET /v1/profile/auctions/participant` —— 当前登录用户参与出价的拍卖（payload.auctions 数组）。
+/// 需登录态：携带 JWT cookie。
+#[tauri::command]
+pub async fn get_my_auction_participant(
+    state: tauri::State<'_, MarketHttp>,
+    token: Option<String>,
+    language: String,
+) -> Result<Value, String> {
+    let mut payload = request_payload(
+        &state.client,
+        reqwest::Method::GET,
+        &format!("{V1}/profile/auctions/participant"),
+        &language,
+        token.as_deref(),
+        None,
+    )
+    .await?;
+    Ok(payload
+        .get_mut("auctions")
+        .map(|v| v.take())
+        .unwrap_or(Value::Array(vec![])))
+}
+
 /// `GET /v2/riven/weapons` —— 全部可交易紫卡（裂罅）武器列表。
 #[tauri::command]
 pub async fn get_riven_weapons(
