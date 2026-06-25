@@ -2,6 +2,8 @@ mod commands;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    // rustls 0.23 需进程级 crypto provider，否则 WS(tokio-tungstenite) 握手 panic。
+    let _ = rustls::crypto::ring::default_provider().install_default();
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())
@@ -21,6 +23,7 @@ pub fn run() {
         .manage(commands::browse::BrowseHttp::new())
         .manage(commands::market::MarketHttp::new())
         .manage(commands::auth::AuthHttp::new())
+        .manage(commands::ws::WsManager::new())
 //         .setup(|app| {
 //             commands::overlay::start_overlay_ticker(app.handle().clone());
 //             Ok(())
@@ -51,6 +54,10 @@ pub fn run() {
             commands::market::create_auction,
             commands::market::get_user_auctions,
             commands::market::get_my_auction_participant,
+            commands::ws::ws_connect,
+            commands::ws::ws_subscribe_auction,
+            commands::ws::ws_unsubscribe_auction,
+            commands::ws::ws_disconnect,
             commands::market::get_user_orders,
             commands::market::create_market_order,
             commands::market::edit_market_order,

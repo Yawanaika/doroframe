@@ -1,5 +1,7 @@
 import { create } from "zustand";
+import { invoke } from "@tauri-apps/api/core";
 import { loadSetting, saveSetting } from "@/lib/tauri/store";
+import { resyncSubscriptions } from "@/features/market/ws/live";
 import { signIn as apiSignIn, signOut as apiSignOut } from "@/api/auth";
 import { parseTokenExpiry } from "@/lib/auth/token";
 import type { User } from "@/types/wf-market";
@@ -59,12 +61,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             expiresAt: parseTokenExpiry(loaded.token),
             hydrated: true,
         });
+        // await 确保 cmd_tx 已就位再补订阅，避免订阅先于连接而丢失
+        if (loaded.token) {
+            await invoke("ws_connect", { token: loaded.token });
+            resyncSubscriptions();
+        }
     },
     signIn: async (email, password) => {
         const deviceId = await deviceName();
         const { token, user } = await apiSignIn(email, password, deviceId);
         set({ token, user, expiresAt: parseTokenExpiry(token) });
         await persist(token, user);
+        await invoke("ws_connect", { token });
+        resyncSubscriptions();
     },
     signOut: async () => {
         const { token } = get();
@@ -73,6 +82,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         } finally {
             set({ token: null, user: null, expiresAt: null });
             await persist(null, null);
+            void invoke("ws_disconnect");
         }
     },
 }));

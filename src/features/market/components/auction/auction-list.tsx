@@ -6,6 +6,7 @@ import {CardEmpty, CardSkeleton} from "@/components/card-states";
 import { statusOf } from "@/features/market/constants";
 import { useAuctionSearchData } from "@/features/market/use-auction-search-data";
 import { AuctionCard } from "@/features/market/components/auction/auction-card";
+import { useAuctionLive } from "@/features/market/ws/use-auction-live";
 import type { AuctionOrder } from "@/types/wf-market";
 
 interface Props {
@@ -19,6 +20,7 @@ interface Props {
 export function AuctionList({ auctions, isLoading, isSearching, emptyText }: Props) {
     const { t } = useTranslation();
     const data = useAuctionSearchData();
+    useAuctionLive(auctions); // 订阅当前列表 id，WS 推送实时合并进缓存
 
     const sorted = useMemo(
         () =>
