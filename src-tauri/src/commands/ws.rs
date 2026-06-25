@@ -32,6 +32,8 @@ enum WsCmd {
         corr: String,
         resp: oneshot::Sender<Value>,
     },
+    /// 超时后清理在途 RPC，避免服务端不回导致 pending 永久残留（内存泄漏）
+    DropRpc(String),
     Shutdown,
 }
 
@@ -130,6 +132,9 @@ async fn serve(
                     pending.insert(corr, resp);
                     let _ = ws.send(Message::Text(frame.to_string().into())).await;
                 }
+                Some(WsCmd::DropRpc(corr)) => {
+                    pending.remove(&corr);
+                }
                 Some(WsCmd::Shutdown) | None => return Served::Shutdown,
             },
         }
@@ -152,6 +157,7 @@ async fn backoff_drain(
                 Some(WsCmd::Unsubscribe(id)) => { subs.remove(&id); }
                 // 未连接时无法发 RPC；drop resp → 命令侧 rx 得 Err("ws not connected")
                 Some(WsCmd::Rpc { resp, .. }) => { drop(resp); }
+                Some(WsCmd::DropRpc(_)) => {} // 断线期间 pending 已空，忽略
                 Some(WsCmd::Shutdown) | None => return false,
             },
         }
@@ -256,13 +262,20 @@ async fn rpc(
         let tx = guard.as_ref().ok_or("ws not connected")?;
         tx.send(WsCmd::Rpc {
             frame,
-            corr,
+            corr: corr.clone(),
             resp: resp_tx,
         })
         .map_err(|_| "ws not connected")?;
     }
 
-    match tokio::time::timeout(Duration::from_secs(10), resp_rx).await {
+    let result = tokio::time::timeout(Duration::from_secs(10), resp_rx).await;
+    // 超时：通知 task 清理 pending[corr]，避免迟到/不回的应答永久残留
+    if result.is_err() {
+        if let Some(tx) = state.cmd_tx.lock().unwrap().as_ref() {
+            let _ = tx.send(WsCmd::DropRpc(corr));
+        }
+    }
+    match result {
         Ok(Ok(v)) => {
             // 业务失败：@WS/ERROR（payload 为字符串）或带 error 字段
             let is_error = v

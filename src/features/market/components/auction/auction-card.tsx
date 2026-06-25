@@ -14,7 +14,7 @@ import { useAuthStore } from "@/store/auth";
 import { assetUrl, avatarUrl } from "@/features/market/assets";
 import { statusOf } from "@/features/market/constants";
 import { usePlaceBid, useCancelBid } from "@/features/market/queries";
-import { myBidOf } from "@/features/market/ws/bids";
+import { useMyBidStore } from "@/features/market/ws/bids";
 import type { AuctionSearchData } from "@/features/market/use-auction-search-data";
 import {elementImg, SearchTypeCode} from "@/features/market/auction-constants";
 import type { AuctionOrder, Attribute } from "@/types/wf-market";
@@ -139,7 +139,7 @@ function BidControls({ ao }: { ao: AuctionOrder }) {
     const myId = useAuthStore((s) => s.user?.id);
     const placeBid = usePlaceBid();
     const cancelBid = useCancelBid();
-    const mine = myBidOf(ao.id);
+    const mine = useMyBidStore((s) => s.bids[ao.id]);
     const [value, setValue] = useState<string>(
         String((ao.topBid ?? ao.startingPrice) + 1),
     );
@@ -199,18 +199,20 @@ function BidControls({ ao }: { ao: AuctionOrder }) {
     );
 }
 
-/** mutation 错误 → 文案。invoke 失败 reject 的是字符串（服务端原因），直接透传。 */
+/** mutation 错误 → 文案。invoke 失败 reject 的是字符串（服务端原因或基础设施码）。
+ * 已知码映射到本地化文案，未知则透传（多为服务端业务原因，如信誉不足）。 */
+const INFRA_CODES = new Set(["no-user", "ws not connected", "ws closed", "rpc timeout"]);
 function bidError(e: unknown, t: (k: string) => string): string {
     const msg = e instanceof Error ? e.message : String(e);
     if (msg === "not-found") return t("auction.bid.notFound");
-    if (msg === "no-user") return t("auction.bid.failed");
+    if (INFRA_CODES.has(msg)) return t("auction.bid.failed");
     return msg || t("auction.bid.failed");
 }
 
 function AuctionPrice({ ao }: { ao: AuctionOrder }) {
     const { t } = useTranslation();
-    // 仅当我参与了该拍卖（内存有我的出价）才展示
-    const mine = myBidOf(ao.id);
+    // 仅当我参与了该拍卖（store 有我的出价）才展示；订阅 store 以即时刷新
+    const mine = useMyBidStore((s) => s.bids[ao.id]);
     const myBid = mine ? (
         <span className="flex justify-end text-primary">
             {t("auction.bid.mine")}: <b>{mine.value}</b>
