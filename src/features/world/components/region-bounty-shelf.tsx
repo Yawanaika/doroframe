@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { BountyJob, Syndicate} from "@/types/wf-state";
 import {EventCard} from "@/components/event-card.tsx";
 import {useTranslation} from "react-i18next";
+import {resolveNode} from "@/lib/wpep/nodes.ts";
 
 export type RegionConfig = {
     id: string;
@@ -316,10 +317,11 @@ function BountyJobTile({ job }: { job: BountyJob }) {
     const [t] = useTranslation("npc");
     const ally = job.ally ? t(job.ally) : "";
     const raw = (detail?.raw as { requiredCount?: number } | undefined);
+    const node = resolveNode(job.node);
     return (
         <EventCard
             title={detail?.name || tr(job.challenge)}
-            // subtitle={}
+            subtitle={`${node.nameZh} · ${node.missionTypeZh}`}
             prefixImg={detail?.icon}
         >
             <span className="text-xs text-muted-foreground">
