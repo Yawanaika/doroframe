@@ -84,24 +84,25 @@ export function AuctionCard({ ao, data }: Props) {
                     )}
                     <div className="font-medium">{displayName}</div>
                 </div>
-                <AuctionPrice ao={ao} />
             </div>
-
-            {/* 属性 / 武器信息 */}
-            {type === "riven" ? (
-                <div>
-                    <RivenAttrs attrs={ao.item.attributes ?? []} data={data} />
-                    <div className="flex text-xs text-muted-foreground gap-2">
-                        <span>{t("auction.field.mastery")}: {ao.item.masteryLevel}</span>
-                        <span>{t("auction.field.modRank")}: {ao.item.modRank}</span>
-                        <span>{t("auction.field.reRolls")}: {ao.item.reRolls}</span>
-                        <span>{t("auction.field.polarity")}: </span>
-                        <PolarityIcon polarity={ao.item.polarity} />
+            <div className="flex justify-between items-center">
+                {/* 属性 / 武器信息 */}
+                {type === "riven" ? (
+                    <div className="flex flex-col gap-2">
+                        <RivenAttrs attrs={ao.item.attributes ?? []} data={data} />
+                        <div className="flex text-xs text-muted-foreground gap-2">
+                            <span>{t("auction.field.mastery")}: {ao.item.masteryLevel}</span>
+                            <span>{t("auction.field.modRank")}: {ao.item.modRank}</span>
+                            <span>{t("auction.field.reRolls")}: {ao.item.reRolls}</span>
+                            <span>{t("auction.field.polarity")}: </span>
+                            <PolarityIcon polarity={ao.item.polarity} />
+                        </div>
                     </div>
-                </div>
-            ) : (
-                <WeaponInfo ao={ao} data={data} type={type} />
-            )}
+                ) : (
+                    <WeaponInfo ao={ao} data={data} type={type} />
+                )}
+                <AuctionPrice ao={ao}/>
+            </div>
 
             {/* 卖家 + 复制喊话 */}
             {ao.owner.ingameName !== undefined ?(
@@ -185,19 +186,14 @@ function BidControls({ ao }: { ao: AuctionOrder }) {
                 {mine ? t("auction.bid.raise") : t("auction.bid.place")}
             </Button>
             {mine ? (
-                <>
-                    <span className="text-xs text-muted-foreground">
-                        {t("auction.bid.mine")}: {mine.value}
-                    </span>
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={onCancel}
-                        disabled={busy}
-                    >
-                        {t("auction.bid.cancel")}
-                    </Button>
-                </>
+                <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={onCancel}
+                    disabled={busy}
+                >
+                    {t("auction.bid.cancel")}
+                </Button>
             ) : null}
         </div>
     );
@@ -213,31 +209,57 @@ function bidError(e: unknown, t: (k: string) => string): string {
 
 function AuctionPrice({ ao }: { ao: AuctionOrder }) {
     const { t } = useTranslation();
+    // 仅当我参与了该拍卖（内存有我的出价）才展示
+    const mine = myBidOf(ao.id);
+    const myBid = mine ? (
+        <div className="flex justify-end text-primary">
+            {t("auction.bid.mine")}: <b>{mine.value}</b>
+            <img src={"/images/resources/Platinum.png"} alt="Platinum" className="size-4" />
+        </div>
+    ) : null;
     // 一口价直售（买断=起拍）：单行
     if (ao.buyoutPrice != null && ao.buyoutPrice === ao.startingPrice) {
         return (
-            <div className="flex text-right text-sm">
-                {t("auction.card.fixed")}: <b>{ao.buyoutPrice}</b>
-                <img src={"/images/resources/Platinum.png"} alt="Platinum" className="size-4"/>
+            <div className="text-right text-sm">
+                <div className="flex justify-end">
+                    {t("auction.card.fixed")}: <b>{ao.buyoutPrice}</b>
+                    <img src={"/images/resources/Platinum.png"} alt="Platinum" className="size-4"/>
+                </div>
+                {myBid}
             </div>
         );
     }
     return (
-        <div className="space-y-0.5 text-right text-sm">
-            <div className="flex">
-                {t("auction.card.starting")}: <b>{ao.startingPrice}</b>
-                <img src={"/images/resources/Platinum.png"} alt="Platinum" className="size-4"/>
-            </div>
-            <div className="flex">
-                {t("auction.card.buyout")}: <b>{ao.buyoutPrice ?? "∞"}</b>
-                {ao.buyoutPrice?(
+        <div className="flex gap-2 space-y-0.5 text-right text-sm">
+            <div>
+                <div className="flex">
+                    {t("auction.card.starting")}: <b>{ao.startingPrice}</b>
                     <img src={"/images/resources/Platinum.png"} alt="Platinum" className="size-4"/>
-                ):null}
+                </div>
+                <div className="flex">
+                    {t("auction.card.buyout")}: <b>{ao.buyoutPrice ?? "∞"}</b>
+                    {ao.buyoutPrice?(
+                        <img src={"/images/resources/Platinum.png"} alt="Platinum" className="size-4"/>
+                    ):null}
+                </div>
             </div>
-            <div className="text-muted-foreground">
+            <div>
                 {ao.topBid != null
-                    ? `${t("auction.card.topBid")}: ${ao.topBid}`
-                    : t("auction.card.noBid")}
+                    ? (
+                        <div className="flex">
+                            <div className="text-muted-foreground">
+                                {t("auction.card.topBid")}: {ao.topBid}
+                            </div>
+                            <img src={"/images/resources/Platinum.png"} alt="Platinum" className="size-4"/>
+                        </div>
+                    ) : (
+                        <div className="text-muted-foreground">
+                            t("auction.card.noBid")
+                        </div>
+                    )}
+                <div>
+                    {myBid}
+                </div>
             </div>
         </div>
     );
