@@ -14,6 +14,7 @@ import { statusOf } from "@/features/market/constants";
 import type { AuctionSearchData } from "@/features/market/use-auction-search-data";
 import {elementImg, SearchTypeCode} from "@/features/market/auction-constants";
 import type { AuctionOrder, Attribute } from "@/types/wf-market";
+import {PolarityIcon} from "@/features/market/components/auction/polarity-select.tsx";
 
 interface Props {
     ao: AuctionOrder;
@@ -91,17 +92,7 @@ export function AuctionCard({ ao, data }: Props) {
                         <span>{t("auction.field.modRank")}: {ao.item.modRank}</span>
                         <span>{t("auction.field.reRolls")}: {ao.item.reRolls}</span>
                         <span>{t("auction.field.polarity")}: </span>
-                        <div
-                            className="size-4 bg-primary"
-                            style={{
-                                maskImage: `url(/images/polarity/POLARITY_${ao.item.polarity}.png)`,
-                                WebkitMaskImage: `url(/images/polarity/POLARITY_${ao.item.polarity}.png)`,
-                                maskSize: "contain",
-                                WebkitMaskSize: "contain",
-                                maskRepeat: "no-repeat",
-                                WebkitMaskRepeat: "no-repeat",
-                            }}
-                        />
+                        <PolarityIcon polarity={ao.item.polarity} />
                     </div>
                 </div>
                 

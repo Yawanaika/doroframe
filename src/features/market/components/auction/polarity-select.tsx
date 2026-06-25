@@ -18,6 +18,24 @@ interface Props {
     options?: readonly string[];
 }
 
+export function PolarityIcon({ polarity }: { polarity: string| undefined }) {
+    if(polarity === undefined){
+        return null;
+    }
+    return (
+        <div
+            className="size-4 bg-primary"
+            style={{
+                maskImage: `url(/images/polarity/POLARITY_${polarity}.png)`,
+                WebkitMaskImage: `url(/images/polarity/POLARITY_${polarity}.png)`,
+                maskSize: "contain",
+                WebkitMaskSize: "contain",
+                maskRepeat: "no-repeat",
+            }}
+        />
+    )
+}
+
 export function PolaritySelect({
     value,
     onValueChange,
@@ -32,17 +50,7 @@ export function PolaritySelect({
             <SelectContent>
                 {options.map((p) => (
                     <SelectItem key={p} value={p} className="flex">
-                        <div
-                            className="size-4 bg-primary"
-                            style={{
-                                maskImage: `url(/images/polarity/POLARITY_${p}.png)`,
-                                WebkitMaskImage: `url(/images/polarity/POLARITY_${p}.png)`,
-                                maskSize: "contain",
-                                WebkitMaskSize: "contain",
-                                maskRepeat: "no-repeat",
-                                WebkitMaskRepeat: "no-repeat",
-                            }}
-                        />
+                        <PolarityIcon polarity={p} />
                         {t(`auction.polarity.${p}`)}
                     </SelectItem>
                 ))}
