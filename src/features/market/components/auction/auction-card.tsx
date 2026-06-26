@@ -140,6 +140,7 @@ function BidControls({ ao }: { ao: AuctionOrder }) {
     const placeBid = usePlaceBid();
     const cancelBid = useCancelBid();
     const mine = useMyBidStore((s) => s.bids[ao.id]);
+    const [editing, setEditing] = useState(false);
     const [value, setValue] = useState<string>(
         String((ao.topBid ?? ao.startingPrice) + 1),
     );
@@ -151,26 +152,63 @@ function BidControls({ ao }: { ao: AuctionOrder }) {
 
     const busy = placeBid.isPending || cancelBid.isPending;
 
-    const onPlace = () => {
+    // 进入编辑态：用当前最高价+1（已出价则用我的出价）回填输入框
+    const openEditor = () => {
+        setValue(String(mine?.value ?? (ao.topBid ?? ao.startingPrice) + 1));
+        setEditing(true);
+    };
+
+    const onConfirm = () => {
         const v = Math.floor(Number(value));
-        if (!Number.isFinite(v) || v <= 0) return;
+        if (!Number.isFinite(v) || v <= 0) {
+            toast.error(t("auction.bid.failed"));
+            return;
+        }
         placeBid.mutate(
             { auctionId: ao.id, value: v },
             {
-                onSuccess: () => toast.success(t("auction.bid.success")),
+                onSuccess: () => {
+                    toast.success(t("auction.bid.success"));
+                    setEditing(false);
+                },
                 onError: (e) => toast.error(bidError(e, t)),
             },
         );
     };
-    const onCancel = () =>
+    const onRemove = () =>
         cancelBid.mutate(
             { auctionId: ao.id },
             {
-                onSuccess: () => toast.success(t("auction.bid.canceled")),
+                onSuccess: () => {
+                    toast.success(t("auction.bid.canceled"));
+                    setEditing(false);
+                },
                 onError: (e) => toast.error(bidError(e, t)),
             },
         );
 
+    // 默认态：仅展示「出价 / 编辑出价」按钮
+    if (!editing) {
+        return (
+            <div className="flex items-center gap-2 border-t pt-2">
+                <Button size="sm" onClick={openEditor} disabled={busy}>
+                    {mine ? t("auction.bid.edit") : t("auction.bid.place")}
+                </Button>
+                {mine ? (
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={onRemove}
+                        disabled={busy}
+                    >
+                        {t("auction.bid.cancel")}
+                    </Button>
+                ) : null}
+            </div>
+        );
+    }
+
+    // 编辑态：价格输入 + 确认 / 取消（已出价时额外提供撤价）
     return (
         <div className="flex items-center gap-2 border-t pt-2">
             <Input
@@ -182,19 +220,17 @@ function BidControls({ ao }: { ao: AuctionOrder }) {
                 className="h-8 w-24"
                 aria-label={t("auction.bid.place")}
             />
-            <Button size="sm" onClick={onPlace} disabled={busy}>
-                {mine ? t("auction.bid.raise") : t("auction.bid.place")}
+            <Button size="sm" onClick={onConfirm} disabled={busy}>
+                {t("auction.bid.confirm")}
             </Button>
-            {mine ? (
-                <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={onCancel}
-                    disabled={busy}
-                >
-                    {t("auction.bid.cancel")}
-                </Button>
-            ) : null}
+            <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setEditing(false)}
+                disabled={busy}
+            >
+                {t("auction.bid.back")}
+            </Button>
         </div>
     );
 }
