@@ -25,7 +25,7 @@ interface Props {
     data: AuctionSearchData;
 }
 
-/** 词条文本：按 slug 区分几种特殊单位（对齐 doroprime _RivenAttributesRow）。 */
+/** 词条文本：按 slug 区分几种特殊单位 */
 function formatAttr(attr: Attribute, name: string): string {
     const v = attr.value;
     const sign = attr.positive ? "+" : ""; // 负面词条 value 自带负号

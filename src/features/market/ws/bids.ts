@@ -2,7 +2,12 @@
 // bid_id 客户端持有——首次出价用新 id，加价/撤价复用同一 id（同 id = 编辑，新 id = 新建）。
 
 import { create } from "zustand";
-import { fetchAuctionBids, type AuctionBidLite } from "@/api/market";
+import {
+    fetchAuctionBids,
+    fetchMyAuctionParticipant,
+    type AuctionBidLite,
+} from "@/api/market";
+import { applyAuctionSnapshot } from "@/features/market/ws/live";
 
 export interface MyBid {
     bidId: string;
@@ -66,9 +71,41 @@ export async function ensureMyBid(
 ): Promise<string | undefined> {
     const cached = myBidOf(auctionId);
     if (cached) return cached.bidId;
-    const bids = await fetchAuctionBids(auctionId, token, lang);
+    const { bids, auction } = await fetchAuctionBids(auctionId, token, lang);
+    // 用同一响应里的新鲜拍卖刷新缓存的 topBid，使卡片「我的出价 vs 最高价」对比准确
+    if (auction) applyAuctionSnapshot(auction);
     const mine = pickMyLatestBid(bids, myId);
     if (!mine) return undefined;
     setMyBid(auctionId, { bidId: mine.id, value: mine.value });
     return mine.id;
+}
+
+let prewarmed = false;
+
+/** 登录后全局预热「我参与的竞拍」出价：拉我参与的拍卖，逐条解析我的出价写入 store，
+ * 使任意列表（大厅 / 搜索 / 我的竞拍）都能即时显示「我的出价」并正确对比最高价，
+ * 而不只是打开「我的竞拍」标签时才加载。幂等：成功一次后不再重复（出价/撤价走 store 增量更新）。 */
+export async function prewarmMyBids(
+    token: string | null,
+    myId: string | undefined,
+    lang: "zh" | "en",
+): Promise<void> {
+    if (!token || !myId || prewarmed) return;
+    prewarmed = true;
+    try {
+        const auctions = await fetchMyAuctionParticipant(token, lang);
+        await Promise.all(
+            auctions.map((a) =>
+                ensureMyBid(a.id, myId, token, lang).catch(() => undefined),
+            ),
+        );
+    } catch {
+        prewarmed = false; // 失败可重试（如刚登录 token 未就位）
+    }
+}
+
+/** 登出时重置预热标记，下次登录重新预热。 */
+export function resetMyBidPrewarm(): void {
+    prewarmed = false;
+    useMyBidStore.setState({ bids: {} });
 }

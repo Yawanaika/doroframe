@@ -319,24 +319,26 @@ export interface AuctionBidLite {
     updated: string;
 }
 
-/** `GET /v1/auctions/entry/{id}/bids` —— 拍卖单出价列表，用于解析「我的出价」bid_id。
- * 内联解析所需字段（不建完整模型）；user 在 REST 为对象、取 id。 */
+/** `GET /v1/auctions/entry/{id}/bids?include=auction` —— 拍卖单出价列表 + 拍卖快照。
+ * bids 用于解析「我的出价」bid_id；auction 为同响应里的新鲜拍卖（topBid 等），供对比刷新。
+ * 内联解析 bids 所需字段（不建完整模型）；user 在 REST 为对象、取 id。 */
 export async function fetchAuctionBids(
     auctionId: string,
     token: string | null,
     lang: LangCode,
-): Promise<AuctionBidLite[]> {
-    const raw = await invoke<any[]>("get_auction_bids", {
-        slug: auctionId,
-        token,
-        language: toMarketLang(lang),
-    });
-    return (raw ?? []).map((b) => ({
+): Promise<{ bids: AuctionBidLite[]; auction: AuctionOrder | null }> {
+    const raw = await invoke<{ bids?: any[]; auction?: unknown }>(
+        "get_auction_bids",
+        { slug: auctionId, token, language: toMarketLang(lang) },
+    );
+    const bids = (raw?.bids ?? []).map((b) => ({
         id: b.id,
         value: b.value,
         userId: typeof b.user === "string" ? b.user : b.user?.id,
         updated: b.updated,
     }));
+    const auction = raw?.auction ? auctionOrderFromJson(raw.auction) : null;
+    return { bids, auction };
 }
 
 /** `PATCH /v2/orders/group/{id}` —— 批量改某订单组的可见性，需登录态。

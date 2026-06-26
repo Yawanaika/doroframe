@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { invoke } from "@tauri-apps/api/core";
 import { loadSetting, saveSetting } from "@/lib/tauri/store";
 import { resyncSubscriptions } from "@/features/market/ws/live";
+import { resetMyBidPrewarm } from "@/features/market/ws/bids";
 import { signIn as apiSignIn, signOut as apiSignOut } from "@/api/auth";
 import { parseTokenExpiry } from "@/lib/auth/token";
 import type { User } from "@/types/wf-market";
@@ -82,6 +83,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         } finally {
             set({ token: null, user: null, expiresAt: null });
             await persist(null, null);
+            resetMyBidPrewarm();
             void invoke("ws_disconnect");
         }
     },

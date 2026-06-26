@@ -1,6 +1,6 @@
 use std::time::{Duration, Instant};
 
-use serde_json::Value;
+use serde_json::{json, Value};
 use tokio::sync::Mutex;
 
 const V1: &str = "https://api.warframe.market/v1";
@@ -30,16 +30,15 @@ impl MarketHttp {
 
 /// 通用请求：支持任意 HTTP 方法，带 Platform/Language header；
 /// `token` 非空时注入 JWT Cookie，`body` 存在时作为 JSON 请求体。
-/// 按 `envelope` 解信封字段（v2 为 `data`，v1 为 `payload`）后返回其值，
-/// 业务错误（error 非空）优先于 HTTP 状态码上报。
-async fn request_envelope(
+/// 发请求并校验信封错误/状态码，返回**完整响应体**（含 `payload`、`include` 等兄弟字段）。
+/// 需要读 `include`（如 bids 的 `include.auction`）的端点用它，其余走 request_envelope。
+async fn request_raw(
     client: &reqwest::Client,
     method: reqwest::Method,
     url: &str,
     language: &str,
     token: Option<&str>,
     body: Option<&Value>,
-    envelope: &str,
 ) -> Result<Value, String> {
     let mut req = client
         .request(method, url)
@@ -60,7 +59,7 @@ async fn request_envelope(
         .map_err(|e| format!("market request failed: {e}"))?;
 
     let status = resp.status();
-    let mut body: Value = resp
+    let body: Value = resp
         .json()
         .await
         .map_err(|e| format!("market decode failed: {e}"))?;
@@ -73,7 +72,20 @@ async fn request_envelope(
     if !status.is_success() {
         return Err(format!("market http {status}: {body}"));
     }
+    Ok(body)
+}
 
+/// 按 `envelope` 解信封字段（v2 为 `data`，v1 为 `payload`）后返回其值。
+async fn request_envelope(
+    client: &reqwest::Client,
+    method: reqwest::Method,
+    url: &str,
+    language: &str,
+    token: Option<&str>,
+    body: Option<&Value>,
+    envelope: &str,
+) -> Result<Value, String> {
+    let mut body = request_raw(client, method, url, language, token, body).await?;
     match body.get_mut(envelope) {
         Some(value) => Ok(value.take()),
         None => Err(format!("market response missing {envelope}")),
@@ -342,8 +354,10 @@ pub async fn get_my_auction_participant(
         .unwrap_or(Value::Array(vec![])))
 }
 
-/// `GET /v1/auctions/entry/{slug}/bids?include=auction` —— 指定拍卖单的出价列表
-/// （payload.bids 数组）。携带 JWT cookie；用于解析「我的出价」bid_id 以加价/撤价。
+/// `GET /v1/auctions/entry/{slug}/bids?include=auction` —— 指定拍卖单的出价列表 +
+/// 该拍卖快照。返回 `{ bids: 出价数组, auction: include.auction 单对象 }`：
+/// bids 用于解析「我的出价」bid_id 以加价/撤价；auction 为同一响应里的新鲜拍卖，
+/// 供前端刷新 topBid 做「我的出价 vs 最高价」对比。携带 JWT cookie。
 #[tauri::command]
 pub async fn get_auction_bids(
     state: tauri::State<'_, MarketHttp>,
@@ -351,7 +365,7 @@ pub async fn get_auction_bids(
     token: Option<String>,
     language: String,
 ) -> Result<Value, String> {
-    let mut payload = request_payload(
+    let mut body = request_raw(
         &state.client,
         reqwest::Method::GET,
         &format!("{V1}/auctions/entry/{slug}/bids?include=auction"),
@@ -360,10 +374,17 @@ pub async fn get_auction_bids(
         None,
     )
     .await?;
-    Ok(payload
-        .get_mut("bids")
+    let bids = body
+        .get_mut("payload")
+        .and_then(|p| p.get_mut("bids"))
         .map(|v| v.take())
-        .unwrap_or(Value::Array(vec![])))
+        .unwrap_or(Value::Array(vec![]));
+    let auction = body
+        .get_mut("include")
+        .and_then(|i| i.get_mut("auction"))
+        .map(|v| v.take())
+        .unwrap_or(Value::Null);
+    Ok(json!({ "bids": bids, "auction": auction }))
 }
 
 /// `GET /v2/riven/weapons` —— 全部可交易紫卡（裂罅）武器列表。
