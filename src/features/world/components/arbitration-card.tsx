@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import {memo, useMemo} from "react";
 import { EventCard } from "@/components/event-card";
 import { CardEmpty, CardError, CardSkeleton } from "@/components/card-states";
 import { useArbyQuery } from "@/features/world/queries";
@@ -7,17 +7,13 @@ import type { ArbyEntry } from "@/types/wf-state";
 import {useTranslation} from "react-i18next";
 import {formatCountdown, useCountdown} from "@/hooks/use-countdown.ts";
 
-export function ArbitrationCard() {
-    const { data, isPending, isError, error } = useArbyQuery();
-    const entries = useMemo(() => pickArbitrationEntries(data ?? []), [data]);
+const ArbitrationRow = memo(function ArbitrationRow({ entries }: { entries: ArbyEntry[] }) {
     const [t] = useTranslation();
-
     // 当前仲裁的剩余时间 = 下一条的激活时刻（即当前这条结束的时刻）
     // activation 是 Unix 秒，useCountdown 内部按毫秒处理，需要 * 1000
     const next = entries[entries.length - 1];
     const expiry = next ? String(Math.floor(next.activation * 1000)) : undefined;
     const countdown = useCountdown(expiry);
-    
     return (
         <EventCard
             title={t("state.title.arby")}
@@ -25,12 +21,7 @@ export function ArbitrationCard() {
             prefixTip={t("resource.elitium")}
             countdown={formatCountdown(countdown)}
         >
-            {isPending ? <CardSkeleton rows={2} /> : null}
-            {!isPending && isError ? <CardError message={String(error)} /> : null}
-            {!isPending && !isError && !entries.length ? (
-                <CardEmpty text="暂无仲裁轮换" />
-            ) : null}
-            {!isPending && !isError && entries.length ? (
+            {entries.length ? (
                 <div className="space-y-2">
                     {entries.map((entry, i) => {
                         const node = resolveNode(entry.node);
@@ -50,6 +41,19 @@ export function ArbitrationCard() {
                 </div>
             ) : null}
         </EventCard>
+    );
+});
+
+export function ArbitrationCard() {
+    const { data, isPending, isError, error } = useArbyQuery();
+    const entries = useMemo(() => pickArbitrationEntries(data ?? []), [data]);
+    if (isPending) return <CardSkeleton />;
+    if (isError) return <CardError message={String(error)} />;
+    if (!data?.length) return <CardEmpty text="暂无仲裁" />;
+    return(
+        <div className="grid gap-3 md:grid-cols-1">
+            <ArbitrationRow key={entries.length} entries={entries} />
+        </div>
     );
 }
 
