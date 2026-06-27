@@ -126,7 +126,6 @@ export function AuctionCard({ ao, data }: Props) {
                     </Button>
                 </div>
             ):null}
-
             <BidControls ao={ao} />
         </Card>
     );
@@ -190,7 +189,7 @@ function BidControls({ ao }: { ao: AuctionOrder }) {
     // 默认态：仅展示「出价 / 编辑出价」按钮
     if (!editing) {
         return (
-            <div className="flex items-center gap-2 border-t pt-2">
+            <div className="flex items-center gap-2 border-t pt-2 justify-end">
                 <Button size="sm" onClick={openEditor} disabled={busy}>
                     {mine ? t("auction.bid.edit") : t("auction.bid.place")}
                 </Button>
@@ -210,7 +209,7 @@ function BidControls({ ao }: { ao: AuctionOrder }) {
 
     // 编辑态：价格输入 + 确认 / 取消（已出价时额外提供撤价）
     return (
-        <div className="flex items-center gap-2 border-t pt-2">
+        <div className="flex items-center gap-2 border-t pt-2 justify-end">
             <Input
                 type="number"
                 min={1}
