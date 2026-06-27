@@ -3,6 +3,7 @@ export * from "./v1/auction/auction-order-item";
 export * from "./v1/auction/auction-order";
 export * from "./v1/auction/auction-search-params";
 export * from "./v1/auction/auction-order-params";
+export * from "./v1/ducats";
 export * from "./v2/item-order";
 export * from "./v2/submit-item-order";
 export * from "./v2/set-info";

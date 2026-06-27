@@ -81,6 +81,8 @@ export async function ensureMyBid(
 }
 
 let prewarmed = false;
+// 预热代际：登出/重置时自增，使在途预热的写入失效，避免上个账号的出价回填已清空的 store
+let prewarmGen = 0;
 
 /** 登录后全局预热「我参与的竞拍」出价：拉我参与的拍卖，逐条解析我的出价写入 store，
  * 使任意列表（大厅 / 搜索 / 我的竞拍）都能即时显示「我的出价」并正确对比最高价，
@@ -92,6 +94,7 @@ export async function prewarmMyBids(
 ): Promise<void> {
     if (!token || !myId || prewarmed) return;
     prewarmed = true;
+    const gen = ++prewarmGen;
     try {
         const auctions = await fetchMyAuctionParticipant(token, lang);
         await Promise.all(
@@ -99,13 +102,16 @@ export async function prewarmMyBids(
                 ensureMyBid(a.id, myId, token, lang).catch(() => undefined),
             ),
         );
+        // 期间发生过登出/重置：在途写入可能已回填，再清一次以丢弃旧账号数据
+        if (gen !== prewarmGen) useMyBidStore.setState({ bids: {} });
     } catch {
         prewarmed = false; // 失败可重试（如刚登录 token 未就位）
     }
 }
 
-/** 登出时重置预热标记，下次登录重新预热。 */
+/** 登出时重置预热标记，下次登录重新预热；自增代际作废在途预热。 */
 export function resetMyBidPrewarm(): void {
+    prewarmGen++;
     prewarmed = false;
     useMyBidStore.setState({ bids: {} });
 }

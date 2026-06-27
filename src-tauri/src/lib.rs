@@ -49,6 +49,7 @@ pub fn run() {
             commands::market::get_sister_weapon,
             commands::market::get_sister_ephemeras,
             commands::market::get_sister_quirks,
+            commands::market::get_ducats,
             commands::market::get_auctions,
             commands::market::search_auctions,
             commands::market::create_auction,

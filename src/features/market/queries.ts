@@ -32,6 +32,7 @@ import {
     createAuction,
     fetchUserAuctions,
     fetchMyAuctionParticipant,
+    fetchDucats,
 } from "@/api/market";
 import { invoke } from "@tauri-apps/api/core";
 import { useSettingsStore } from "@/store/settings";
@@ -56,6 +57,7 @@ import type {
     AuctionOrder,
     AuctionSearchParams,
     AuctionOrderParams,
+    DucatsStats,
 } from "@/types/wf-market";
 import type { Riven, RivenAttribute } from "@/types/wf-market/v2/riven.ts";
 import type {
@@ -117,6 +119,17 @@ export function useRecentOrdersQuery(
         queryFn: () => fetchRecentOrders(lang),
         enabled,
         staleTime: 60_000,
+    });
+}
+
+/** 杜卡德效率统计（GET /v1/tools/ducats）：服务端按小时聚合，5 分钟 staleTime。
+ * 数据与语言无关（item 为 id），故不按 lang 区分缓存。 */
+export function useDucatsQuery(): UseQueryResult<DucatsStats> {
+    const lang = useSettingsStore((s) => s.lang);
+    return useQuery({
+        queryKey: ["market", "ducats"],
+        queryFn: () => fetchDucats(lang),
+        staleTime: 5 * 60 * 1000,
     });
 }
 

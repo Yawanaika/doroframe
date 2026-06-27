@@ -33,6 +33,8 @@ import {
     auctionSearchParamsToQuery,
     type AuctionOrderParams,
     auctionOrderParamsToJson,
+    type DucatsStats,
+    ducatsStatsFromJson,
 } from "@/types/wf-market";
 
 /**
@@ -247,6 +249,14 @@ export async function fetchSisterQuirks(
         language: toMarketLang(lang),
     });
     return (raw ?? []).map(nemesisQuirkFromJson);
+}
+
+/** `GET /v1/tools/ducats` —— 杜卡德效率统计（previous_hour / previous_day）。无需登录。 */
+export async function fetchDucats(lang: LangCode): Promise<DucatsStats> {
+    const raw = await invoke<unknown>("get_ducats", {
+        language: toMarketLang(lang),
+    });
+    return ducatsStatsFromJson(raw);
 }
 
 // ===== 拍卖（v1）=====

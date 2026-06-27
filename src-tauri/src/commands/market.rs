@@ -222,6 +222,24 @@ pub async fn get_orders_top(
     fetch_data(&state.client, &url, &language).await
 }
 
+/// `GET /v1/tools/ducats` —— 杜卡德效率统计（payload.previous_hour / previous_day 两数组）。
+/// 无需登录；每项的 `item` 为物品 id。返回整个 payload 对象。
+#[tauri::command]
+pub async fn get_ducats(
+    state: tauri::State<'_, MarketHttp>,
+    language: String,
+) -> Result<Value, String> {
+    request_payload(
+        &state.client,
+        reqwest::Method::GET,
+        &format!("{V1}/tools/ducats"),
+        &language,
+        None,
+        None,
+    )
+    .await
+}
+
 // ===== 拍卖（v1）=====
 // 拍卖端点全部走 v1，信封为 `{ payload, error }`，故用 request_payload 取值。
 
