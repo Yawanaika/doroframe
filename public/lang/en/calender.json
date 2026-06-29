@@ -169,7 +169,7 @@
     "desc": "Shoot Health Orbs to collect them. Health Orbs now have a 25% chance to duplicate on pickup",
     "ally": "Lettie"
   },
-  "name": {
+  "/Lotus/Upgrades/Calendar/StatusChancePerAmmoSpent": {
     "name": "Cumulative Cartridges",
     "desc": "+1% Status Chance per shot until reload",
     "ally": "Quincy"

@@ -20,8 +20,8 @@
     "ally": "Aoi"
   },
   "/Lotus/Upgrades/Calendar/HealingEffects": {
-    "name": "Emergency Medicine",
-    "desc": "All restoration effects by Orb pickups increased by 25%",
+    "name": "应急特效药",
+    "desc": "所有补给球拾取物提供的恢复效果提高25%。",
     "ally": "Lettie"
   },
   "/Lotus/Upgrades/Calendar/EnergyRestoration": {
@@ -80,8 +80,8 @@
     "ally": "Amir"
   },
   "/Lotus/Upgrades/Calendar/AttackAndMovementSpeedOnCritMelee": {
-    "name": "Hit'N'Split",
-    "desc": "Critical melee hits have a chance to increase attack and movement speed by 5% for 10s.",
+    "name": "快刀斩乱麻",
+    "desc": "近战暴击有几率增加5%的攻击速度和移动速度，持续10秒。",
     "ally": "Amir"
   },
   "/Lotus/Upgrades/Calendar/ElectricDamagePerDistance": {
@@ -169,7 +169,7 @@
     "desc": "Shoot Health Orbs to collect them. Health Orbs now have a 25% chance to duplicate on pickup",
     "ally": "Lettie"
   },
-  "name": {
+  "/Lotus/Upgrades/Calendar/StatusChancePerAmmoSpent": {
     "name": "累积弹匣",
     "desc": "每射击1次增加1%触发几率，装填时重置。",
     "ally": "Quincy"
