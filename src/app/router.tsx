@@ -28,6 +28,7 @@ import { MarketMePage } from "@/routes/market-me";
 import {SettingsPage} from "@/routes/settings.tsx";
 import { NotFoundPage } from "@/routes/not-found";
 import { i18n } from "@/lib/i18n";
+import {MarketDucatsPage} from "@/routes/market-ducats.tsx";
 
 const rootRoute = createRootRoute({
     component: RootLayout,
@@ -68,6 +69,12 @@ const marketMeRoute = createRoute({
     component: MarketMePage,
 });
 
+const marketDucatsRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/market/ducats",
+    component: MarketDucatsPage,
+});
+
 const settingsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/settings",
@@ -86,6 +93,7 @@ const routeTree = rootRoute.addChildren([
     marketItemsRoute,
     marketAuctionsRoute,
     marketMeRoute,
+    marketDucatsRoute,
     settingsRoute,
     notFoundRoute,
 ]);
@@ -143,6 +151,7 @@ function breadcrumb(path: string): string {
     if (path.startsWith("/market/items")) return t("nav.market.items");
     if (path.startsWith("/market/auctions")) return t("nav.market.auctions");
     if (path.startsWith("/market/me")) return t("nav.market.me");
+    if (path.startsWith("/market/ducats")) return t("nav.market.ducats");
     if (path.startsWith("/settings")) return t("nav.settings");
     return path;
 }

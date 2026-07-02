@@ -38,6 +38,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           { title: t("nav.market.items"), url: "/market/items" },
           { title: t("nav.market.auctions"), url: "/market/auctions" },
+          { title: t("nav.market.ducats"), url: "/market/ducats" },
           { title: t("nav.market.me"), url: "/market/me" },
         ],
       },
