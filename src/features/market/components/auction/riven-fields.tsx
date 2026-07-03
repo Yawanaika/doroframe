@@ -33,6 +33,7 @@ import {
     MIN_POSITIVE,
     unitSymbol,
 } from "@/features/market/create-auction-shared";
+import {clamp} from "@/lib/utils.ts";
 
 type Container = React.ComponentProps<typeof AttributeCombobox>["container"];
 
@@ -219,6 +220,13 @@ export function RivenMetaFields({
     const { t } = useTranslation();
     const onlyDigits = (set: (v: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) =>
         set(e.target.value.replace(/\D/g, ""));
+    // 失焦时把值夹进 [min,max] 回写；max 缺省为无上限；空值不强制填充（NaN → min）
+    const clampBlur =
+        (value: string, set: (v: string) => void, min: number, max = Infinity) => () => {
+            if (value.trim() === "") return;
+            const n = parseInt(value, 10);
+            set(String(Number.isNaN(n) ? min : clamp(n, min, max)));
+        };
     return (
         <>
             {/* 极性 + Mod 名 */}
@@ -256,22 +264,40 @@ export function RivenMetaFields({
             <div className="grid grid-cols-3 gap-3">
                 <Field>
                     <FieldLabel>{t("auction.field.mastery")}</FieldLabel>
-                    <Input inputMode="numeric" value={mr} onChange={onlyDigits(setMr)} />
+                    <Input
+                        inputMode="numeric"
+                        type="number"
+                        step={1}
+                        min={8}
+                        max={16}
+                        value={mr}
+                        onChange={onlyDigits(setMr)}
+                        onBlur={clampBlur(mr, setMr, 8, 16)}
+                    />
                 </Field>
                 <Field>
                     <FieldLabel>{t("auction.field.modRank")}</FieldLabel>
                     <Input
                         inputMode="numeric"
+                        type="number"
+                        step={1}
+                        min={0}
+                        max={8}
                         value={modRank}
                         onChange={onlyDigits(setModRank)}
+                        onBlur={clampBlur(modRank, setModRank, 0, 8)}
                     />
                 </Field>
                 <Field>
                     <FieldLabel>{t("auction.field.reRolls")}</FieldLabel>
                     <Input
                         inputMode="numeric"
+                        type="number"
+                        step={1}
+                        min={0}
                         value={reRolls}
                         onChange={onlyDigits(setReRolls)}
+                        onBlur={clampBlur(reRolls, setReRolls, 0, 9999)}
                     />
                 </Field>
             </div>

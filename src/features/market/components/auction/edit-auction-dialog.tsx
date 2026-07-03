@@ -15,10 +15,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { PriceFields } from "@/features/market/components/auction/price-fields";
-import { num } from "@/features/market/create-auction-shared";
+import { AuctionPreview } from "@/features/market/components/auction/auction-preview";
+import { num, formatStat } from "@/features/market/create-auction-shared";
 import { useEditAuctionMutation } from "@/features/market/queries";
+import { useAuctionSearchData } from "@/features/market/use-auction-search-data";
 import type { AuctionOrder } from "@/types/wf-market";
-import {BuyoutPolicyCode, CREATE_POLICIES} from "@/features/market/auction-constants.ts";
+import {
+    BuyoutPolicyCode,
+    CREATE_POLICIES,
+    type SearchTypeCode,
+} from "@/features/market/auction-constants.ts";
 
 interface Props {
     open: boolean;
@@ -30,6 +36,13 @@ interface Props {
 export function EditAuctionDialog({ open, onOpenChange, ao , trigger}: Props) {
     const { t } = useTranslation();
     const editMut = useEditAuctionMutation();
+    const data = useAuctionSearchData();
+    const itemType = ao.item.type as SearchTypeCode;
+    const isRiven = itemType === "riven";
+    // 卡面词条行：从已有 attributes 复用 formatStat（与创建弹窗同一格式化）
+    const previewStats = (ao.item.attributes ?? []).map((a) =>
+        formatStat(String(a.value), data.attrName(a.urlName), a.positive, data.attrMeta(a.urlName)),
+    );
     const [policy, setPolicy] = useState<BuyoutPolicyCode>(ao.isDirectSell ? "direct" : "auction");
     const [startingPrice, setStartingPrice] = useState("");
     const [buyoutPrice, setBuyoutPrice] = useState("");
@@ -75,12 +88,31 @@ export function EditAuctionDialog({ open, onOpenChange, ao , trigger}: Props) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>{t("auction.edit.title")}</DialogTitle>
                 </DialogHeader>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex gap-4">
+                    {/* 左侧：武器 / 紫卡卡面预览（与创建弹窗一致） */}
+                    <div className="hidden sm:block">
+                        <AuctionPreview
+                            isRiven={isRiven}
+                            weaponName={data.weaponName(itemType, ao.item.weaponUrlName)}
+                            weaponIcon={data.weaponIcon(itemType, ao.item.weaponUrlName)}
+                            modName={ao.item.name ?? ""}
+                            polarity={ao.item.polarity ?? ""}
+                            stats={previewStats}
+                            masteryRank={String(ao.item.masteryLevel ?? "")}
+                            reRolls={String(ao.item.reRolls ?? "")}
+                            damage={String(ao.item.damage ?? "")}
+                            element={ao.item.element ?? ""}
+                            hasEphemera={ao.item.havingEphemera ?? false}
+                            ephemeraName={data.ephemeraName(itemType, ao.item.element ?? "")}
+                        />
+                    </div>
+
+                    <div className="flex flex-1 flex-col gap-3">
                     <Field>
                         <FieldLabel>{t("auction.field.policy")}</FieldLabel>
                         <div className="flex gap-2">
@@ -142,6 +174,7 @@ export function EditAuctionDialog({ open, onOpenChange, ao , trigger}: Props) {
                         {editMut.isPending && <Spinner data-icon="inline-start" />}
                         {t("auction.edit.submit")}
                     </Button>
+                    </div>
                 </div>
             </DialogContent>
         </Dialog>
