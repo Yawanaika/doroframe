@@ -325,6 +325,72 @@ pub async fn create_auction(
         .unwrap_or(payload))
 }
 
+/// `PUT /v1/auctions/entry/{auction_id}` —— 编辑拍卖（payload.auction 单对象）。
+/// 需登录态。`body` 含 starting_price / buyout_price / minimal_reputation / visible / note。
+#[tauri::command]
+pub async fn edit_auction(
+    state: tauri::State<'_, MarketHttp>,
+    auction_id: String,
+    token: Option<String>,
+    body: Value,
+    language: String,
+) -> Result<Value, String> {
+    let mut payload = request_payload(
+        &state.client,
+        reqwest::Method::PUT,
+        &format!("{V1}/auctions/entry/{auction_id}"),
+        &language,
+        token.as_deref(),
+        Some(&body),
+    )
+    .await?;
+    Ok(payload
+        .get_mut("auction")
+        .map(|v| v.take())
+        .unwrap_or(payload))
+}
+
+/// `PUT /v1/auctions/entry/{auction_id}/close` —— 关闭（下架）拍卖。需登录态。
+/// 返回整个 payload（含关闭结果）。
+#[tauri::command]
+pub async fn close_auction(
+    state: tauri::State<'_, MarketHttp>,
+    auction_id: String,
+    token: Option<String>,
+    language: String,
+) -> Result<Value, String> {
+    request_payload(
+        &state.client,
+        reqwest::Method::PUT,
+        &format!("{V1}/auctions/entry/{auction_id}/close"),
+        &language,
+        token.as_deref(),
+        None,
+    )
+    .await
+}
+
+/// `PUT /v1/profile/auctions/visibility` —— 批量显示/隐藏我的全部拍卖。需登录态。
+/// 请求体 `{ "visibility": bool }`；返回整个 payload。
+#[tauri::command]
+pub async fn set_auctions_visibility(
+    state: tauri::State<'_, MarketHttp>,
+    visible: bool,
+    token: Option<String>,
+    language: String,
+) -> Result<Value, String> {
+    let body = json!({ "visibility": visible });
+    request_payload(
+        &state.client,
+        reqwest::Method::PUT,
+        &format!("{V1}/profile/auctions/visibility"),
+        &language,
+        token.as_deref(),
+        Some(&body),
+    )
+    .await
+}
+
 /// `GET /v1/profile/{slug}/auctions` —— 指定用户上架的拍卖（payload.auctions 数组）。
 /// 携带 JWT cookie 时可取回自己不可见的拍卖；本应用用于「我的拍卖」。
 #[tauri::command]

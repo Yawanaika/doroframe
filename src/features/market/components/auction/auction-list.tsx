@@ -15,9 +15,11 @@ interface Props {
     isSearching: boolean;
     /** 自定义空态文案；传入时覆盖默认的 auction.empty.* */
     emptyText?: string;
+    /** owner 视角（我的拍卖）：卡片展示关闭/编辑/隐藏而非出价 */
+    owner?: boolean;
 }
 
-export function AuctionList({ auctions, isLoading, isSearching, emptyText }: Props) {
+export function AuctionList({ auctions, isLoading, isSearching, emptyText, owner }: Props) {
     const { t } = useTranslation();
     const data = useAuctionSearchData();
     useAuctionLive(auctions); // 订阅当前列表 id，WS 推送实时合并进缓存
@@ -51,7 +53,7 @@ export function AuctionList({ auctions, isLoading, isSearching, emptyText }: Pro
     return (
         <div className="flex flex-col gap-2">
             {sorted.map((ao) => (
-                <AuctionCard key={ao.id} ao={ao} data={data} />
+                <AuctionCard key={ao.id} ao={ao} data={data} owner={owner} />
             ))}
         </div>
     );

@@ -30,6 +30,10 @@ import {
     fetchAuctions,
     searchAuctions,
     createAuction,
+    editAuction,
+    closeAuction,
+    setAuctionsVisibility,
+    type AuctionEditParams,
     fetchUserAuctions,
     fetchMyAuctionParticipant,
     fetchDucats,
@@ -422,6 +426,52 @@ export function useCreateAuctionMutation(): UseMutationResult<
         onSuccess: () => {
             void qc.invalidateQueries({ queryKey: ["market", "auctions"] });
         },
+    });
+}
+
+/** 编辑拍卖：成功后合并返回的拍卖快照进列表缓存，并让「我的拍卖」失效以刷新。 */
+export function useEditAuctionMutation(): UseMutationResult<
+    AuctionOrder,
+    Error,
+    { id: string; params: AuctionEditParams }
+> {
+    const lang = useSettingsStore((s) => s.lang);
+    const token = useAuthStore((s) => s.token);
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, params }) => editAuction(id, params, token, lang),
+        onSuccess: (updated) => {
+            applyAuctionSnapshot(updated);
+            void qc.invalidateQueries({ queryKey: ["market", "user-auctions"] });
+        },
+    });
+}
+
+/** 关闭（下架）拍卖：成功后让「我的拍卖」失效以刷新。 */
+export function useCloseAuctionMutation(): UseMutationResult<void, Error, string> {
+    const lang = useSettingsStore((s) => s.lang);
+    const token = useAuthStore((s) => s.token);
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (id: string) => closeAuction(id, token, lang),
+        onSuccess: () =>
+            void qc.invalidateQueries({ queryKey: ["market", "user-auctions"] }),
+    });
+}
+
+/** 批量显示/隐藏我的全部拍卖：成功后让「我的拍卖」失效以刷新。 */
+export function useSetAuctionsVisibilityMutation(): UseMutationResult<
+    void,
+    Error,
+    boolean
+> {
+    const lang = useSettingsStore((s) => s.lang);
+    const token = useAuthStore((s) => s.token);
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (visible: boolean) => setAuctionsVisibility(visible, token, lang),
+        onSuccess: () =>
+            void qc.invalidateQueries({ queryKey: ["market", "user-auctions"] }),
     });
 }
 

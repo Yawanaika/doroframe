@@ -295,6 +295,63 @@ export async function createAuction(
     return auctionOrderFromJson(raw);
 }
 
+/** 编辑拍卖的可写字段（PUT /v1/auctions/entry/{id}）。visible 单独翻转即可实现隐藏/显示。 */
+export interface AuctionEditParams {
+    startingPrice: number;
+    buyoutPrice?: number;
+    minimalReputation: number;
+    visible: boolean;
+    note: string;
+}
+
+/** `PUT /v1/auctions/entry/{id}` —— 编辑拍卖，需登录态。返回更新后的拍卖。 */
+export async function editAuction(
+    id: string,
+    params: AuctionEditParams,
+    token: string | null,
+    lang: LangCode,
+): Promise<AuctionOrder> {
+    const raw = await invoke<unknown>("edit_auction", {
+        auctionId: id,
+        token,
+        body: {
+            starting_price: params.startingPrice,
+            buyout_price: params.buyoutPrice ?? null,
+            minimal_reputation: params.minimalReputation,
+            visible: params.visible,
+            note: params.note,
+        },
+        language: toMarketLang(lang),
+    });
+    return auctionOrderFromJson(raw);
+}
+
+/** `PUT /v1/auctions/entry/{id}/close` —— 关闭（下架）拍卖，需登录态。 */
+export async function closeAuction(
+    id: string,
+    token: string | null,
+    lang: LangCode,
+): Promise<void> {
+    await invoke("close_auction", {
+        auctionId: id,
+        token,
+        language: toMarketLang(lang),
+    });
+}
+
+/** `PUT /v1/profile/auctions/visibility` —— 批量显示/隐藏我的全部拍卖，需登录态。 */
+export async function setAuctionsVisibility(
+    visible: boolean,
+    token: string | null,
+    lang: LangCode,
+): Promise<void> {
+    await invoke("set_auctions_visibility", {
+        visible,
+        token,
+        language: toMarketLang(lang),
+    });
+}
+
 /** `GET /v1/profile/{slug}/auctions` —— 指定用户上架的拍卖；带 token 可取回自己的不可见拍卖 */
 export async function fetchUserAuctions(
     slug: string,

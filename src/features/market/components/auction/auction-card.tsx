@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { CopyIcon } from "lucide-react";
+import {CopyIcon, SquarePenIcon, EyeIcon, EyeOffIcon} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,8 +13,14 @@ import { useSettingsStore } from "@/store/settings";
 import { useAuthStore } from "@/store/auth";
 import { assetUrl, avatarUrl } from "@/features/market/assets";
 import { statusOf } from "@/features/market/constants";
-import { usePlaceBid, useCancelBid } from "@/features/market/queries";
+import {
+    usePlaceBid,
+    useCancelBid,
+    useCloseAuctionMutation,
+    useEditAuctionMutation,
+} from "@/features/market/queries";
 import { useMyBidStore } from "@/features/market/ws/bids";
+import { EditAuctionDialog } from "@/features/market/components/auction/edit-auction-dialog";
 import type { AuctionSearchData } from "@/features/market/use-auction-search-data";
 import {elementImg, SearchTypeCode} from "@/features/market/auction-constants";
 import type { AuctionOrder, Attribute } from "@/types/wf-market";
@@ -23,6 +29,8 @@ import {PolarityIcon} from "@/features/market/components/auction/polarity-select
 interface Props {
     ao: AuctionOrder;
     data: AuctionSearchData;
+    /** owner 视角（我的拍卖）：展示关闭 / 编辑 / 隐藏，而非出价控件 */
+    owner?: boolean;
 }
 
 /** 词条文本：按 slug 区分几种特殊单位 */
@@ -43,7 +51,7 @@ function formatAttr(attr: Attribute, name: string): string {
     }
 }
 
-export function AuctionCard({ ao, data }: Props) {
+export function AuctionCard({ ao, data, owner }: Props) {
     const { t } = useTranslation();
     const lang = useSettingsStore((s) => s.lang);
     const type = ao.item.type as SearchTypeCode;
@@ -126,8 +134,70 @@ export function AuctionCard({ ao, data }: Props) {
                     </Button>
                 </div>
             ):null}
-            <BidControls ao={ao} />
+            {owner ? <OwnerControls ao={ao} /> : <BidControls ao={ao} />}
         </Card>
+    );
+}
+
+/** 我的拍卖操作：编辑 / 隐藏·显示 / 关闭。已关闭的单不再展示操作。 */
+function OwnerControls({ ao }: { ao: AuctionOrder }) {
+    const { t } = useTranslation();
+    const closeMut = useCloseAuctionMutation();
+    const editMut = useEditAuctionMutation();
+    const [editOpen, setEditOpen] = useState(false);
+
+    if (ao.closed) return null;
+
+    const busy = closeMut.isPending || editMut.isPending;
+    const hidden = !ao.visible;
+
+    // 隐藏/显示 = 编辑该单，仅翻转 visible，其余字段沿用当前值（PUT 需完整字段）
+    const onToggleVisible = () =>
+        editMut.mutate(
+            {
+                id: ao.id,
+                params: {
+                    startingPrice: ao.startingPrice,
+                    buyoutPrice: ao.buyoutPrice,
+                    minimalReputation: ao.minimalReputation,
+                    visible: !ao.visible,
+                    note: ao.noteRaw,
+                },
+            },
+            {
+                onSuccess: () =>
+                    toast.success(
+                        hidden ? t("auction.owner.shown") : t("auction.owner.hidden"),
+                    ),
+                onError: (e) => toast.error(String(e)),
+            },
+        );
+
+    const onClose = () =>
+        closeMut.mutate(ao.id, {
+            onSuccess: () => toast.success(t("auction.owner.closed")),
+            onError: (e) => toast.error(String(e)),
+        });
+
+    return (
+        <div className="flex items-center gap-2 border-t pt-2 justify-end">
+            <Button size="sm" onClick={() => setEditOpen(true)} disabled={busy}>
+                <SquarePenIcon className="size-3.5" />
+                {t("auction.owner.edit")}
+            </Button>
+            <Button size="sm" variant="outline" onClick={onToggleVisible} disabled={busy}>
+                {hidden ? (
+                    <EyeIcon className="size-3.5" />
+                ) : (
+                    <EyeOffIcon className="size-3.5" />
+                )}
+                {hidden ? t("auction.owner.show") : t("auction.owner.hide")}
+            </Button>
+            <Button size="sm" variant="outline" onClick={onClose} disabled={busy}>
+                {t("auction.owner.close")}
+            </Button>
+            <EditAuctionDialog open={editOpen} onOpenChange={setEditOpen} ao={ao}/>
+        </div>
     );
 }
 
