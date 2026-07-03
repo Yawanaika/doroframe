@@ -7,7 +7,6 @@ import {
     EyeOffIcon,
     MoreHorizontalIcon,
     PackageOpenIcon,
-    Plus,
     SquarePenIcon,
     Trash2Icon,
 } from "lucide-react";
@@ -36,8 +35,7 @@ import {
 } from "@/components/ui/tooltip";
 import { EditOrderDialog } from "@/features/market/components/edit-order-dialog";
 import { OrderMeta } from "@/features/market/components/order-meta";
-import {CreateOrderDialog} from "@/features/market/components/create-order-dialog.tsx";
-import {useMarketItems} from "@/features/market/use-market-items.ts";
+import {NeedCreateOrder} from "@/features/market/components/create-order-dialog.tsx";
 
 /**
  * 当前登录用户的订单展示。
@@ -45,16 +43,9 @@ import {useMarketItems} from "@/features/market/use-market-items.ts";
  * 只读展示，不含编辑/删除（后续接入写操作时再扩展）。
  */
 export function MyOrders({ slug }: { slug: string | undefined }) {
-    const { t } = useTranslation();
     const lang = useSettingsStore((s) => s.lang);
     const ordersQ = useUserOrdersQuery(slug);
     const itemsQ = useMarketItemsQuery();
-    const {
-        orderOpen,
-        setOrderOpen,
-        isLoggedIn,
-        set,
-    } = useMarketItems();
     
     // itemId → Item，订单只带 itemId，图标/名称需 join 物品表
     const itemsById = useMemo(() => {
@@ -96,23 +87,7 @@ export function MyOrders({ slug }: { slug: string | undefined }) {
                 error={ordersQ.isError}
                 lang={lang}
             />
-            {isLoggedIn && (
-                <CreateOrderDialog
-                    open={orderOpen}
-                    onOpenChange={setOrderOpen}
-                    setInfo={set.data}
-                    slug=""
-                    trigger={
-                        <Button
-                            size="icon"
-                            aria-label={t("order.title")}
-                            className="fixed bottom-6 right-6 z-50 size-14 rounded-full shadow-lg"
-                        >
-                            <Plus className="size-6" />
-                        </Button>
-                    }
-                />
-            )}
+            <NeedCreateOrder slug={""} />
         </div>
     );
 }

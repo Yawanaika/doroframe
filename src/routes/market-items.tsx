@@ -1,13 +1,11 @@
 import { useTranslation } from "react-i18next";
-import { Plus } from "lucide-react";
 import { SearchBar } from "@/features/market/components/search-bar";
 import { OrderList } from "@/features/market/components/order-list";
 import { ItemDetail } from "@/features/market/components/item-detail";
 import { SetDisplay } from "@/features/market/components/set-display";
-import { CreateOrderDialog } from "@/features/market/components/create-order-dialog";
+import { NeedCreateOrder} from "@/features/market/components/create-order-dialog";
 import { OrderTypeToggle } from "@/features/market/components/order-type-toggle";
 import { useMarketItems } from "@/features/market/use-market-items";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CardError } from "@/components/card-states";
 
@@ -20,9 +18,6 @@ export function MarketItemsPage() {
         slug,
         orderType,
         setOrderType,
-        orderOpen,
-        setOrderOpen,
-        isLoggedIn,
         orders,
         set,
         itemNameEn,
@@ -30,7 +25,6 @@ export function MarketItemsPage() {
         item,
         onSelect,
     } = useMarketItems();
-
     return (
         <div className="flex h-full flex-col gap-3">
             <Card className="shrink-0 p-4">
@@ -76,24 +70,7 @@ export function MarketItemsPage() {
                     />
                 )}
             </div>
-
-            {isLoggedIn && (
-                <CreateOrderDialog
-                    open={orderOpen}
-                    onOpenChange={setOrderOpen}
-                    setInfo={set.data}
-                    slug={slug}
-                    trigger={
-                        <Button
-                            size="icon"
-                            aria-label={t("order.title")}
-                            className="fixed bottom-6 right-6 z-50 size-14 rounded-full shadow-lg"
-                        >
-                            <Plus className="size-6" />
-                        </Button>
-                    }
-                />
-            )}
+            <NeedCreateOrder slug={slug} setInfo={set.data}/>
         </div>
     );
 }

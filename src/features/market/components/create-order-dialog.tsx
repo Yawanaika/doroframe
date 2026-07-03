@@ -45,7 +45,7 @@ import {
 import { OrderTypeToggle } from "@/features/market/components/order-type-toggle";
 import { Spinner } from "@/components/ui/spinner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useSettingsStore } from "@/store";
+import { useSettingsStore, useAuthStore } from "@/store";
 import {
     useMarketItemsQuery,
     useSuggestions,
@@ -56,6 +56,7 @@ import { draftToSubmitOrder } from "../order-mapper";
 import { itemDisplayName, itemIconUrl } from "../assets";
 import type { OrderTypeCode } from "../constants";
 import type { Item, SetInfo } from "@/types/wf-market";
+import {Plus} from "lucide-react";
 
 interface Props {
     open: boolean;
@@ -78,6 +79,31 @@ const EMPTY_NUMBERS = {
 } as const;
 
 type NumberKey = keyof typeof EMPTY_NUMBERS;
+
+export const NeedCreateOrder = ({ slug, setInfo }: { slug: string; setInfo?: SetInfo }) => {
+    const { t } = useTranslation();
+    const isLoggedIn = useAuthStore((s) => s.isLoggedIn());
+    const [orderOpen, setOrderOpen] = useState(false);
+    return (
+        isLoggedIn && (
+            <CreateOrderDialog
+                open={orderOpen}
+                onOpenChange={setOrderOpen}
+                setInfo={setInfo}
+                slug={slug}
+                trigger={
+                    <Button
+                        size="icon"
+                        aria-label={t("order.title")}
+                        className="fixed bottom-6 right-6 z-50 size-14 rounded-full shadow-lg"
+                    >
+                        <Plus className="size-6" />
+                    </Button>
+                }
+            />
+        )
+    )
+}
 
 export function CreateOrderDialog({
     open,

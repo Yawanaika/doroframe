@@ -50,11 +50,35 @@ import {
     type BuyoutPolicyCode,
 } from "@/features/market/auction-constants";
 import type { Attribute, AuctionOrderParams } from "@/types/wf-market";
+import {Plus} from "lucide-react";
+import {useAuctions} from "@/features/market/use-auctions.ts";
 
 interface Props {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     trigger?: React.ReactNode;
+}
+
+export const NeedCreateAuction = () => {
+    const { t } = useTranslation();
+    const { isLoggedIn, createOpen, setCreateOpen} = useAuctions();
+    return (
+        isLoggedIn && (
+            <CreateAuctionDialog
+                open={createOpen}
+                onOpenChange={setCreateOpen}
+                trigger={
+                    <Button
+                        size="icon"
+                        aria-label={t("auction.create.title")}
+                        className="fixed bottom-6 right-6 z-50 size-14 rounded-full shadow-lg"
+                    >
+                        <Plus className="size-6" />
+                    </Button>
+                }
+            />
+        )
+    )
 }
 
 export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
