@@ -16,10 +16,10 @@ export function MyAuctions({ slug }: { slug: string | undefined }) {
     const { t } = useTranslation();
     const auctionsQ = useUserAuctionsQuery(slug);
     const visMut = useSetAuctionsVisibilityMutation();
-    
     const auctions = auctionsQ.data ?? [];
-    const hasOpen = auctions.some((a) => !a.closed);
-
+    const visible = auctions.filter((o) => o.visible ?? true).length;
+    const hidden = auctions.length - visible;
+    const hasOrders = !auctionsQ.isPending && !auctionsQ.isError && auctions.length > 0;
     const setAllVisible = (visible: boolean) =>
         visMut.mutate(visible, {
             onSuccess: () =>
@@ -33,12 +33,12 @@ export function MyAuctions({ slug }: { slug: string | undefined }) {
 
     return (
         <div className="flex flex-col gap-3">
-            {hasOpen ? (
+            {hasOrders ? (
                 <div className="flex items-center justify-end gap-2">
                     <Button
                         type="button"
                         size="sm"
-                        disabled={visMut.isPending}
+                        disabled={visMut.isPending || hidden === 0}
                         onClick={() => setAllVisible(true)}
                     >
                         <EyeIcon data-icon="inline-start" />
@@ -47,8 +47,7 @@ export function MyAuctions({ slug }: { slug: string | undefined }) {
                     <Button
                         type="button"
                         size="sm"
-                        variant="outline"
-                        disabled={visMut.isPending}
+                        disabled={visMut.isPending || visible === 0}
                         onClick={() => setAllVisible(false)}
                     >
                         <EyeOffIcon data-icon="inline-start" />
