@@ -5,7 +5,6 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SearchIcon, RotateCcwIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
     Select,
     SelectContent,
@@ -30,9 +29,10 @@ import {
     type SearchTypeCode,
     type BuyoutPolicyCode,
     type WeaponElementCode,
-    type PolarityCode,
+    type PolarityCode, elementImg, DAMAGE_MIN, DAMAGE_MAX, DAMAGE_STEP,
 } from "@/features/market/auction-constants";
 import type { AuctionSearchParams } from "@/types/wf-market";
+import { RangeInput } from "@/components/ui/range-input";
 
 interface Props {
     onSearch: (params: AuctionSearchParams) => void;
@@ -232,6 +232,11 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
                             <SelectContent>
                                 {WEAPON_ELEMENTS.map((e) => (
                                     <SelectItem key={e} value={e}>
+                                        <img
+                                            className="inline-block h-6 w-6"
+                                            src={elementImg(e)}
+                                            alt={t(`auction.element.${e}`)}
+                                        />
                                         {t(`auction.element.${e}`)}
                                     </SelectItem>
                                 ))}
@@ -261,21 +266,17 @@ export function AuctionSearchBar({ onSearch, onReset }: Props) {
                     </Field>
                     <Field>
                         <FieldLabel>{t("auction.field.damage")}</FieldLabel>
-                        <div className="flex items-center gap-1">
-                            <Input
-                                inputMode="numeric"
-                                placeholder="25"
-                                value={damageMin}
-                                onChange={(e) => setDamageMin(e.target.value.replace(/\D/g, ""))}
-                            />
-                            <span className="text-muted-foreground">-</span>
-                            <Input
-                                inputMode="numeric"
-                                placeholder="60"
-                                value={damageMax}
-                                onChange={(e) => setDamageMax(e.target.value.replace(/\D/g, ""))}
-                            />
-                        </div>
+                        <RangeInput
+                            min={DAMAGE_MIN}
+                            max={DAMAGE_MAX}
+                            step={DAMAGE_STEP}
+                            minValue={damageMin}
+                            maxValue={damageMax}
+                            onMinChange={setDamageMin}
+                            onMaxChange={setDamageMax}
+                            minPlaceholder={String(DAMAGE_MIN)}
+                            maxPlaceholder={String(DAMAGE_MAX)}
+                        />
                     </Field>
                 </div>
             )}

@@ -65,3 +65,6 @@ export function getSumEndo(item: Item | undefined, amberStars?: number, cyanStar
     }
     return 0 ;
 }
+
+export const clamp = (value: number, min: number, max: number) =>
+    Math.min(max, Math.max(min, value));

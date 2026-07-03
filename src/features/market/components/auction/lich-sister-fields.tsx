@@ -26,9 +26,10 @@ import {
     type Option,
 } from "@/features/market/use-auction-search-data";
 import {
-    CREATE_ELEMENTS,
+    CREATE_ELEMENTS, DAMAGE_MAX, DAMAGE_MIN, elementImg,
     type SearchTypeCode,
 } from "@/features/market/auction-constants";
+import {clamp} from "@/lib/utils.ts";
 
 type Container = React.ComponentProps<typeof ComboboxContent>["container"];
 
@@ -80,6 +81,11 @@ export function LichSisterFields({
                     <SelectContent>
                         {CREATE_ELEMENTS.map((e) => (
                             <SelectItem key={e} value={e}>
+                                <img
+                                    className="inline-block h-6 w-6"
+                                    src={elementImg(e)}
+                                    alt={t(`auction.element.${e}`)}
+                                />
                                 {t(`auction.element.${e}`)}
                             </SelectItem>
                         ))}
@@ -110,9 +116,22 @@ export function LichSisterFields({
             <Field>
                 <FieldLabel>{t("auction.field.damage")}</FieldLabel>
                 <Input
+                    type="number"
                     inputMode="decimal"
+                    min={DAMAGE_MIN}
+                    max={DAMAGE_MAX}
+                    step={0.01}
                     value={damage}
                     onChange={(e) => setDamage(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (["e", "E", "+", "-"].includes(e.key)) {
+                            e.preventDefault();
+                        }
+                    }}
+                    onBlur={() => {
+                        const num = Number(damage);
+                        setDamage(String(clamp(num, DAMAGE_MIN, DAMAGE_MAX)));
+                    }}
                 />
             </Field>
             <Field>

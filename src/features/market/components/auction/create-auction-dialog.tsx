@@ -265,6 +265,8 @@ export function CreateAuctionDialog({ open, onOpenChange, trigger }: Props) {
                             stats={previewStats}
                             masteryRank={mr}
                             reRolls={reRolls}
+                            damage={damage}
+                            element={element}
                             hasEphemera={hasEphemera}
                             ephemeraName={data.ephemeraName(type, element)}
                         />

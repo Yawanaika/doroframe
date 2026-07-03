@@ -3,6 +3,7 @@
 
 import { assetUrl } from "@/features/market/assets";
 import { RivenCardPreview } from "@/features/market/components/auction/riven-card-preview.tsx";
+import {elementImg} from "@/features/market/auction-constants.ts";
 
 export function AuctionPreview({
     isRiven,
@@ -13,6 +14,8 @@ export function AuctionPreview({
     stats,
     masteryRank,
     reRolls,
+    damage,
+    element,
     hasEphemera,
     ephemeraName,
 }: {
@@ -24,6 +27,8 @@ export function AuctionPreview({
     stats: string[];
     masteryRank: string;
     reRolls: string;
+    damage: string;
+    element: string;
     hasEphemera: boolean;
     ephemeraName: string;
 }) {
@@ -40,13 +45,20 @@ export function AuctionPreview({
         );
     }
     return (
-        <div className="flex w-50 shrink-0 flex-col items-center gap-3 rounded-lg border p-4">
+        <div className="flex w-50 shrink-0 flex-col items-center gap-3 rounded-lg p-4">
             {weaponIcon ? (
                 <img src={assetUrl(weaponIcon)} alt="" className="size-28 object-contain" />
             ) : (
                 <div className="size-28 rounded-full bg-muted" />
             )}
             <div className="text-center font-medium">{weaponName}</div>
+            <div className="flex gap-1">
+                <div className="text-center text-sm text-muted-foreground">
+                    {`${damage}%`}
+                </div>
+                <img src={elementImg(element)} className="size-4" alt={element}/>
+            </div>
+            
             {hasEphemera && (
                 <div className="text-center text-sm text-muted-foreground">
                     {ephemeraName}

@@ -64,3 +64,4 @@ export const NEGATIVE_CUSTOM = ["none", "has"] as const;
 /** lich/sister 伤害加成取值范围 */
 export const DAMAGE_MIN = 25;
 export const DAMAGE_MAX = 60;
+export const DAMAGE_STEP = 0.01;
