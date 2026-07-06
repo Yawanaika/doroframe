@@ -165,8 +165,8 @@
     "ally": "Lettie"
   },
   "/Lotus/Upgrades/Calendar/OrbsDuplicateOnPickup": {
-    "name": "Targeted Medicine",
-    "desc": "Shoot Health Orbs to collect them. Health Orbs now have a 25% chance to duplicate on pickup",
+    "name": "靶向治疗",
+    "desc": "可通过射击生命球来拾取它们。生命球拾取后有25%的几率复制。",
     "ally": "Lettie"
   },
   "/Lotus/Upgrades/Calendar/StatusChancePerAmmoSpent": {
