@@ -92,9 +92,6 @@ importers:
       warframe-public-export-plus:
         specifier: '*'
         version: 0.6.2
-      warframe-worldstate-data:
-        specifier: ^3.16.1
-        version: 3.16.1
       zustand:
         specifier: ^5.0.14
         version: 5.0.14(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
@@ -3434,10 +3431,6 @@ packages:
   warframe-public-export-plus@0.6.2:
     resolution: {integrity: sha512-eyfJJ4H9dtN03vGTvHwDBJh5Gr6lC/OCN7K8GdSjT0MlyuwwglyYw8gvQU9lwkS3kNY2eClhG86Xe3Y625KbYg==}
 
-  warframe-worldstate-data@3.16.1:
-    resolution: {integrity: sha512-R+A2iPTDre/+APYCXLSG03/9c2iMtGNF3Zf5Ki/wb71a9pt1DfbWvFqP4Som9b9iHn7sPZaEaWDCOwxrCqkkrA==}
-    engines: {node: '>=22'}
-
   webidl-conversions@8.0.1:
     resolution: {integrity: sha512-BMhLD/Sw+GbJC21C/UgyaZX41nPt8bUTg+jWyDeg7e7YN4xOM05YPSIXceACnXVtqyEw/LMClUQMtMZ+PGGpqQ==}
     engines: {node: '>=20'}
@@ -6731,8 +6724,6 @@ snapshots:
       xml-name-validator: 5.0.0
 
   warframe-public-export-plus@0.6.2: {}
-
-  warframe-worldstate-data@3.16.1: {}
 
   webidl-conversions@8.0.1: {}
 
