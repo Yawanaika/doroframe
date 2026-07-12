@@ -5,7 +5,7 @@ import { CardEmpty, CardError, CardSkeleton } from "@/components/card-states";
 import { useAlertsQuery } from "@/features/world/queries";
 import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
 import { resolveNode } from "@/lib/wpep/nodes";
-import {itemIcon, rewardName, tr} from "@/lib/wpep";
+import {itemDetail, tr} from "@/lib/wpep";
 
 const AlertRow = memo(function AlertRow({ alert }: { alert: Alert }) {
     const node = resolveNode(alert.missionInfo.location);
@@ -18,30 +18,36 @@ const AlertRow = memo(function AlertRow({ alert }: { alert: Alert }) {
             badge={tr(alert.missionInfo.faction)}
             countdown={formatCountdown(sec)}
         >
-            <div className="flex items-center gap-3 text-xs text-muted-foreground tabular-nums">
+            <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground tabular-nums">
                 {reward.credits > 0 && (
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center gap-1 whitespace-nowrap">
                         {reward.credits}
                         <img src="/images/resources/Credits.png" alt="" role="presentation" className="w-4 h-4" />
                     </span>
                 )}
-                {reward.items.map((it) => (
-                    <span className="flex items-center gap-1">
-                        {rewardName(it)}
-                        <img src={itemIcon(it)} alt={rewardName(it)} role="presentation" className="w-4 h-4" onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                        }}/>
-                    </span>
-                ))}
-                {reward.countedItems.map((it) => (
-                    <span className="flex items-center gap-1">
-                        {rewardName(it.itemType)}
-                        <img src={itemIcon(it.itemType)} alt={rewardName(it.itemType)} role="presentation" className="w-4 h-4" onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                        }}/>
-                        × {it.itemCount}
-                    </span>
-                ))}
+                {reward.items.map((it) => {
+                    const detail = itemDetail(it);
+                    return (
+                        <span className="flex items-center gap-1 whitespace-nowrap">
+                            {detail?.name}
+                            <img src={detail?.icon} alt={detail?.name} role="presentation" className="w-4 h-4" onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                            }}/>
+                        </span>
+                    )
+                })}
+                {reward.countedItems.map((it) => {
+                    const detail = itemDetail(it.itemType);
+                    return (
+                        <span className="flex items-center gap-1">
+                            {detail?.name}
+                            <img src={detail?.icon} alt={detail?.name} role="presentation" className="w-4 h-4" onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                            }}/>
+                            × {it.itemCount}
+                        </span>
+                    )
+                })}
             </div>
         </EventCard>
     );
