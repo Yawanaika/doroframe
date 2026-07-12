@@ -12,7 +12,6 @@ import {
 import {
   BotIcon,
   HomeIcon,
-  Settings2Icon,
   WaypointsIcon,
 } from "lucide-react"
 
@@ -40,12 +39,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           { title: t("nav.market.auctions"), url: "/market/auctions" },
           { title: t("nav.market.ducats"), url: "/market/ducats" },
         ],
-      },
-      {
-        title: t("nav.settings"),
-        url: "/settings",
-        icon: <Settings2Icon />,
-      },
+      }
     ],
   }
   return (

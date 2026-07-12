@@ -4,7 +4,6 @@ import { formatDistanceToNow } from "date-fns";
 import { enUS, zhCN } from "date-fns/locale";
 import {
     GlobeIcon,
-    LogOutIcon,
     MonitorIcon,
     ShieldAlertIcon,
     StarIcon,
@@ -54,18 +53,6 @@ function Profile() {
     const { t } = useTranslation();
     const lang = useSettingsStore((s) => s.lang);
     const user = useAuthStore((s) => s.user);
-    const signOut = useAuthStore((s) => s.signOut);
-    const [pending, setPending] = useState(false);
-
-    const handleLogout = async () => {
-        setPending(true);
-        try {
-            await signOut();
-        } finally {
-            setPending(false);
-        }
-    };
-
     if (!user) return null;
 
     const name = user.ingameName || user.slug || "—";
@@ -80,20 +67,20 @@ function Profile() {
                 <ProfileBanner background={user.background} />
 
                 {/* 退出登录：固定卡片右上角，半透明描边按钮在背景图上保持可读 */}
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="absolute top-4 right-4 z-10 bg-card/70 backdrop-blur"
-                    disabled={pending}
-                    onClick={handleLogout}
-                >
-                    {pending ? (
-                        <Spinner data-icon="inline-start" />
-                    ) : (
-                        <LogOutIcon data-icon="inline-start" />
-                    )}
-                    {t("market.me.logout")}
-                </Button>
+                {/*<Button*/}
+                {/*    variant="outline"*/}
+                {/*    size="sm"*/}
+                {/*    className="absolute top-4 right-4 z-10 bg-card/70 backdrop-blur"*/}
+                {/*    disabled={pending}*/}
+                {/*    onClick={handleLogout}*/}
+                {/*>*/}
+                {/*    {pending ? (*/}
+                {/*        <Spinner data-icon="inline-start" />*/}
+                {/*    ) : (*/}
+                {/*        <LogOutIcon data-icon="inline-start" />*/}
+                {/*    )}*/}
+                {/*    {t("market.me.logout")}*/}
+                {/*</Button>*/}
 
                 <CardContent className="relative flex items-center gap-5 p-5">
                     {/* 头像 + 状态点 */}
