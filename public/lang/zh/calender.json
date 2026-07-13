@@ -74,9 +74,9 @@
     "desc": "旋身飞跃落地时增加50%电击伤害，持续5秒。",
     "ally": "Amir"
   },
-  "name": {
-    "name": "常旅客",
-    "desc": "Reload Speed, Fire Rate, Casting Speed and Melee Attack Speed is increased by 100% whie airborne",
+  "/Lotus/Upgrades/Calendar/SpeedBuffsWhenAirborne": {
+    "name": "航班常客",
+    "desc": "在空中时，装填速度、射速、施放速度和近战攻击速度增加100%。",
     "ally": "Amir"
   },
   "/Lotus/Upgrades/Calendar/AttackAndMovementSpeedOnCritMelee": {
@@ -175,8 +175,8 @@
     "ally": "Quincy"
   },
   "/Lotus/Upgrades/Calendar/RefundBulletOnStatusProc": {
-    "name": "Free Shot",
-    "desc": "Triggering a status proc has a 10% chance to reload the triggering bullet into the clip",
+    "name": "随意开火",
+    "desc": "造成异常状态有10%的几率将该发子弹重新装入弹匣中。",
     "ally": "Quincy"
   },
   "/Lotus/Upgrades/Calendar/BlastEveryXShots": {

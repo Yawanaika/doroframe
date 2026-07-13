@@ -74,7 +74,7 @@
     "desc": "On landing from a bullet jump gain 50% Electricity Damage for 5s.",
     "ally": "Amir"
   },
-  "name": {
+  "/Lotus/Upgrades/Calendar/SpeedBuffsWhenAirborne": {
     "name": "Frequent Flyer Benefits",
     "desc": "Reload Speed, Fire Rate, Casting Speed and Melee Attack Speed is increased by 100% whie airborne",
     "ally": "Amir"
