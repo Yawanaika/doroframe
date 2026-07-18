@@ -90,8 +90,8 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
       warframe-public-export-plus:
-        specifier: '*'
-        version: 0.6.2
+        specifier: ^0.6.5
+        version: 0.6.5
       zustand:
         specifier: ^5.0.14
         version: 5.0.14(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
@@ -3428,8 +3428,8 @@ packages:
     resolution: {integrity: sha512-o8qghlI8NZHU1lLPrpi2+Uq7abh4GGPpYANlalzWxyWteJOCsr/P+oPBA49TOLu5FTZO4d3F9MnWJfiMo4BkmA==}
     engines: {node: '>=18'}
 
-  warframe-public-export-plus@0.6.2:
-    resolution: {integrity: sha512-eyfJJ4H9dtN03vGTvHwDBJh5Gr6lC/OCN7K8GdSjT0MlyuwwglyYw8gvQU9lwkS3kNY2eClhG86Xe3Y625KbYg==}
+  warframe-public-export-plus@0.6.5:
+    resolution: {integrity: sha512-iOfjmaXqeFNSyOh+sbx1jyeZd7I3989afKEWQeR2Bcbc4+24xP6t2DTXCb6sNgIWV8Ur5GIYxb2TjuTVOXdOJA==}
 
   webidl-conversions@8.0.1:
     resolution: {integrity: sha512-BMhLD/Sw+GbJC21C/UgyaZX41nPt8bUTg+jWyDeg7e7YN4xOM05YPSIXceACnXVtqyEw/LMClUQMtMZ+PGGpqQ==}
@@ -6723,7 +6723,7 @@ snapshots:
     dependencies:
       xml-name-validator: 5.0.0
 
-  warframe-public-export-plus@0.6.2: {}
+  warframe-public-export-plus@0.6.5: {}
 
   webidl-conversions@8.0.1: {}
 
