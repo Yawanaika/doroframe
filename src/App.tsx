@@ -11,6 +11,7 @@ import {RouterProvider} from "@tanstack/react-router";
 import {router} from "@/app/router.tsx";
 import {Toaster} from "sonner";
 import {SessionExpiryGuard} from "@/features/market/components/session-expiry-guard.tsx";
+import {UpdateNotifier} from "@/features/updater/update-notifier.tsx";
 
 function App() {
   useEffect(() => initAuctionLive(), []);
@@ -28,6 +29,7 @@ function App() {
               <TooltipProvider>
                   <RouterProvider router={router} />
                   <SessionExpiryGuard />
+                  <UpdateNotifier />
                   <Toaster richColors position="top-right" />
               </TooltipProvider>
           </QueryClientProvider>

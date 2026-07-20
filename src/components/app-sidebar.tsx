@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
+import { useAppUpdaterStore } from "@/store/updater"
 import {
   Sidebar,
   SidebarContent,
@@ -17,6 +18,7 @@ import {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation()
+  const currentVersion = useAppUpdaterStore((state) => state.currentVersion)
   const data = {
     navMain: [
       {
@@ -54,7 +56,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-medium">DoroFrame</span>
-                  <span className="text-muted-foreground">v0.1.0</span>
+                  <span className="text-muted-foreground">v{currentVersion}</span>
                 </div>
               </a>
             </SidebarMenuButton>

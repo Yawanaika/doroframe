@@ -117,11 +117,7 @@ async fn request_payload(
 }
 
 /// GET 便捷封装（无 token、无请求体）。
-async fn fetch_data(
-    client: &reqwest::Client,
-    url: &str,
-    language: &str,
-) -> Result<Value, String> {
+async fn fetch_data(client: &reqwest::Client, url: &str, language: &str) -> Result<Value, String> {
     request_data(client, reqwest::Method::GET, url, language, None, None).await
 }
 
@@ -249,9 +245,15 @@ pub async fn get_auctions(
     state: tauri::State<'_, MarketHttp>,
     language: String,
 ) -> Result<Value, String> {
-    let mut payload =
-        request_payload(&state.client, reqwest::Method::GET, &format!("{V1}/auctions"), &language, None, None)
-            .await?;
+    let mut payload = request_payload(
+        &state.client,
+        reqwest::Method::GET,
+        &format!("{V1}/auctions"),
+        &language,
+        None,
+        None,
+    )
+    .await?;
     Ok(payload
         .get_mut("auctions")
         .map(|v| v.take())
@@ -293,8 +295,15 @@ pub async fn search_auctions(
             .to_string()
     };
 
-    let mut payload =
-        request_payload(&state.client, reqwest::Method::GET, &url, &language, None, None).await?;
+    let mut payload = request_payload(
+        &state.client,
+        reqwest::Method::GET,
+        &url,
+        &language,
+        None,
+        None,
+    )
+    .await?;
     Ok(payload
         .get_mut("auctions")
         .map(|v| v.take())
@@ -487,7 +496,12 @@ pub async fn get_riven_weapon(
     slug: String,
     language: String,
 ) -> Result<Value, String> {
-    fetch_data(&state.client, &format!("{V2}/riven/weapon/{slug}"), &language).await
+    fetch_data(
+        &state.client,
+        &format!("{V2}/riven/weapon/{slug}"),
+        &language,
+    )
+    .await
 }
 
 /// `GET /v2/riven/attributes` —— 全部紫卡词条。
@@ -515,7 +529,12 @@ pub async fn get_lich_weapon(
     slug: String,
     language: String,
 ) -> Result<Value, String> {
-    fetch_data(&state.client, &format!("{V2}/lich/weapon/{slug}"), &language).await
+    fetch_data(
+        &state.client,
+        &format!("{V2}/lich/weapon/{slug}"),
+        &language,
+    )
+    .await
 }
 
 /// `GET /v2/lich/ephemeras` —— 全部可交易赤毒幻纹。
@@ -552,7 +571,12 @@ pub async fn get_sister_weapon(
     slug: String,
     language: String,
 ) -> Result<Value, String> {
-    fetch_data(&state.client, &format!("{V2}/sister/weapon/{slug}"), &language).await
+    fetch_data(
+        &state.client,
+        &format!("{V2}/sister/weapon/{slug}"),
+        &language,
+    )
+    .await
 }
 
 /// `GET /v2/sister/ephemeras` —— 全部可交易姐妹幻纹。

@@ -84,7 +84,9 @@ async fn connect(token: &Option<String>) -> Result<Ws, String> {
             builder = builder.header("Cookie", t.as_str());
         }
     }
-    let req = builder.body(()).map_err(|e| format!("ws build request: {e}"))?;
+    let req = builder
+        .body(())
+        .map_err(|e| format!("ws build request: {e}"))?;
     let (ws, _) = connect_async(req)
         .await
         .map_err(|e| format!("ws connect: {e}"))?;

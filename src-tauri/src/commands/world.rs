@@ -27,9 +27,7 @@ impl WorldHttp {
 }
 
 #[tauri::command]
-pub async fn get_world_state(
-    state: tauri::State<'_, WorldHttp>,
-) -> Result<Value, String> {
+pub async fn get_world_state(state: tauri::State<'_, WorldHttp>) -> Result<Value, String> {
     {
         let cache = state.cache.lock().await;
         if let Some((at, ref value)) = *cache {

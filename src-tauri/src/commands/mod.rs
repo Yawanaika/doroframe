@@ -1,5 +1,5 @@
-pub mod world;
+pub mod auth;
 pub mod browse;
 pub mod market;
-pub mod auth;
+pub mod world;
 pub mod ws;

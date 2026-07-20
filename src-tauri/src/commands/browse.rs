@@ -86,9 +86,7 @@ fn parse_incursions(text: &str) -> Value {
 }
 
 #[tauri::command]
-pub async fn get_arby(
-    state: tauri::State<'_, BrowseHttp>,
-) -> Result<Value, String> {
+pub async fn get_arby(state: tauri::State<'_, BrowseHttp>) -> Result<Value, String> {
     if let Some(value) = cached(&state.arby, SCHEDULE_TTL).await {
         return Ok(value);
     }
@@ -115,9 +113,7 @@ pub async fn get_arby(
 }
 
 #[tauri::command]
-pub async fn get_sp_incursions(
-    state: tauri::State<'_, BrowseHttp>,
-) -> Result<Value, String> {
+pub async fn get_sp_incursions(state: tauri::State<'_, BrowseHttp>) -> Result<Value, String> {
     if let Some(value) = cached(&state.sp_incursions, SCHEDULE_TTL).await {
         return Ok(value);
     }
@@ -144,9 +140,7 @@ pub async fn get_sp_incursions(
 }
 
 #[tauri::command]
-pub async fn get_bounty_cycle(
-    state: tauri::State<'_, BrowseHttp>,
-) -> Result<Value, String> {
+pub async fn get_bounty_cycle(state: tauri::State<'_, BrowseHttp>) -> Result<Value, String> {
     if let Some(value) = cached(&state.bounty_cycle, BOUNTY_CYCLE_TTL).await {
         return Ok(value);
     }

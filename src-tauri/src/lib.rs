@@ -5,6 +5,8 @@ pub fn run() {
     // rustls 0.23 需进程级 crypto provider，否则 WS(tokio-tungstenite) 握手 panic。
     let _ = rustls::crypto::ring::default_provider().install_default();
     tauri::Builder::default()
+        .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_notification::init())
@@ -24,10 +26,10 @@ pub fn run() {
         .manage(commands::market::MarketHttp::new())
         .manage(commands::auth::AuthHttp::new())
         .manage(commands::ws::WsManager::new())
-//         .setup(|app| {
-//             commands::overlay::start_overlay_ticker(app.handle().clone());
-//             Ok(())
-//         })
+        //         .setup(|app| {
+        //             commands::overlay::start_overlay_ticker(app.handle().clone());
+        //             Ok(())
+        //         })
         .invoke_handler(tauri::generate_handler![
             commands::world::get_world_state,
             commands::browse::get_arby,
