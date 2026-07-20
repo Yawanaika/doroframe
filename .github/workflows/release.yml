@@ -28,10 +28,10 @@ jobs:
             platform: windows-latest
             rustTargets: x86_64-pc-windows-msvc
             args: --target x86_64-pc-windows-msvc
-          - name: macOS Universal
+          - name: macOS Apple Silicon
             platform: macos-latest
-            rustTargets: aarch64-apple-darwin,x86_64-apple-darwin
-            args: --target universal-apple-darwin
+            rustTargets: aarch64-apple-darwin
+            args: --target aarch64-apple-darwin
 
     steps:
       - name: Check out repository
@@ -94,6 +94,8 @@ jobs:
       - name: Build and publish release
         uses: tauri-apps/tauri-action@v1
         env:
+          # WPEP 包含大量导出 JSON，Vite 打包时会超过 CI 默认约 2 GB 的 V8 堆上限。
+          NODE_OPTIONS: --max-old-space-size=4096
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}

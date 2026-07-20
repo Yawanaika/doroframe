@@ -3,7 +3,7 @@
 本地 Release 脚本会同步更新 `package.json`、`src-tauri/Cargo.toml` 和
 `src-tauri/Cargo.lock` 的版本，然后运行测试、前端构建和 Rust 检查。
 检查通过后，它会创建 Release 提交与 `v*` 注释标签，并原子推送到 GitHub，
-从而触发 Windows x64 和 macOS Universal 发布工作流。
+从而触发 Windows x64 和 macOS Apple Silicon 发布工作流。
 
 ## 常用命令
 
