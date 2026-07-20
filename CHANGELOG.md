@@ -5,6 +5,28 @@
 
 <!-- changelog:entries -->
 
+<!-- changelog:v0.1.4:start -->
+## [0.1.4] - 2026-07-20
+
+[查看 GitHub Release](https://github.com/Yawanaika/doroframe/releases/tag/v0.1.4) | [查看完整变更](https://github.com/Yawanaika/doroframe/compare/v0.1.3...v0.1.4)
+
+### 新功能
+
+- **menu：**添加跨平台菜单支持并优化构建流程 ([b9db9d9](https://github.com/Yawanaika/doroframe/commit/b9db9d93046615931ce5a9ca20e6d31f078ca721))
+
+### 文档
+
+- **lang：**更新射击戏法词条翻译 ([10a447d](https://github.com/Yawanaika/doroframe/commit/10a447dd278feddb79fccad1449fab72056e81ae))
+
+### 工程与依赖
+
+- **release：**更新版本号到 0.1.4 ([354a43f](https://github.com/Yawanaika/doroframe/commit/354a43f0ba3b1d9bb9578d55ec7bd946aa24bb98))
+
+### 贡献者
+
+- Yika
+<!-- changelog:v0.1.4:end -->
+
 <!-- changelog:v0.1.3:start -->
 ## [0.1.3] - 2026-07-20
 
