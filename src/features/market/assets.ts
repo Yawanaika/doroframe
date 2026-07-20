@@ -5,11 +5,20 @@ import type { I18n } from "@/types/wf-market/i18n";
 import type { LangCode } from "@/store/settings";
 
 const ASSETS_BASE = "https://warframe.market/static/assets";
-export const DEFAULT_AVATAR = `${ASSETS_BASE}/user/default-avatar.png`;
+const IMAGE_PROXY = "https://wsrv.nl/?url=";
 
-/** 拼接 warframe.market 静态资源 URL（icon / avatar 等相对路径） */
+/**
+ * 通过图片代理加载 warframe.market 静态资源。
+ *
+ * warframe.market 返回 `Cross-Origin-Resource-Policy: same-origin`，Tauri
+ * WebView 会拒绝直接嵌入；代理响应允许跨域，同时保留源站路径的长期缓存能力。
+ */
 export const assetUrl = (path: string | undefined | null): string =>
-    path ? `${ASSETS_BASE}/${path}` : "";
+    path
+        ? `${IMAGE_PROXY}${encodeURIComponent(`${ASSETS_BASE}/${path.replace(/^\/+/, "")}`)}`
+        : "";
+
+export const DEFAULT_AVATAR = assetUrl("user/default-avatar.png");
 
 /** 头像 URL，缺失时回退默认头像 */
 export const avatarUrl = (path: string | undefined | null): string =>
