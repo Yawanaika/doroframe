@@ -1,7 +1,7 @@
 {
   "name": "doroframe",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,8 +9,10 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "start": "tauri dev",
+    "release": "node tools/release.mjs",
     "test": "vitest",
     "test:changelog": "node --test .github/changelog/generate.node-test.mjs",
+    "test:release": "node --test tools/release.node-test.mjs",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "changelog:generate": "node .github/changelog/generate.mjs"
