@@ -1,3 +1,4 @@
+#[cfg(not(target_os = "windows"))]
 mod app_menu;
 mod commands;
 
@@ -5,8 +6,12 @@ mod commands;
 pub fn run() {
     // rustls 0.23 需进程级 crypto provider，否则 WS(tokio-tungstenite) 握手 panic。
     let _ = rustls::crypto::ring::default_provider().install_default();
-    tauri::Builder::default()
-        .menu(app_menu::build)
+    let builder = tauri::Builder::default();
+
+    #[cfg(not(target_os = "windows"))]
+    let builder = builder.menu(app_menu::build);
+
+    builder
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
