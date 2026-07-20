@@ -185,8 +185,8 @@
     "ally": "Quincy"
   },
   "/Lotus/Upgrades/Calendar/GuidingMissilesChance": {
-    "name": "Tickshots",
-    "desc": "Shots gain a 10% chance to fire a seeking projectile for each successful hit. Firing weapons reduces the chance by 5%",
+    "name": "射击戏法",
+    "desc": "每次成功命中时，增加10%的几率在射击时额外发射一颗追踪投射物，可累积。每次开火时使该几率减少5%。",
     "ally": "Quincy"
   }
 }
