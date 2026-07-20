@@ -1,9 +1,12 @@
 [package]
 name = "doroframe"
 version = "0.1.0"
-description = "A Tauri App"
+description = "Warframe world-state and market companion"
 authors = ["Yawanaika"]
 edition = "2021"
+license = "GPL-3.0-only"
+homepage = "https://github.com/Yawanaika/doroframe"
+repository = "https://github.com/Yawanaika/doroframe"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -18,7 +21,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = [] }
+tauri = { version = "2", features = ["image-png"] }
 tauri-plugin-opener = "2"
 tauri-plugin-store = "2"
 tauri-plugin-notification = "2"
@@ -39,4 +42,3 @@ tauri-plugin-process = "2"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-updater = "2"
-
