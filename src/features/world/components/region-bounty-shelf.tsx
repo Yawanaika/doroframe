@@ -17,6 +17,7 @@ import { BountyJob, Syndicate} from "@/types/wf-state";
 import {EventCard} from "@/components/event-card.tsx";
 import {useTranslation} from "react-i18next";
 import {resolveNode} from "@/lib/wpep/nodes.ts";
+import { MapPinnedIcon } from "lucide-react";
 
 export type RegionConfig = {
     id: string;
@@ -31,7 +32,7 @@ export const REGIONS: RegionConfig[] = [
         id: "cetus",
         tag: "CetusSyndicate",
         name: "syndicate.cetus",
-        caption: "平原赏金",
+        caption: "home.region.cetus.caption",
         icon: "/images/syndicate/CetusSyndicate.png",
         flag: "/images/syndicate-flag/OstronSyndicateFlag.webp"
     },
@@ -39,35 +40,35 @@ export const REGIONS: RegionConfig[] = [
         id: "fortuna",
         tag: "SolarisSyndicate",
         name: "syndicate.fortuna",
-        caption: "奥布山谷",
+        caption: "home.region.fortuna.caption",
         icon: "/images/syndicate/SolarisSyndicate.png",
     },
     {
         id: "deimos",
         tag: "EntratiSyndicate",
         name: "syndicate.deimos",
-        caption: "隔离库与赏金",
+        caption: "home.region.deimos.caption",
         icon: "/images/syndicate/EntratiSyndicate.png",
     },
     {
         id: "sanctum",
         tag: "EntratiLabSyndicate",
         name: "syndicate.sanctum",
-        caption: "实验室赏金",
+        caption: "home.region.sanctum.caption",
         icon: "/images/syndicate/EntratiLabSyndicate.png",
     },
     {
         id: "zariman",
         tag: "ZarimanSyndicate",
         name: "syndicate.zariman",
-        caption: "虚空航舰",
+        caption: "home.region.zariman.caption",
         icon: "/images/syndicate/ZarimanSyndicate.png",
     },
     {
         id: "hex",
         tag: "HexSyndicate",
         name: "syndicate.hex",
-        caption: "1999 委托",
+        caption: "home.region.hex.caption",
         icon: "/images/syndicate/HexSyndicate.png",
     },
 ];
@@ -107,35 +108,51 @@ export function RegionBountyShelf({
     onRegionClick: (regionId: string) => void;
 }) {
     const syndicateQuery = useSyndicateMissionsQuery();
+    const { t } = useTranslation();
     return (
-        <section className="island overflow-hidden p-3">
-            <div
-                className={cn(
-                    "grid gap-3 transition-all duration-300 ease-premium",
-                    activeRegion
-                        ? "md:grid-cols-[5rem_minmax(0,1fr)]"
-                        : "grid-cols-2 sm:grid-cols-3 md:grid-cols-6",
-                )}
-            >
-                {(activeRegion ? [activeRegion] : REGIONS).map((region) => (
-                    <RegionColumn
-                        key={region.id}
-                        region={region}
-                        active={activeRegion?.id === region.id}
-                        syndicates={syndicateQuery.data}
-                        onClick={() => onRegionClick(region.id)}
-                    />
-                ))}
+        <section
+            aria-labelledby="home-region-title"
+            className="min-w-0 space-y-3"
+        >
+            <header className="flex items-center gap-3">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <MapPinnedIcon className="size-4" aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                    <h2
+                        id="home-region-title"
+                        className="text-lg font-semibold text-foreground"
+                    >
+                        {t("home.title.region")}
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                        {t("home.subtitle.region")}
+                    </p>
+                </div>
+            </header>
 
-                {activeRegion ? (
-                    <RegionBountyPanel
-                        region={activeRegion}
-                        usesBountyCycle={BOUNTY_CYCLE_REGION_TAGS.has(
-                            activeRegion.tag,
-                        )}
-                    />
-                ) : null}
+            <div className="-mx-1 max-w-[calc(100%+0.5rem)] min-w-0 overflow-x-auto px-1 pb-1 scrollbar-none [&::-webkit-scrollbar]:hidden">
+                <div className="grid min-w-3xl grid-cols-6 gap-1.5 rounded-2xl bg-muted/55 p-1.5 ring-1 ring-foreground/5">
+                    {REGIONS.map((region) => (
+                        <RegionColumn
+                            key={region.id}
+                            region={region}
+                            active={activeRegion?.id === region.id}
+                            syndicates={syndicateQuery.data}
+                            onClick={() => onRegionClick(region.id)}
+                        />
+                    ))}
+                </div>
             </div>
+
+            {activeRegion ? (
+                <RegionBountyPanel
+                    region={activeRegion}
+                    usesBountyCycle={BOUNTY_CYCLE_REGION_TAGS.has(
+                        activeRegion.tag,
+                    )}
+                />
+            ) : null}
         </section>
     );
 }
@@ -156,16 +173,23 @@ function RegionColumn({
     return (
         <Button
             type="button"
-            variant={active ? "secondary" : "ghost"}
+            variant="ghost"
             className={cn(
-                "h-100 flex-col justify-start gap-2 rounded-xl px-2 py-3",
-                active && "ring-1 ring-primary/35",
+                "h-auto min-h-23 w-full min-w-0 justify-start gap-2.5 rounded-xl px-3 py-2.5 text-left",
+                active
+                    ? "bg-card text-foreground shadow-sm ring-1 ring-foreground/10 hover:bg-card"
+                    : "hover:bg-card/70",
             )}
             aria-expanded={active}
             aria-controls="home-region-challenges"
             onClick={onClick}
         >
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-background/70 ring-1 ring-border">
+            <span
+                className={cn(
+                    "flex size-10 shrink-0 items-center justify-center rounded-lg bg-background/70 ring-1 ring-border transition-colors duration-200",
+                    active && "bg-primary/10 ring-primary/20",
+                )}
+            >
                 <img
                     src={region.icon}
                     alt=""
@@ -173,39 +197,44 @@ function RegionColumn({
                     loading="lazy"
                 />
             </span>
-            <span className="tracking-[0.35em] text-sm font-semibold text-center whitespace-pre-line">
-                {t(region.name).replace(/ /g, '\n')}
-            </span>
-            <div className="mt-auto w-full">
+            <span className="min-w-0 flex-1">
+                <span className="flex items-center gap-1">
+                    <span className="min-w-0 flex-1 truncate text-sm font-semibold leading-tight">
+                        {t(region.name)}
+                    </span>
+                </span>
                 {cycle ? (
                     <span
                         className={cn(
-                            "flex items-center justify-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium tabular-nums",
+                            "mt-1.5 flex w-fit max-w-full items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium tabular-nums",
                             cycle.tone === "warm"
                                 ? "bg-amber-500/15 text-amber-500"
                                 : "bg-sky-500/15 text-sky-400",
                         )}
                     >
-                        <span>{cycle.label}</span>
-                        <span className="opacity-80">
-                            {formatCycleRemaining(cycle.remainingMs)}
-                        </span>
+                        <div className="flex items-center gap-1">
+                            <span>{cycle.label}</span>
+                            <span className="truncate opacity-80">
+                                {formatCycleRemaining(cycle.remainingMs)}
+                            </span>
+                        </div>
                     </span>
                 ) : null}
-            </div>
+            </span>
         </Button>
     );
 }
 
 function RegionBountyPanel({
     region,
-    usesBountyCycle,
+    usesBountyCycle
 }: {
     region: RegionConfig;
     usesBountyCycle: boolean;
 }) {
     const syndicateQuery = useSyndicateMissionsQuery();
     const bountyCycleQuery = useBountyCycleQuery();
+    const { t } = useTranslation();
 
     const syndicate = syndicateQuery.data?.find(
         (item) => item.tag === region.tag,
@@ -228,32 +257,51 @@ function RegionBountyPanel({
     return (
         <div
             id="home-region-challenges"
-            className="min-w-0 rounded-xl border bg-background/70 p-4 animate-fade-up"
+            className="min-w-0 border-t pt-4 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-1 motion-safe:duration-200"
         >
-            {isPending ? <CardSkeleton rows={3} /> : null}
-            {!isPending && error ? <CardError message={error} /> : null}
-            {!isPending && !error && !hasContent ? (
-                <CardEmpty text="暂无该地区赏金" />
-            ) : null}
-            {!isPending && !error && hasContent ? (
-                <div className="grid gap-2 lg:grid-cols-2">
-                    {syndicateJobs.map((job, index) => (
-                        <SyndicateJobTile
-                            key={`job-${job.jobType}-${index}`}
-                            job={job}
-                        />
-                    ))}
-                    {bountyCycle
-                        ? bountyJobs.map((job, index) => (
-                              <BountyJobTile
-                                  key={`bounty-${job.node}-${index}`}
-                                  job={job}
-                              />
-                          ))
-                        : null}
-                </div>
-            ) : null}
+            <div>
+                {isPending ? <CardSkeleton rows={3} /> : null}
+                {!isPending && error ? <CardError message={error} /> : null}
+                {!isPending && !error && !hasContent ? (
+                    <CardEmpty text={t("home.region.empty")} />
+                ) : null}
+                {!isPending && !error && hasContent ? (
+                    <div className="grid gap-2 lg:grid-cols-2">
+                        {syndicateJobs.map((job, index) => (
+                            <SyndicateJobTile
+                                key={`job-${job.jobType}-${index}`}
+                                job={job}
+                            />
+                        ))}
+                        {bountyCycle
+                            ? bountyJobs.map((job, index) => (
+                                  <BountyJobTile
+                                      key={`bounty-${job.node}-${index}`}
+                                      job={job}
+                                  />
+                              ))
+                            : null}
+                        {nodes.map((node) => (
+                            <RegionNodeTile key={node} node={node} />
+                        ))}
+                    </div>
+                ) : null}
+            </div>
         </div>
+    );
+}
+
+function RegionNodeTile({ node }: { node: string }) {
+    const detail = resolveNode(node);
+    const subtitle = [detail.systemNameZh, detail.missionTypeZh]
+        .filter(Boolean)
+        .join(" · ");
+
+    return (
+        <EventCard
+            title={detail.nameZh || node}
+            subtitle={subtitle || undefined}
+        />
     );
 }
 
