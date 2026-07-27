@@ -1,5 +1,7 @@
 allowBuilds:
   esbuild: true
   msw: true
+minimumReleaseAgeExclude:
+  - warframe-public-export-plus
 onlyBuiltDependencies:
   - esbuild
