@@ -44,8 +44,7 @@ jobs:
         shell: bash
         run: |
           current_version="$(node -p "require('./node_modules/warframe-public-export-plus/package.json').version")"
-          pnpm update warframe-public-export-plus --latest
-          latest_version="$(node -p "require('./node_modules/warframe-public-export-plus/package.json').version")"
+          latest_version="$(pnpm view warframe-public-export-plus version)"
 
           echo "current_version=${current_version}" >> "$GITHUB_OUTPUT"
           echo "latest_version=${latest_version}" >> "$GITHUB_OUTPUT"
@@ -53,6 +52,14 @@ jobs:
           if [[ "$current_version" == "$latest_version" ]]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
+            pnpm update "warframe-public-export-plus@${latest_version}"
+            installed_version="$(node -p "require('./node_modules/warframe-public-export-plus/package.json').version")"
+
+            if [[ "$installed_version" != "$latest_version" ]]; then
+              echo "Expected warframe-public-export-plus ${latest_version}, installed ${installed_version}" >&2
+              exit 1
+            fi
+
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
