@@ -75,7 +75,7 @@ const ConquestRow = memo(function ConquestRow({ conquest }: { conquest: Conquest
                     </div>
                 ))}
             </div>
-            <div className="flex flex-wrap justify-around gap-1.5 mt-2">
+            <div className="flex flex-wrap justify-around gap-1.5 mt-2 lg:grid-cols-2">
                 {conquest.variables.map((v, idx) => (
                         <Tooltip key={idx}>
                             <TooltipTrigger asChild>

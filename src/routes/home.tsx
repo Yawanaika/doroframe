@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { ArrowRightIcon, CrosshairIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import {ConquestList} from "@/features/world/components/conquest-card.tsx";
 
 export function HomePage() {
     const { t } = useTranslation();
@@ -65,6 +66,9 @@ function DailyChallengeGrid() {
             <DailyDealList />
             <SortyList />
             <LiteSortyList />
+            <div className="lg:col-span-2">
+                <ConquestList />
+            </div>
         </section>
     );
 }

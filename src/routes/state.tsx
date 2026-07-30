@@ -6,7 +6,6 @@ import { VoidTraderList } from "@/features/world/components/void-trader-card";
 import { PrimeVaultList } from "@/features/world/components/prime-vault-card";
 import { VoidStormList } from "@/features/world/components/void-storm-card";
 import { GoalList } from "@/features/world/components/goal-card";
-import { ConquestList } from "@/features/world/components/conquest-card";
 import { DescentList } from "@/features/world/components/descent-card";
 import { EndlessXpList } from "@/features/world/components/endless-xp-card";
 import { SeasonInfoCard } from "@/features/world/components/season-info-card";
@@ -45,7 +44,6 @@ export function StatePage() {
         <div className="space-y-6">
             <S title={t("state.title.goal")}><GoalList /></S>
             <S title={t("state.title.alert")}><AlertList /></S>
-            <S title={t("state.title.conquest")}><ConquestList /></S>
             <S title={t("state.title.endless-xp")}><EndlessXpList /></S>
             <S title={t("state.title.sp-incursions")}><SpIncursionsCard /></S>
             <S title={t("state.title.active-mission")}><ActiveMissionList /></S>

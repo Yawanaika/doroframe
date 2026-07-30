@@ -11,6 +11,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { FadeBanner } from "@/components/fade-banner";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import {TimerReset} from "lucide-react";
 
 /** 缩略图：单图 URL 或多图 URL 列表（多图时自动轮播） */
 type EventCardImage = string | string[];
@@ -96,12 +97,9 @@ export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(function Eve
                         ) : null}
                     </div>
                     <div className="flex flex-col items-end gap-1">
-                        {badge ? <Badge variant="secondary">{badge}</Badge> : null}
                         {countdown ? (
                             <span className="text-muted-foreground text-xs tabular-nums flex items-center gap-1">
-                                <div className="w-4 h-4 shrink-0 rounded bg-muted flex items-center justify-center">
-                                    <img src="/images/Timer.png" alt={t("event.expiry")} className="w-3 h-3" />
-                                </div>
+                                <TimerReset className="w-4 h-4"/>
                                 {countdown}
                             </span>
                         ) : null}
@@ -110,6 +108,7 @@ export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(function Eve
                                 {t("event.grace")}:  {redemption}
                             </span>
                         ) : null}
+                        {badge ? <Badge variant="secondary">{badge}</Badge> : null}
                     </div>
                 </CardHeader>
                 {children ? <CardContent className="p-0">{children}</CardContent> : null}

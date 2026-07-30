@@ -15,9 +15,11 @@ const Narmer = "/Lotus/Language/Cosmetics/ColourPickerNarmerName";
 const SortyRow = memo(function SortyRow({
     sorty,
     title,
+    showFactionName = true
 }: {
     sorty: Sorty;
     title: string;
+    showFactionName?: boolean;
 }) {
     const sec = useCountdown(sorty.expiry);
     const [t] = useTranslation();
@@ -47,13 +49,15 @@ const SortyRow = memo(function SortyRow({
                                         </TooltipContent>
                                     </Tooltip>
                                 ) : null}
-                            <div>
-                                <Badge variant="outline">{
-                                    title === "sorty.title"
-                                    ? node.factionNameZh
-                                    : tr(Narmer)
-                                }</Badge>
-                            </div>
+                            {showFactionName && (
+                                <div>
+                                    <Badge variant="outline">{
+                                        title === "sorty.title"
+                                            ? node.factionNameZh
+                                            : tr(Narmer)
+                                    }</Badge>
+                                </div>
+                            )}
                         </div>
                     );
                 })}
@@ -69,7 +73,7 @@ export function SortyList() {
     return (
         <div className="grid gap-3">
             {data.map((s) => (
-                <SortyRow key={s.id} sorty={s} title={"sorty.title"} />
+                <SortyRow key={s.id} sorty={s} title={"sorty.title"} showFactionName={false} />
             ))}
         </div>
     );
