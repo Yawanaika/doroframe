@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import {worldFromJson, worldToJson} from "@/types/wf-state/world/index.ts";
+import {
+    weeklyVaultBonusRewardFromJson,
+    weeklyVaultBonusRewardToJson,
+    worldFromJson,
+    worldToJson,
+} from "@/types/wf-state/world/index.ts";
 
 
 describe('World', () => {
@@ -7676,3 +7681,51 @@ describe('World', () => {
         });
     });
 })
+
+describe('WeeklyVaultBonusReward', () => {
+    const source = {
+        WeekCount: 651,
+        BonusRegion: '/Lotus/Language/Locations/Neptune',
+        Rewards: [
+            {
+                RewardClaimed: false,
+                PointThreshold: 500,
+                ItemCount: 50,
+                Reward: '/Lotus/StoreItems/Types/Restoratives/SyndicateTeamEnergyTotem',
+            },
+        ],
+    };
+
+    it('parses the API shape and always returns a reward array', () => {
+        const result = weeklyVaultBonusRewardFromJson(source);
+
+        expect(result).toEqual({
+            weekCount: 651,
+            bonusRegion: '/Lotus/Language/Locations/Neptune',
+            rewards: [
+                {
+                    rewardClaimed: false,
+                    pointThreshold: 500,
+                    itemCount: 50,
+                    reward: '/Lotus/StoreItems/Types/Restoratives/SyndicateTeamEnergyTotem',
+                },
+            ],
+        });
+        expect(weeklyVaultBonusRewardFromJson({}).rewards).toEqual([]);
+    });
+
+    it('serializes the normalized camelCase model', () => {
+        expect(weeklyVaultBonusRewardToJson(weeklyVaultBonusRewardFromJson(source))).toEqual({
+            weekCount: 651,
+            bonusRegion: '/Lotus/Language/Locations/Neptune',
+            rewards: [
+                {
+                    rewardClaimed: false,
+                    pointThreshold: 500,
+                    itemCount: 50,
+                    reward: '/Lotus/StoreItems/Types/Restoratives/SyndicateTeamEnergyTotem',
+                },
+            ],
+        });
+    });
+});

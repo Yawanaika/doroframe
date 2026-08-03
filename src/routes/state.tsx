@@ -11,6 +11,7 @@ import { EndlessXpList } from "@/features/world/components/endless-xp-card";
 import { SeasonInfoCard } from "@/features/world/components/season-info-card";
 import { CalendarMonthList } from "@/features/world/components/calendar-month-card";
 import {SpIncursionsCard} from "@/features/world/components/sp-incursions-card.tsx";
+import { WeeklyVaultBonusRewardList } from "@/features/world/components/weekly-vault-bonus-reward-card";
 
 function Section({
     title,
@@ -51,6 +52,7 @@ export function StatePage() {
             <S title={t("state.title.invasion")}><InvasionList /></S>
             <S title={t("state.title.void-trader")}><VoidTraderList /></S>
             <S title={t("state.title.prime-vault")}><PrimeVaultList /></S>
+            <S title={t("state.title.weekly-vault-bonus")}><WeeklyVaultBonusRewardList /></S>
             <S title={t("state.title.season-info")}><SeasonInfoCard /></S>
             <S title={t("state.title.calendar")}><CalendarMonthList /></S>
             <S title={t("state.title.descent")}><DescentList /></S>

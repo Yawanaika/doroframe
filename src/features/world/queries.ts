@@ -23,6 +23,7 @@ import type {
     Conquest,
     Descent,
     Goal,
+    WeeklyVaultBonusReward,
     Arby,
     SpIncursion,
     BountyCycle,
@@ -94,6 +95,9 @@ export const useDescentsQuery = (): UseQueryResult<Descent[]> =>
 
 export const useGoalsQuery = (): UseQueryResult<Goal[]> =>
     useWorldSelect((w) => w.goals);
+
+export const useWeeklyVaultBonusRewardsQuery = (): UseQueryResult<WeeklyVaultBonusReward[]> =>
+    useWorldSelect((w) => w.weeklyVaultBonusRewards);
 
 // browse.wf 系列：与 worldState 不同源，各自独立的 Tauri command + 后端缓存，
 // 因此用各自的 queryKey 单独 useQuery（不能走 useWorldSelect）。轮询节奏沿用设置项。

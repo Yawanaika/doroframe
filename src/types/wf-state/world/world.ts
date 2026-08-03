@@ -67,6 +67,10 @@ import {
     descentFromJson,
     descentToJson,
 } from "@/types/wf-state/world/descent.ts";
+import {
+    WeeklyVaultBonusReward,
+    weeklyVaultBonusRewardFromJson, weeklyVaultBonusRewardToJson
+} from "@/types/wf-state/world/weekly-vault-bonus-reward.ts";
 
 export interface World {
     worldSeed: string;
@@ -92,6 +96,7 @@ export interface World {
     knownCalendarSeasons: KnownCalendarSeason[];
     conquests: Conquest[];
     descents: Descent[];
+    weeklyVaultBonusRewards: WeeklyVaultBonusReward[];
 }
 
 const arr = <T>(json: any, key: string, parse: (j: any) => T): T[] =>
@@ -122,6 +127,7 @@ export function worldFromJson(json: any): World {
         knownCalendarSeasons: arr(json, "KnownCalendarSeasons", knownCalendarSeasonFromJson),
         conquests: arr(json, "Conquests", conquestFromJson),
         descents: arr(json, "Descents", descentFromJson),
+        weeklyVaultBonusRewards: arr(json, "WeeklyVaultBonusRewards", weeklyVaultBonusRewardFromJson),
     };
 }
 
@@ -150,5 +156,6 @@ export function worldToJson(w: World) {
         knownCalendarSeasons: w.knownCalendarSeasons.map(knownCalendarSeasonToJson),
         conquests: w.conquests.map(conquestToJson),
         descents: w.descents.map(descentToJson),
+        weeklyVaultBonusRewards: w.weeklyVaultBonusRewards.map(weeklyVaultBonusRewardToJson),
     };
 }

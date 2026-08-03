@@ -329,7 +329,7 @@ export interface RewardNameOptions {
  *   4. rewardKey 以 "Blueprint" 结尾时追加 " 蓝图"；
  *   5. itemCount 处理（含内融核心特殊倍乘）。
  */
-const FUSION_BUNDLE_KEY = "/Lotus/Language/Items/FusionBundle";
+const FUSION_BUNDLE_KEY = "FusionBundle";
 export const rewardName = (
     key: string | undefined | null,
     opts: RewardNameOptions = {},
@@ -380,7 +380,7 @@ export const rewardName = (
     const count = opts.itemCount;
     if (typeof count === "number" && count > 1) {
         let n = count;
-        if (key === FUSION_BUNDLE_KEY) {
+        if (key.includes(FUSION_BUNDLE_KEY)) {
             const fp = hit?.item.fusionPoints;
             if (typeof fp === "number") n *= fp;
         }

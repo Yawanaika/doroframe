@@ -18,4 +18,5 @@ export * from "./syndicate";
 export * from "./void-storm";
 export * from "./void-trader";
 export * from "./world";
+export * from "./weekly-vault-bonus-reward";
 export * from "./selectors";

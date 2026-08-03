@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { tr, setActiveLang, getActiveLang, itemDetail } from "@/lib/wpep";
+import { tr, setActiveLang, getActiveLang, itemDetail, rewardName } from "@/lib/wpep";
 import { resolveNode } from "@/lib/wpep/nodes";
 
 describe("wpep tr()", () => {
@@ -65,5 +65,18 @@ describe("itemDetail", () => {
             name: "唱歌的 Lotus 社区浮印",
         });
         expect(singingLotusGlyph?.icon).toContain("SingingLotusGlyph.png");
+    });
+});
+
+describe("rewardName", () => {
+    it("按 FusionBundle 后缀匹配 fusionPoints", () => {
+        setActiveLang("zh");
+
+        expect(
+            rewardName(
+                "/Lotus/StoreItems/Upgrades/Mods/FusionBundles/CircuitSilverSteelPathFusionBundle",
+                { itemCount: 2 },
+            ),
+        ).toBe("内融核心 x 12000");
     });
 });
