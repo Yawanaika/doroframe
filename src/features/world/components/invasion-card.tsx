@@ -3,7 +3,7 @@ import type { Invasion } from "@/types/wf-state";
 import { CardEmpty, CardError, CardSkeleton } from "@/components/card-states";
 import { useInvasionsQuery } from "@/features/world/queries";
 import { resolveNode } from "@/lib/wpep/nodes";
-import { Regions, rewardName, tr} from "@/lib/wpep";
+import {itemDetail, Regions, tr} from "@/lib/wpep";
 import { cn } from "@/lib/utils";
 import {EventCard} from "@/components/event-card.tsx";
 import { Progress } from "@/components/ui/progress";
@@ -85,21 +85,29 @@ const InvasionSubCard = memo(function InvasionSubCard({ invasion }: { invasion: 
 
     const attacker = invasion.attackerReward?.countedItems?.[0];
     const defender = invasion.defenderReward?.countedItems?.[0];
+    const attackerReward = attacker
+        ? itemDetail(attacker.itemType)
+        : null;
+    const defenderReward = defender
+        ? itemDetail(defender.itemType)
+        : null;
     return (
         <EventCard title={node.nameZh} className="mt-2">
             <div className="flex flex-col gap-2">
                 <ProgressBar value={barValue} />
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>
-                        {attacker
-                            ? `${rewardName(attacker.itemType) || attacker.itemType} x ${attacker.itemCount}`
-                            : ""}
-                    </span>
-                    <span>
-                        {defender
-                            ? `${defender.itemCount} x ${rewardName(defender.itemType) || defender.itemType}`
-                            : ""}
-                    </span>
+                    {attackerReward ? (
+                        <span className="flex items-center gap-1 text-muted-foreground">
+                            <img src={attackerReward.icon} alt={attackerReward.name} className="size-4 object-contain" loading="lazy"/>
+                            {`${attackerReward.name} x ${attacker?.itemCount}`}
+                        </span>
+                    ) : <span/>}
+                    {defenderReward ? (
+                        <span className="flex items-center gap-1 text-muted-foreground">
+                            {`${defender?.itemCount} x ${defenderReward.name}`}
+                            <img src={defenderReward.icon} alt={defenderReward.name} className="size-4 object-contain" loading="lazy"/>
+                        </span>
+                    ) : <span/>}
                 </div>
             </div>
         </EventCard>
