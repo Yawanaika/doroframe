@@ -12,12 +12,20 @@ export interface Goal extends Base {
     rewardGoal?: number;
     reward?: Reward;
     gracePeriod?: string;
+    bonusGoal?: number;
+    bonusReward?: Reward;
 }
 
 interface Reward {
     credits?: number;
     xp?: number;
     items: string[];
+    countedItems?: countedItem[];
+}
+
+interface countedItem {
+    itemType: string;
+    itemCount: number;
 }
 
 export function goalFromJson(json: any): Goal {
@@ -34,6 +42,8 @@ export function goalFromJson(json: any): Goal {
         rewardGoal: json?.Goal,
         reward: json?.Reward ? rewardFromJson(json.Reward) : undefined,
         gracePeriod: asDateMs(json?.GracePeriod),
+        bonusGoal: json?.BonusGoal,
+        bonusReward: json?.BonusReward ? rewardFromJson(json.BonusReward) : undefined,
     };
 }
 
@@ -50,7 +60,9 @@ export function goalToJson(g: Goal) {
         interimRewards: g.interimRewards.map(rewardToJson),
         rewardGoal: g.rewardGoal,
         reward: g.reward ? rewardToJson(g.reward) : undefined,
-        gracePeriod: g.gracePeriod
+        gracePeriod: g.gracePeriod,
+        bonusGoal: g.bonusGoal,
+        bonusReward: g.bonusReward ? rewardToJson(g.bonusReward) : undefined,
     };
 }
 
@@ -59,6 +71,7 @@ function rewardFromJson(json: any): Reward {
         credits: json?.credits ?? 0,
         xp: json?.xp ?? 0,
         items: json?.items ?? [],
+        countedItems: json?.countedItems ? json.countedItems.map(countedItemFromJson) : [],
     };
 }
 
@@ -67,5 +80,20 @@ function rewardToJson(r: Reward) {
         credits: r.credits,
         xp: r.xp,
         items: r.items,
+        countedItems: r.countedItems?.map(countedItemToJson),
+    };
+}
+
+function countedItemFromJson(json: any): countedItem {
+    return {
+        itemType: json?.ItemType ?? "",
+        itemCount: json?.ItemCount ?? 0,
+    };
+}
+
+function countedItemToJson(c: countedItem) {
+    return {
+        itemType: c.itemType,
+        itemCount: c.itemCount,
     };
 }

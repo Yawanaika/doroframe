@@ -6,7 +6,7 @@ import { CardEmpty, CardError, CardSkeleton } from "@/components/card-states";
 import { useGoalsQuery } from "@/features/world/queries";
 import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
 import { resolveNode } from "@/lib/wpep/nodes";
-import {itemDetail, tr, trImage} from "@/lib/wpep";
+import {itemDetail, rewardName, tr, trImage} from "@/lib/wpep";
 import {Progress} from "@/components/ui/progress.tsx";
 import {Button} from "@/components/ui/button";
 import {
@@ -29,6 +29,12 @@ function buildRewardTiers(goal: Goal): RewardTier[] {
     if (goal.reward) {
         tiers.push({ score: goal.rewardGoal ?? 0, reward: goal.reward });
     }
+    if (goal.bonusReward) {
+        tiers.push({
+            score: goal.bonusGoal ?? 0,
+            reward: goal.bonusReward,
+        });
+    }
     return tiers;
 }
 
@@ -38,8 +44,8 @@ const RewardItems = memo(function RewardItems({ reward }: { reward: Reward }) {
         <div className="flex flex-wrap items-center gap-2 divide-y divide-border">
             {reward.credits ? (
                 <span className="flex items-center gap-1 text-muted-foreground">
-                    {reward.credits.toLocaleString()}
                     <img src={"/images/resources/Credits.png"} alt={"Credits"} className="size-4 object-contain" loading="lazy"/>
+                    {reward.credits.toLocaleString()}
                 </span>
             ) : null}
             {reward.xp ? (
@@ -65,6 +71,26 @@ const RewardItems = memo(function RewardItems({ reward }: { reward: Reward }) {
                         {detail?.name ?? it}
                     </span>
                 );
+            })}
+            {reward.countedItems?.map((it) => {
+                const detail = itemDetail(it.itemType);
+                const name = rewardName(it.itemType, {itemCount: it.itemCount});
+                return (
+                    <span
+                        key={it.itemType}
+                        className="inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5"
+                    >
+                        {detail?.icon ? (
+                            <img
+                                src={detail.icon}
+                                alt=""
+                                className="size-4 object-contain"
+                                loading="lazy"
+                            />
+                        ) : null}
+                        {name}
+                    </span>
+                )
             })}
         </div>
     );
