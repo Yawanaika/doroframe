@@ -104,7 +104,7 @@
     "desc": "Casting abilities increases Ability Strength by 2% and Ability Efficiency by -1% per unit of energy used by ability, for 5s. Capped at 150% Ability Strength and -75% Ability Efficiency",
     "ally": "Aoi"
   },
-  "name": {
+  "/Lotus/Upgrades/Calendar/SharedFreeAbilityEveryXCasts": {
     "name": "Sharing is Caring",
     "desc": "Every 10th ability cast makes the next one free for yourself and allies.",
     "ally": "Aoi"
@@ -119,7 +119,7 @@
     "desc": "Upon gaining 7x combo multiplier all melee attacks fire off waves of energy",
     "ally": "Arthur"
   },
-  "name": {
+  "/Lotus/Upgrades/Calendar/RadialJavelinOnHeavy": {
     "name": "Heavy Javelin",
     "desc": "Heavy melee attacks trigger Radial Javelin with 3m range and 1000 damage scaling both with combo multiplier",
     "ally": "Arthur"
