@@ -129,7 +129,7 @@
     "desc": "Melee slide attacks increase slide attack Critical Chance by 5%, slide speed by 20% and reduce slide friction by 10% for 10 seconds with each slide melee attack. Max 10 stacks.",
     "ally": "Arthur"
   },
-  "name": {
+  "/Lotus/Upgrades/Calendar/CloneActiveCompanionForEnergySpent": {
     "name": "Copy & Paste",
     "desc": "Create a spectral clone of a random currently active specter or companion every 125 energy spent",
     "ally": "Eleanor"

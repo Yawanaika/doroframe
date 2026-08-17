@@ -129,9 +129,9 @@
     "desc": "每次近战滑行攻击都会增加5%滑行攻击暴击几率，20%滑行速度，同时减少10%滑行摩擦力，持续10秒。最多可叠加10层。",
     "ally": "Arthur"
   },
-  "name": {
-    "name": "Copy & Paste",
-    "desc": "Create a spectral clone of a random currently active specter or companion every 125 energy spent",
+  "/Lotus/Upgrades/Calendar/CloneActiveCompanionForEnergySpent": {
+    "name": "复制粘贴",
+    "desc": "每消耗125点能量，将随机生成一个当前存在的魅影或同伴的幽灵分身。",
     "ally": "Eleanor"
   },
   "/Lotus/Upgrades/Calendar/CompanionsRadiationChance": {
