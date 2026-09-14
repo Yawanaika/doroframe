@@ -30,5 +30,7 @@ PRODUCT.md
 .claude
 .codex
 .impeccable
+.hallmark
+.codegraph
 scripts
 docs
