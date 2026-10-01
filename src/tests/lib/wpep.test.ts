@@ -55,7 +55,7 @@ describe("itemDetail", () => {
         expect(cosplayDisplay).toMatchObject({
             key: "/Lotus/Types/Items/ShipDecos/Tennocon2026CosplayDisplay",
             source: "resources",
-            name: "维米尼亚角色扮演社区展示",
+            name: "维米尼亚角色扮演社区展示图",
         });
         expect(cosplayDisplay?.icon).toContain("TennoCon2026CosplayDisplay.png");
 
