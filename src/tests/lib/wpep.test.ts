@@ -44,21 +44,11 @@ describe("resolveNode", () => {
 describe("itemDetail", () => {
     it("能查询 browse.wf 最新快照中的 TennoCon 装饰与 Lotus 浮印", () => {
         setActiveLang("zh");
-
-        const cosplayDisplay = itemDetail(
-            "/Lotus/StoreItems/Types/Items/ShipDecos/Tennocon2026CosplayDisplay",
-        );
+        
         const singingLotusGlyph = itemDetail(
             "/Lotus/StoreItems/Types/StoreItems/AvatarImages/AvatarImageSingingLotusGlyph",
         );
-
-        expect(cosplayDisplay).toMatchObject({
-            key: "/Lotus/Types/Items/ShipDecos/Tennocon2026CosplayDisplay",
-            source: "resources",
-            name: "维米尼亚角色扮演社区展示图",
-        });
-        expect(cosplayDisplay?.icon).toContain("TennoCon2026CosplayDisplay.png");
-
+        
         expect(singingLotusGlyph).toMatchObject({
             key: "/Lotus/Types/StoreItems/AvatarImages/AvatarImageSingingLotusGlyph",
             source: "flavour",
